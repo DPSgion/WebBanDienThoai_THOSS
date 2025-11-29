@@ -1,0 +1,150 @@
+:root{
+  --container:1200px;
+  --accent-start:#2563eb; /* blue */
+  --accent-end:#7c3aed; /* purple */
+  --brand:#0f172a;
+  --dark-green:#064e3b;
+}
+*{box-sizing:border-box}
+body{font-family:Segoe UI, Roboto, Arial, sans-serif;margin:0;color:#111;background:#fff}
+.container{max-width:var(--container);margin:0 auto;padding:0 16px}
+
+/* Topbar */
+.topbar{background:#E3E3E3;border-bottom:1px solid #eee;font-size:13px}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.topbar .socials{display:flex;gap:12px}
+.topbar .social{color:#111;text-decoration:none;font-weight:600}
+.hotline{font-weight:700}
+
+/* Header */
+.main-header{background:#fff;padding:12px 0;border-bottom:1px solid #eee}
+.header-inner{display:flex;flex-direction:column;gap:6px}
+.header-top{display:flex;justify-content:center;padding:6px 0}
+.logo{background:#C3D5C4;color:#000000;padding:25px 20px;border-radius:50px 0px 50px 0px;font-weight:900}
+.header-bottom{display:block}
+
+/* header row holds bordered area + contact block */
+.header-row{display:flex;align-items:center;gap:12px}
+
+/* bordered box wrapping categories/search/menu (mục 3) */
+.header-bottom-border{flex:1;display:flex;align-items:center;gap:12px;padding:10px;border:1px solid #e6edf3;border-radius:8px;background:#D4DBD7;justify-content:space-between}
+
+/* categories button (left) */
+.categories-short{flex:0 0 auto}
+.cat-btn{background:#f3f4f6;border:1px solid #e6edf3;padding:8px 12px;border-radius:8px;font-weight:700}
+
+/* search in middle */
+.search-wrap{flex:1;display:flex;justify-content:center}
+.search{width:100%;max-width:420px;padding:8px 12px;border-radius:6px 0 0 6px;border:1px solid #e5e7eb}
+.search-btn{padding:10px;border:1px solid #ddd;border-left:0;background:#f7f7f7;border-radius:0 6px 6px 0}
+
+/* main nav inside bordered area */
+.main-nav{display:flex;gap:14px;flex:0 0 auto}
+.main-nav a{text-decoration:none;color:#111;font-weight:700}
+
+/* contact block on the right (outside border) */
+.contact-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+.phone-btn{background:#F7C35F;color:#fff;border:0;padding:10px;border-radius:8px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
+.phone-icon{font-size:16px;line-height:1}
+.hotline-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+.hotline-label{font-size:11px;opacity:0.95}
+.hotline-number{font-size:13px;font-weight:800}
+.quick-icons{display:flex;flex-direction:row;gap:8px;margin-top:6px;align-items:center}
+.quick-icons .qi{background:transparent;border:0;padding:6px 6px;border-radius:6px;font-size:14px}
+
+/* Main banner */
+.main-banner{background:#16296d;color:#fff;padding:0}
+.banner-inner{display:flex;align-items:center;gap:20px}
+.banner-text h1{margin:0;font-size:32px}
+.banner-text .price{font-size:20px;margin:8px 0}
+.banner-text .promo{margin:6px 0;color:#fce7f3}
+.btn{background:#fff;color:var(--brand);padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:700}
+.banner-image{margin-left:auto}
+
+/* Carousel specific */
+.carousel{position:relative;overflow:hidden;padding:12px 0}
+.carousel .slides{display:flex;transition:transform 350ms ease;will-change:transform}
+.carousel .slide{min-width:90%;box-sizing:border-box}
+.carousel .slide .banner-inner{padding:18px;border-radius:12px}
+.carousel .carousel-control{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.35);color:#fff;border:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+.carousel .carousel-control.prev{left:12px}
+.carousel .carousel-control.next{right:12px}
+.carousel-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px}
+.carousel-dots button{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,0.5);cursor:pointer}
+.carousel-dots button.active{background:#fff}
+
+@media(max-width:900px){
+  .carousel .carousel-control{width:36px;height:36px;font-size:18px}
+}
+
+/* Services */
+.services{display:flex;gap:12px;justify-content:space-between;padding:18px 0}
+.service{background:#fff;border:1px solid #eee;padding:12px;border-radius:8px;flex:1;text-align:center;font-weight:700}
+.service div{margin-top:6px;font-size:14px;color:#444}
+
+/* Categories */
+.categories{padding:18px 0}
+.categories-title{text-align:center;font-size:18px;font-weight:800;margin-bottom:12px;color:var(--brand)}
+.categories-list{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
+.cat{background:#f8fafc;border:1px solid #e6edf3;padding:10px 12px;border-radius:8px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:110px}
+
+/* Sub banner */
+.sub-banner{background:#16296d;color:#fff;padding:18px 0;margin:18px 0}
+
+/* Sub carousel styles */
+.sub-carousel{position:relative;overflow:hidden}
+.sub-slides{display:flex;transition:transform 300ms ease;will-change:transform}
+.sub-slide{min-width:100%;box-sizing:border-box;padding:12px 0}
+.sub-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--container);margin:0 auto;padding:0 16px}
+.sub-text{font-size:18px;font-weight:700}
+.sub-graphic{font-size:28px}
+.sub-control{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.25);color:#fff;border:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sub-control.prev{left:8px}
+.sub-control.next{right:8px}
+.sub-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;display:flex;gap:8px}
+.sub-dots button{width:8px;height:8px;border-radius:50%;border:0;background:rgba(255,255,255,0.5);cursor:pointer}
+.sub-dots button.active{background:#fff}
+
+@media(max-width:600px){
+  .sub-inner{flex-direction:column;gap:8px;text-align:center}
+}
+
+/* Featured products */
+.featured{padding:6px 0;border:1px solid #e6edf3;border-radius:8px;margin:16px auto;background:#fff;display:flex;flex-direction:column;align-items:center;box-sizing:border-box}
+.section-header{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:var(--container);padding:0 16px;box-sizing:border-box}
+.products{display:flex;gap:12px;margin-top:12px;justify-content:center;flex-wrap:wrap;width:100%;max-width:var(--container);padding:0 16px;box-sizing:border-box}
+.product{background:#fff;border:1px solid #e6edf3;padding:6px;border-radius:8px;flex:0 0 180px;text-align:center;box-sizing:border-box}
+.product .thumb{display:flex;align-items:center;justify-content:center;height:120px;margin-bottom:10px}
+.product .name{font-weight:700;margin-top:4px}
+.product .prices{margin-top:8px}
+.current-price{font-size:15px;font-weight:700;color:#111}
+.original-price{font-size:16px;font-weight:800;color:#ef4444;text-decoration:line-through;margin-top:4px}
+.product .sale{color:#ef4444;margin-left:6px}
+.product .badge{background:#ef4444;color:#fff;padding:4px 6px;border-radius:6px;margin-left:6px}
+.product.more{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+
+/* Footer */
+.site-footer{background:#2E4033;padding:28px 0;margin-top:28px;color:#e6efe7}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.site-footer h4{margin-top:0;color:#ffffff}
+.site-footer a{display:block;color:#cfe7d8;text-decoration:none;margin:6px 0}
+.site-footer .col:first-child{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.site-footer .col:first-child h4{margin:0}
+.col.dark-green{background:var(--dark-green);color:#fff;padding:12px;border-radius:6px}
+.footer-bottom{text-align:center;padding:12px;color:#b8c6bc}
+
+/* Responsive */
+@media(max-width:900px){
+  .main-nav{display:none}
+  .banner-inner{flex-direction:column;text-align:center}
+  .banner-image{margin:12px 0}
+  .products{flex-wrap:wrap}
+  .product{flex-basis:48%}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+  .container{padding:0 12px}
+  .services{flex-direction:column}
+  .product{flex-basis:100%}
+  .footer-grid{grid-template-columns:1fr}
+}
