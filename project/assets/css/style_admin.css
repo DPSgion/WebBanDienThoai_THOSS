@@ -1,0 +1,81 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.header {
+    background: #fff;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    min-width: 110px;
+}
+
+.header-left{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-right{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-name{
+    font-size: 20px;
+}
+
+.logout-btn{
+    padding: 8px 20px;
+    border-radius: 5px;
+
+    background: #ce493a;
+
+    color: white;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.sidebar{
+    position: fixed;
+    top: 110px;
+    left: 0;
+    width: 220px;
+    height: calc(100vh - 110px);
+    background: #475868;
+    padding: 20px 0;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+}
+
+.sidebar ul{
+    list-style: none;
+}
+
+.sidebar li{
+    margin: 30px;
+}
+
+.sidebar a{
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    gap: 12px;
+}
