@@ -1,0 +1,27 @@
+project/
+- index.php                 # Trang chủ
+
+- config/
+	+ db.php            # Kết nối database
+
+- admin/                    # Khu vực trang admin              
+
+- pages/                    # Các trang người dùng
+
+- includes/
+    + header.php            # Header chung
+    + footer.php            # Footer chung
+    + functions.php         # Các hàm PHP dùng chung
+
+- assets/
+    + css/
+        * style.css         # CSS chính
+    + js/
+        * main.js           # JavaScript
+    + images/               # Ảnh trang web
+
+- uploads/
+    + products/             # Ảnh sản phẩm upload
+
+- database/
+    + db.sql                # File SQL
