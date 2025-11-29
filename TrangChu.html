@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ĐIỆN THOẠI TRỰC TUYẾN</title>
+  <link rel="stylesheet" href="stylesTC.css">
+</head>
+<body>
+
+  <!-- Top small bar -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="socials">
+        <a href="#" class="social" aria-label="Facebook">🔵</a>
+        <a href="#" class="social" aria-label="Instagram">📸</a>
+        <a href="#" class="social" aria-label="YouTube">▶️</a>
+      </div>
+      <div class="hotline">📞 <strong>0123456789</strong></div>
+    </div>
+  </div>
+
+  <!-- Main header split into two rows: logo row and controls row -->
+  <header class="main-header">
+    <div class="container header-inner">
+      <!-- Row 1: centered logo -->
+      <div class="header-top">
+        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
+      </div>
+
+      <!-- Row 2: navigation (center) + search and action icons (right) -->
+      <div class="header-bottom">
+        <div class="header-row">
+          <!-- Bordered area containing categories, search and menu -->
+          <div class="header-bottom-border">
+            <div class="categories-short">
+              <button class="cat-btn">☰ Danh mục</button>
+            </div>
+
+            <div class="search-wrap">
+              <input class="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm" />
+              <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+            </div>
+
+            <nav class="main-nav" aria-label="Main navigation">
+              <a href="#">TRANG CHỦ</a>
+              <a href="#">SẢN PHỦ</a>
+              <a href="#">TIN TỨC</a>
+              <a href="#">GIỚI THIỆU</a>
+            </nav>
+            <!-- Contact block moved inside the bordered area (right side) -->
+            <div class="contact-block">
+              <button class="phone-btn" aria-label="hotline">
+                <span class="phone-icon">📞</span>
+                <span class="hotline-text">
+                  <span class="hotline-label">Hotline</span>
+                  <span class="hotline-number">0123456789</span>
+                </span>
+              </button>
+              <div class="quick-icons">
+                <button title="Tìm" class="qi">🔍</button>
+                <button title="Giỏ hàng" class="qi">🛒</button>
+                <button title="Tài khoản" class="qi">👤</button>
+                <button title="Chat" class="qi">💬</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main banner (carousel) -->
+  <section class="main-banner">
+    <div class="container">
+      <div class="carousel" id="mainCarousel" tabindex="0" aria-roledescription="carousel">
+        <div class="slides">
+          <div class="slide">
+            <div class="banner-inner">
+              <div class="banner-text">
+                <h1>Siêu ưu đãi cho Galaxy S9</h1>
+                <p class="price">Giá <strong>15.990.000₫</strong></p>
+                <p class="promo">Khuyến mãi giảm giá đến <strong>4.000.000₫</strong></p>
+                <p class="cta"><a class="btn" href="#">SỞ HỮU NGAY</a></p>
+              </div>
+              <div class="banner-image" aria-hidden="true">
+                <svg width="240" height="420" viewBox="0 0 240 420" xmlns="http://www.w3.org/2000/svg">
+                  <rect rx="28" width="240" height="420" fill="#0f172a" />
+                  <rect x="14" y="30" width="212" height="360" rx="18" fill="#eef2ff" />
+                  <circle cx="120" cy="80" r="22" fill="#7c3aed" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+
+        <button class="carousel-control prev" aria-label="Previous slide">‹</button>
+        <button class="carousel-control next" aria-label="Next slide">›</button>
+
+        <div class="carousel-dots" aria-hidden="false"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services container">
+    <div class="service">🚚<div>Giao hàng tận nơi</div></div>
+    <div class="service">🔁<div>Hỗ trợ đổi trả 30 ngày</div></div>
+    <div class="service">🔒<div>100% thanh toán an toàn</div></div>
+    <div class="service">✔️<div>Cam kết sản phẩm chính hãng</div></div>
+  </section>
+
+  <!-- Categories -->
+  <section class="categories container">
+    <h3 class="categories-title">Danh mục sản phẩm</h3>
+    <div class="categories-list">
+      <div class="cat">📱 Samsung</div>
+      <div class="cat">📱 iPhone</div>
+      <div class="cat">📱 Xiaomi</div>
+      <div class="cat">📱 Google</div>
+      <div class="cat">📱 Realme</div>
+      <div class="cat">📱 Oppo</div>
+      <div class="cat">📱 Huawei</div>
+      <div class="cat">📱 iPad</div>
+    </div>
+  </section>
+
+  <!-- Sub banner -->
+  <section class="sub-banner">
+    <div class="container">
+      <div class="sub-carousel" id="subCarousel">
+        <div class="sub-slides">
+          <div class="sub-slide">
+            <div class="sub-inner">
+              <div class="sub-text">Nhiều mẫu điện thoại - Giá tốt, lựa chọn đa dạng</div>
+              <div class="sub-graphic">📱📱📱📱</div>
+            </div>
+          </div>
+          
+        </div>
+        <button class="sub-control prev" aria-label="Previous sub slide">‹</button>
+        <button class="sub-control next" aria-label="Next sub slide">›</button>
+        <div class="sub-dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured products: iPhone -->
+  <section class="featured container">
+    <div class="section-header">
+      <h2>iPhone chính hãng</h2>
+      <a class="view-more" href="#">Xem Thêm →</a>
+    </div>
+    <div class="products">
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+          </svg>
+        </div>
+        <div class="name">iPhone 15 Pro Max</div>
+        <div class="prices">
+          <div class="current-price">31.990.000₫</div>
+          <div class="original-price">35.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#fff7ed" stroke="#ffedd5"/>
+          </svg>
+        </div>
+        <div class="name">iPhone 15</div>
+        <div class="prices">
+          <div class="current-price">21.990.000₫</div>
+          <div class="original-price">25.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+          </svg>
+        </div>
+        <div class="name">iPhone 14</div>
+        <div class="prices">
+          <div class="current-price">18.990.000₫</div>
+          <div class="original-price">22.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#fff1f2" stroke="#fecaca"/>
+          </svg>
+        </div>
+        <div class="name">iPhone 13</div>
+        <div class="prices">
+          <div class="current-price">14.990.000₫</div>
+          <div class="original-price">17.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#f8fafc" stroke="#e6edf3"/>
+          </svg>
+        </div>
+        <div class="name">iPhone 12</div>
+        <div class="prices">
+          <div class="current-price">9.990.000₫</div>
+          <div class="original-price">12.990.000₫</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured products: Samsung -->
+  <section class="featured container">
+    <div class="section-header">
+      <h2>Samsung chính hãng</h2>
+      <a class="view-more" href="#">Xem Thêm →</a>
+    </div>
+    <div class="products">
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+          </svg>
+        </div>
+        <div class="name">Samsung S23 Ultra</div>
+        <div class="prices">
+          <div class="current-price">24.990.000₫</div>
+          <div class="original-price">28.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#fff7ed" stroke="#ffedd5"/>
+          </svg>
+        </div>
+        <div class="name">Samsung A54</div>
+        <div class="prices">
+          <div class="current-price">7.990.000₫</div>
+          <div class="original-price">8.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+          </svg>
+        </div>
+        <div class="name">Samsung A34</div>
+        <div class="prices">
+          <div class="current-price">5.990.000₫</div>
+          <div class="original-price">6.490.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#fff1f2" stroke="#fecaca"/>
+          </svg>
+        </div>
+        <div class="name">Samsung S22</div>
+        <div class="prices">
+          <div class="current-price">18.990.000₫</div>
+          <div class="original-price">20.990.000₫</div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="thumb">
+          <svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="120" rx="10" fill="#f8fafc" stroke="#e6edf3"/>
+          </svg>
+        </div>
+        <div class="name">Samsung M33</div>
+        <div class="prices">
+          <div class="current-price">4.990.000₫</div>
+          <div class="original-price">5.490.000₫</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="col">
+        <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
+      </div>
+      <div class="col">
+        <h4>TÀI KHOẢN</h4>
+        <p>EMAIL <a href="#">contact@dienthoaitructuyen.com</a></p>
+        
+        <p>SDT <a href="#">0123456789</a></p>
+        
+        <div class="socials">🔵 📸 ▶️</div>
+      </div>
+      <div class="col">
+        <h4>HỖ TRỢ</h4>
+        <a href="#">Chính sách đổi trả</a>
+        <a href="#">Bảo hành</a>
+        <a href="#">Liên hệ hỗ trợ</a>
+        <a href="#">Câu hỏi thường gặp</a>
+      </div>
+      <div class="col">
+        <h4>CHÍNH SÁCH</h4>
+        <a href="#">Giao hàng</a>
+        <a href="#">Bảo mật</a>
+        <a href="#">Điều khoản dịch vụ</a>
+        <a href="#">Bán hàng</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 ĐIỆN THOẠI TRỰC TUYẾN</div>
+  </footer>
+
+</body>
+</html>
