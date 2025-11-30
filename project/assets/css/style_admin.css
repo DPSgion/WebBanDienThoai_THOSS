@@ -7,12 +7,13 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f6f9;
+    margin: 0;
 }
 
 .header {
     background: #fff;
     padding: 15px 30px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,24 +24,25 @@ body {
     min-width: 110px;
 }
 
-.header-left{
+.header-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.header-right{
+.header-right {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.admin-name{
+.admin-name {
     font-size: 20px;
 }
 
-.logout-btn{
+.logout-btn {
     padding: 8px 20px;
+    border: none;
     border-radius: 5px;
 
     background: #ce493a;
@@ -51,7 +53,7 @@ body {
     cursor: pointer;
 }
 
-.sidebar{
+.sidebar {
     position: fixed;
     top: 110px;
     left: 0;
@@ -59,18 +61,18 @@ body {
     height: calc(100vh - 110px);
     background: #475868;
     padding: 20px 0;
-    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar ul{
+.sidebar ul {
     list-style: none;
 }
 
-.sidebar li{
+.sidebar li {
     margin: 30px;
 }
 
-.sidebar a{
+.sidebar a {
     display: flex;
     align-items: center;
     color: white;
@@ -78,4 +80,360 @@ body {
     text-decoration: none;
     transition: 0.3s;
     gap: 12px;
+}
+
+
+.content {
+    position: absolute;
+    top: 110px;
+    left: 220px;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    overflow: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-size: 28px;
+}
+
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-size: 28px;
+}
+
+/* Quản lý sản phẩm */
+.quanlysp {
+    display: flex;
+    gap: 20px;
+    border: 1px solid #d1d8e0;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quanly-trai {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.quanly-trai .timkiem input[type='text'] {
+    width: 300px;
+    height: 42px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding-left: 12px;
+    transition: all 0.3s;
+}
+
+.quanly-trai .timkiem input[type='text']:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.4);
+    outline: none;
+}
+
+.quanly-trai .themsp button {
+    height: 42px;
+    border-radius: 8px;
+    border: none;
+    padding: 10px 25px;
+    background-color: #27ae60;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quanly-trai .themsp button:hover {
+    background-color: #219150;
+    transform: translateY(-2px);
+}
+
+/* Bộ lọc dưới quanlysp */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    justify-content: center;
+}
+
+.filter-container label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.filter-container select,
+.filter-container input[type="number"] {
+    height: 35px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+/* Bảng sản phẩm */
+.table-sp {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 15px;
+}
+
+.table-sp th,
+.table-sp td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    word-break: break-word;
+}
+
+.table-sp th {
+    background-color: #27ae60;
+    color: white;
+    font-weight: 500;
+}
+
+.table-sp tr:hover {
+    background-color: #f1f8f5;
+}
+
+.table-sp .btn-action {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: all 0.2s;
+}
+
+.table-sp .btn-edit {
+    background-color: #3498db;
+    color: white;
+}
+
+.table-sp .btn-edit:hover {
+    background-color: #2c80b4;
+}
+
+.table-sp .btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.table-sp .btn-delete:hover {
+    background-color: #c0392b;
+}
+
+/* Column width */
+.table-sp th:nth-child(1),
+.table-sp td:nth-child(1) {
+    width: 50px;
+}
+
+.table-sp th:nth-child(2),
+.table-sp td:nth-child(2) {
+    width: 180px;
+}
+
+.table-sp th:nth-child(3),
+.table-sp td:nth-child(3) {
+    width: 120px;
+}
+
+.table-sp th:nth-child(4),
+.table-sp td:nth-child(4) {
+    width: 120px;
+}
+
+.table-sp th:nth-child(5),
+.table-sp td:nth-child(5) {
+    width: 100px;
+}
+
+.table-sp th:nth-child(6),
+.table-sp td:nth-child(6) {
+    width: 120px;
+}
+
+.table-sp th:nth-child(7),
+.table-sp td:nth-child(7) {
+    width: 100px;
+}
+
+.table-sp th:nth-child(8),
+.table-sp td:nth-child(8) {
+    width: 180px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .quanlysp {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .table-sp th,
+    .table-sp td {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+
+
+/* Modal nền */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    overflow: auto;
+    animation: fadeIn 0.3s;
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 60px auto;
+    padding: 30px 35px;
+    border-radius: 14px;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #27ae60;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 26px;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #e74c3c;
+}
+
+/* Grid form */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
+    outline: none;
+}
+
+/* Button submit */
+.btn-submit {
+    grid-column: 1 / -1;
+    padding: 12px;
+    font-size: 16px;
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(90deg, #219150, #27ae60);
+    transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1
+    }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 }
