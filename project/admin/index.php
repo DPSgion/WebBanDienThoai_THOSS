@@ -11,6 +11,7 @@
 
 <?php
 $quanlysanpham = '../assets/js/quanlysanpham.js';
+$quanlydonhang = '../assets/js/quanlydonhang.js';
 ?>
 
 <body>
@@ -35,7 +36,8 @@ $quanlysanpham = '../assets/js/quanlysanpham.js';
                     data-callback="initQuanLySanPham">Quản lý sản phẩm</a>
             </li>
             <li>
-                <a href="#">Quản lý đơn hàng</a>
+                <a href="#" data-page="quanlydonhang.php" data-js="<?php echo $quanlydonhang ?>"
+                    data-callback="initQuanLyDonHang">Quản lý đơn hàng</a>
             </li>
             <li>
                 <a href="#">Quản lý khách hàng</a>

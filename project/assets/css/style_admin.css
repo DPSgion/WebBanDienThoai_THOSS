@@ -598,3 +598,116 @@ form#form-them {
         opacity: 1
     }
 }
+
+
+
+
+
+
+
+
+/* Quản lý đơn hàng */
+
+.quanlydonhang-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.quanlydonhang .search-input {
+    padding: 8px 12px;
+    width: 350px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.quanlydonhang .status-filter {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.quanlydonhang table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.quanlydonhang th,
+.quanlydonhang td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.quanlydonhang th {
+    background: #eee;
+}
+
+.quanlydonhang td .order-item {
+    margin-bottom: 4px;
+}
+
+.quanlydonhang .btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quanlydonhang .btn-approve {
+    background: #007bff;
+    color: #fff;
+}
+
+.quanlydonhang .btn-complete {
+    background: #28a745;
+    color: #fff;
+}
+
+.quanlydonhang .status-wait,
+.quanlydonhang .status-shipping,
+.quanlydonhang .status-completed {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+
+    font-weight: 600;
+    text-align: center;
+}
+
+.quanlydonhang .status-wait{
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.quanlydonhang .status-shipping{
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+.quanlydonhang .status-completed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+@media(max-width: 900px) {
+
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        display: none;
+    }
+
+    /* ẩn Tên khách hàng */
+}
+
+@media(max-width: 700px) {
+
+    .table th:nth-child(7),
+    .table td:nth-child(7) {
+        display: none;
+    }
+
+    /* ẩn Ngày đặt */
+}
