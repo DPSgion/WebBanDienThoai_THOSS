@@ -1,0 +1,77 @@
+/* Search & Filter page styles */
+:root{--green:#1f7a3a;--accent:#2E8BFF}
+.search-page{padding:20px 0}
+.filter-bar{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #eee;margin-bottom:18px}
+.filter-item{position:relative}
+.filter-btn{background:#fff;border:1px solid #dbe7df;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.filter-btn .arrow{margin-left:8px}
+.filter-menu{position:absolute;top:110%;left:0;background:#fff;border:1px solid #eee;border-radius:8px;padding:8px 0;display:none;min-width:180px;box-shadow:0 6px 18px rgba(0,0,0,0.08);z-index:20}
+.filter-menu li{list-style:none;padding:8px 12px;cursor:pointer}
+.filter-menu li:hover{background:#f5f7f6}
+
+
+
+/* header / nav */
+.main-header{background:white;padding:14px 0;border-bottom:1px solid #eee}
+.header-row{display:flex;align-items:center;gap:16px}
+.logo-left .logo{font-size:18px;background:#C3D5C4;color:#000000;padding:25px 20px;border-radius:50px 0px 50px 0px;border:2px solid #f0f0f0}
+.search-center{flex:1;display:flex;justify-content:center}
+.search-input{width:60%;padding:10px;border:1px solid #ddd;border-radius:6px 0 0 6px}
+.search-btn{padding:10px;border:1px solid #ddd;border-left:0;background:#f7f7f7;border-radius:0 6px 6px 0}
+.icons-right{display:flex;align-items:center;gap:8px}
+.icon-btn{background:transparent;border:0;font-size:18px;cursor:pointer}
+.icon-btn, a.icon-btn{
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.danh-muc{background:#f2f2f2;border:0;padding:8px 10px;border-radius:6px}
+/* Inline dropdown styles to ensure submenu displays even if external CSS path differs */
+    .danh-container{position:relative}
+    .danh-container .danh-muc{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:#f2f2f2;border:0;padding:8px 10px;border-radius:6px}
+    .danh-menu{position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid #e6edf3;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.06);min-width:220px;display:none;z-index:50;padding:8px 0}
+    .danh-menu li{list-style:none}
+    .danh-menu a{display:block;padding:8px 12px;color:#111;text-decoration:none;font-weight:700}
+    .danh-container.open .danh-menu{display:block}
+
+
+.section-grid{margin-top:18px}
+.section-header h2{margin:0 0 12px 0}
+.products-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.product-card{background:#fff;border:1px solid #eef3ea;border-radius:12px;padding:12px;box-sizing:border-box;position:relative;text-align:center}
+.product-card .label{position:absolute;top:10px;right:10px;background:#fff3e0;color:#d97706;padding:4px 8px;border-radius:8px;font-weight:700;font-size:12px}
+.product-card .fav{position:absolute;top:10px;left:10px;background:#fff;border-radius:50%;border:1px solid #eee;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.prod-img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+.prod-name{font-weight:800;margin-bottom:6px}
+.prod-prices{display:flex;flex-direction:column;gap:4px}
+.sale{color:#d32f2f;font-weight:900}
+.orig{color:#9aa1a0;text-decoration:line-through}
+
+.see-more{display:flex;justify-content:center;margin-top:12px}
+.btn.see{background:var(--green);color:white;border-radius:8px;padding:10px 16px;border:0}
+
+/* Footer */
+.site-footer{background:#2E4033;padding:28px 0;margin-top:28px;color:#e6efe7}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.site-footer h4{margin-top:0;color:#ffffff}
+.site-footer a{display:block;color:#cfe7d8;text-decoration:none;margin:6px 0}
+.site-footer .col:first-child{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.site-footer .col:first-child h4{margin:0}
+.col.dark-green{background:var(--dark-green);color:#fff;padding:12px;border-radius:6px}
+.footer-bottom{text-align:center;padding:12px;color:#b8c6bc}
+
+@media(max-width:1200px){
+  .products-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:900px){
+  .products-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+  .filter-bar{flex-direction:column;align-items:stretch}
+  .products-grid{grid-template-columns:repeat(2,1fr)}
+  .prod-img{height:120px}
+  .footer-grid{grid-template-columns:1fr}
+}

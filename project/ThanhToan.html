@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanh toán — ĐIỆN THOẠI TRỰC TUYẾN</title>
+  <link rel="stylesheet" href="assets/css/stylesTC.css">
+  <link rel="stylesheet" href="assets/css/stylesCheckout.css">
+</head>
+<body>
+
+  <!-- TOP FAINT BAR (copied from ChiTietSanPham.html to keep header identical) -->
+ <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="socials">
+        <a href="#" class="social" aria-label="Facebook">🔵</a>
+        <a href="#" class="social" aria-label="Instagram">📸</a>
+        <a href="#" class="social" aria-label="YouTube">▶️</a>
+      </div>
+      <div class="hotline">📞 <strong>0123456789</strong></div>
+    </div>
+  </div>
+
+  <!-- MAIN HEADER / NAV (identical structure) -->
+  <header class="main-header">
+    <div class="container header-row">
+      <div class="logo-left">
+        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
+      </div>
+
+      <div class="search-center">
+        <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
+        <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+      </div>
+
+      <div class="icons-right">
+        <button class="icon-btn" aria-label="Yêu thích">❤</button>
+        <a href="GioHang.html" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </a>
+        <div class="danh-container">
+          <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
+          <ul class="danh-menu" role="menu">
+            <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
+            <li><a href="#">Samsung</a></li>
+            <li><a href="#">Xiaomi</a></li>
+            <li><a href="#">Google</a></li>
+            <li><a href="#">Realme</a></li>
+            <li><a href="#">Oppo</a></li>
+            <li><a href="#">Huawei</a></li>
+            <li><a href="#">iPad</a></li>
+            <li><a href="#">Phụ kiện</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container checkout-page">
+    <h1>Thanh toán</h1>
+    <div class="checkout-grid">
+      <section class="checkout-left">
+        <form id="checkoutForm">
+          <h2>Thông tin người đặt</h2>
+          <div class="form-row">
+            <label>Họ và tên <input name="name" type="text" required></label>
+            <label>Số điện thoại <input name="phone" type="tel" required></label>
+          </div>
+
+          <div class="form-row">
+            <label>Địa chỉ nhận hàng <input name="address" type="text" required></label>
+          </div>
+
+          <div class="form-row">
+            <label>Tỉnh / Thành <input name="city" type="text" required></label>
+            <label>Quận / Huyện <input name="district" type="text" required></label>
+          </div>
+
+          <h2>Phương thức thanh toán</h2>
+          <div class="payment-methods">
+            <label><input type="radio" name="pay" value="cod" checked> Thanh toán khi nhận hàng (COD)</label>
+            <label><input type="radio" name="pay" value="card"> Thẻ tín dụng / ghi nợ</label>
+            <label><input type="radio" name="pay" value="momo"> Ví điện tử (Momo / ZaloPay)</label>
+          </div>
+
+          <div id="cardDetails" class="card-details" style="display:none;">
+            <label>Số thẻ <input name="cardnum" type="text" pattern="\d{12,19}"></label>
+            <div class="form-row">
+              <label>Hạn dùng <input name="exp" type="text" placeholder="MM/YY"></label>
+              <label>CVV <input name="cvv" type="text" pattern="\d{3,4}"></label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn primary">Đặt hàng và thanh toán</button>
+            <a class="btn outline" href="GioHang.html">Quay lại giỏ hàng</a>
+          </div>
+        </form>
+      </section>
+
+      <aside class="checkout-right">
+        <h2>Đơn hàng của bạn</h2>
+        <div class="order-list">
+          <div class="order-item">
+            <div class="order-card" data-price="38999000">
+              <img src="uploads/products/iphone17.webp" alt="iPhone 17 pro max 256GB, Cam" class="prod-thumb">
+              <div class="order-mid">
+                <div class="prod-name">iPhone 17 pro max 256GB, Cam</div>
+                <div class="prod-meta">256GB • Cam</div>
+                <div class="qty-controls">
+                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
+                  <input class="qty-input" type="number" min="1" value="1">
+                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
+                </div>
+              </div>
+              <div class="order-price"> <span class="price-red">38.999.000đ</span> </div>
+            </div>
+          </div>
+
+          <div class="order-item">
+            <div class="order-card" data-price="14599000">
+              <img src="uploads/products/Readme-pro.jpg" alt="Readme 256GB, Xanh lam" class="prod-thumb">
+              <div class="order-mid">
+                <div class="prod-name">Readme 256GB, Xanh lam</div>
+                <div class="prod-meta">256GB • Xanh lam</div>
+                <div class="qty-controls">
+                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
+                  <input class="qty-input" type="number" min="1" value="1">
+                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
+                </div>
+              </div>
+              <div class="order-price"> <span class="price-red">14.599.000đ</span> </div>
+            </div>
+          </div>
+
+          <div class="order-item">
+            <div class="order-card" data-price="17599000">
+              <img src="uploads/products/iphone17.webp" alt="iPhone 17 pro max 256GB, Hồng" class="prod-thumb">
+              <div class="order-mid">
+                <div class="prod-name">iPhone 17 pro max 256GB, Hồng</div>
+                <div class="prod-meta">256GB • Hồng</div>
+                <div class="qty-controls">
+                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
+                  <input class="qty-input" type="number" min="1" value="1">
+                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
+                </div>
+              </div>
+              <div class="order-price"> <span class="price-red">17.599.000đ</span> </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="row"><span>Tạm tính</span><span class="value">72.998.000đ</span></div>
+          <div class="row"><span>Phí vận chuyển</span><span class="value">0đ</span></div>
+          <div class="row total"><span>Tổng cộng</span><span class="value">72.998.000đ</span></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="col">
+        <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
+      </div>
+      <div class="col">
+        <h4>TÀI KHOẢN</h4>
+        <p>EMAIL <a href="#">contact@dienthoaitructuyen.com</a></p>
+        
+        <p>SDT <a href="#">0123456789</a></p>
+        
+        <div class="socials">🔵 📸 ▶️</div>
+      </div>
+      <div class="col">
+        <h4>HỖ TRỢ</h4>
+        <a href="#">Chính sách đổi trả</a>
+        <a href="#">Bảo hành</a>
+        <a href="#">Liên hệ hỗ trợ</a>
+        <a href="#">Câu hỏi thường gặp</a>
+      </div>
+      <div class="col">
+        <h4>CHÍNH SÁCH</h4>
+        <a href="#">Giao hàng</a>
+        <a href="#">Bảo mật</a>
+        <a href="#">Điều khoản dịch vụ</a>
+        <a href="#">Bán hàng</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 ĐIỆN THOẠI TRỰC TUYẾN</div>
+  </footer>
+
+  <script>
+    // payment method toggle
+    document.querySelectorAll('input[name="pay"]').forEach(r=> r.addEventListener('change', (e)=>{
+      const card = document.getElementById('cardDetails');
+      if(e.target.value === 'card') card.style.display = 'block'; else card.style.display = 'none';
+    }));
+
+    // simple submit handler
+    document.getElementById('checkoutForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const fd = new FormData(this);
+      if(!fd.get('name') || !fd.get('phone') || !fd.get('address')){
+        alert('Vui lòng điền đầy đủ thông tin giao hàng.');
+        return;
+      }
+      alert('Cảm ơn! Đơn hàng của bạn đã được nhận (demo).');
+      window.location.href = 'TrangChu.html';
+    });
+
+    // qty controls for checkout order list + totals
+    function parseNumber(str){ return Number(String(str).replace(/[^0-9]/g,'')) || 0; }
+    function formatVND(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ'; }
+    function recalcTotals(){
+      let subtotal = 0;
+      document.querySelectorAll('.order-card').forEach(card=>{
+        const price = Number(card.dataset.price) || 0;
+        const qty = Number(card.querySelector('.qty-input').value) || 1;
+        subtotal += price * qty;
+      });
+      const subtEl = document.querySelector('.summary .row .value');
+      // set first .value to subtotal and last to total
+      const values = document.querySelectorAll('.summary .value');
+      if(values.length>=1) values[0].textContent = formatVND(subtotal);
+      if(values.length>=3) values[2].textContent = formatVND(subtotal);
+    }
+
+    document.querySelectorAll('.qty-minus').forEach(btn=> btn.addEventListener('click', (e)=>{
+      const input = btn.parentElement.querySelector('.qty-input');
+      input.value = Math.max(1, Number(input.value)-1);
+      recalcTotals();
+    }));
+    document.querySelectorAll('.qty-plus').forEach(btn=> btn.addEventListener('click', (e)=>{
+      const input = btn.parentElement.querySelector('.qty-input');
+      input.value = Math.max(1, Number(input.value)+1);
+      recalcTotals();
+    }));
+    document.querySelectorAll('.qty-input').forEach(inp=> inp.addEventListener('change', ()=>{ if(Number(inp.value)<1) inp.value=1; recalcTotals(); }));
+
+    // initial totals
+    recalcTotals();
+
+    // danh mục dropdown (shared behavior)
+    (function(){
+      document.querySelectorAll('.danh-container').forEach(dc=>{
+        const btn = dc.querySelector('.danh-muc');
+        const menu = dc.querySelector('.danh-menu');
+        if(!btn || !menu) return;
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
+        menu.addEventListener('click', (e)=> e.stopPropagation());
+      });
+      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
+
+</body>
+</html>
