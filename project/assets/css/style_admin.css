@@ -334,8 +334,6 @@ h1 {
 }
 
 
-
-
 :root {
     --bg: #f6f8fa;
     --card: #ffffff;
@@ -602,7 +600,7 @@ form#form-them {
 
 
 
-
+/* ----------------------------------------------------------------------------- */
 
 
 
@@ -677,12 +675,12 @@ form#form-them {
     text-align: center;
 }
 
-.quanlydonhang .status-wait{
+.quanlydonhang .status-wait {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.quanlydonhang .status-shipping{
+.quanlydonhang .status-shipping {
     background-color: #cfe2ff;
     color: #084298;
 }
@@ -710,4 +708,82 @@ form#form-them {
     }
 
     /* ẩn Ngày đặt */
+}
+
+
+
+
+/* ----------------------------------------------------------------------------- */
+
+
+
+
+/* Cài đặt */
+
+.caidat {
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.caidat .card {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.caidat h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.caidat label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.caidat input[type="email"],
+.caidat input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.caidat .btn-save {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.caidat .btn-save:hover {
+    background-color: #0056b3;
+}
+
+.caidat .message {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.caidat .message.success {
+    color: green;
+}
+
+.caidat .message.error {
+    color: red;
 }

@@ -12,6 +12,7 @@
 <?php
 $quanlysanpham = '../assets/js/quanlysanpham.js';
 $quanlydonhang = '../assets/js/quanlydonhang.js';
+$caidat = '../assets/js/caidat.js';
 ?>
 
 <body>
@@ -40,7 +41,8 @@ $quanlydonhang = '../assets/js/quanlydonhang.js';
                     data-callback="initQuanLyDonHang">Quản lý đơn hàng</a>
             </li>
             <li>
-                <a href="#">Quản lý khách hàng</a>
+                <a href="#" data-page="caidat.php" data-js="<?php echo $caidat ?>"
+                    data-callback="initCaiDat">Cài đặt</a>
             </li>
         </ul>
     </div>
