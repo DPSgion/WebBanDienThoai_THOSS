@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style_admin.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <title>Admin Page</title>
 </head>
 
 <?php
+$dashboard = '../assets/js/dashboard.js';
 $quanlysanpham = '../assets/js/quanlysanpham.js';
 $quanlydonhang = '../assets/js/quanlydonhang.js';
 $caidat = '../assets/js/caidat.js';
@@ -19,7 +20,7 @@ $caidat = '../assets/js/caidat.js';
     <div class="header">
         <div class="header-left">
             <img src="../assets/images/logodt.png" width="80px">
-            <h1>Admin</h1>
+            <h1 class="header-logo">Admin</h1>
         </div>
         <div class="header-right">
             <p class="admin-name">Admin Name</p>
@@ -30,7 +31,8 @@ $caidat = '../assets/js/caidat.js';
     <div class="sidebar">
         <ul>
             <li>
-                <a href="#">Dashboard</a>
+                <a href="#" data-page="dashboard.php" data-js="<?php echo $dashboard ?>"
+                    data-callback="initDashboard">Dashboard</a>
             </li>
             <li>
                 <a href="#" data-page="quanlysanpham.php" data-js="<?php echo $quanlysanpham ?>"
@@ -100,6 +102,18 @@ $caidat = '../assets/js/caidat.js';
                 loadPage(page, js, callback);
             }
         });
+
+        // Tự động load dashboard khi mở trang
+        window.addEventListener('DOMContentLoaded', () => {
+            const dashboardLink = document.querySelector('.sidebar a[data-page="dashboard.php"]');
+            if (dashboardLink) {
+                const page = dashboardLink.dataset.page;
+                const js = dashboardLink.dataset.js;
+                const callback = dashboardLink.dataset.callback;
+                loadPage(page, js, callback);
+            }
+        });
+
     </script>
 
 

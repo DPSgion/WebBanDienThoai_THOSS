@@ -30,6 +30,10 @@ body {
     gap: 10px;
 }
 
+.header .header-left .header-logo{
+    margin: 0;
+}
+
 .header-right {
     display: flex;
     align-items: center;
@@ -600,7 +604,7 @@ form#form-them {
 
 
 
-/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 
 
@@ -713,7 +717,7 @@ form#form-them {
 
 
 
-/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 
 
@@ -786,4 +790,299 @@ form#form-them {
 
 .caidat .message.error {
     color: red;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+
+
+
+
+/* DASHBOARD */
+
+.dashboard .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+/* Stats Cards */
+.dashboard .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard .stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard .stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.dashboard .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.dashboard .stat-icon.blue {
+    background: #3498db;
+}
+
+.dashboard .stat-icon.green {
+    background: #27ae60;
+}
+
+.dashboard .stat-icon.purple {
+    background: #9b59b6;
+}
+
+.dashboard .stat-icon.orange {
+    background: #e67e22;
+}
+
+.dashboard .stat-info h3 {
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.dashboard .stat-info .value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.dashboard .stat-info .change {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.dashboard .change.positive {
+    color: #27ae60;
+}
+
+.dashboard .change.negative {
+    color: #e74c3c;
+}
+
+/* Charts Section */
+.dashboard .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard .chart-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard .chart-card h3 {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Top Products */
+.top-products {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.dashboard .top-products h3 {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.dashboard .product-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard .product-table thead tr {
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.dashboard .product-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 600;
+}
+
+.dashboard .product-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.dashboard .product-table tr:hover {
+    background: #f8f9fa;
+}
+
+/* Bottom Section */
+.dashboard .bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard .info-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard .info-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard .info-card h3 {
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.dashboard .badge {
+    background: #e74c3c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dashboard .order-item,
+.dashboard .stock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+}
+
+.dashboard .order-item:hover,
+.dashboard .stock-item:hover {
+    background: #ecf0f1;
+}
+
+.dashboard .order-info,
+.dashboard .stock-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dashboard .icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.dashboard .icon-circle.warning {
+    background: #ffeaa7;
+}
+
+.dashboard .icon-circle.alert {
+    background: #ff7675;
+}
+
+.dashboard .order-details h4,
+.dashboard .stock-details h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 3px;
+}
+
+.dashboard .order-details p,
+.dashboard .stock-details p {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.dashboard .order-amount {
+    text-align: right;
+}
+
+.dashboard .order-amount .price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 3px;
+}
+
+.dashboard .order-amount .time {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.dashboard .status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.dashboard .status-badge.critical {
+    background: #ff7675;
+    color: white;
+}
+
+.dashboard .status-badge.warning {
+    background: #ffeaa7;
+    color: #d63031;
+}
+
+@media (max-width: 768px) {
+
+    .charts-grid,
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
 }
