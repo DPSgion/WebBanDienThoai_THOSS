@@ -11,6 +11,7 @@
 
 <?php
 $dashboard = '../assets/js/dashboard.js';
+$quanlydanhmuc = '../assets/js/quanlydanhmuc.js';
 $quanlysanpham = '../assets/js/quanlysanpham.js';
 $quanlydonhang = '../assets/js/quanlydonhang.js';
 $caidat = '../assets/js/caidat.js';
@@ -33,6 +34,10 @@ $caidat = '../assets/js/caidat.js';
             <li>
                 <a href="#" data-page="dashboard.php" data-js="<?php echo $dashboard ?>"
                     data-callback="initDashboard">Dashboard</a>
+            </li>
+            <li>
+                <a href="#" data-page="quanlydanhmuc.php" data-js="<?php echo $quanlydanhmuc ?>"
+                    data-callback="initQuanLyDanhMuc">Quản lý danh mục</a>
             </li>
             <li>
                 <a href="#" data-page="quanlysanpham.php" data-js="<?php echo $quanlysanpham ?>"

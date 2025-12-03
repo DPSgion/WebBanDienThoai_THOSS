@@ -30,7 +30,7 @@ body {
     gap: 10px;
 }
 
-.header .header-left .header-logo{
+.header .header-left .header-logo {
     margin: 0;
 }
 
@@ -1085,4 +1085,77 @@ form#form-them {
     .bottom-grid {
         grid-template-columns: 1fr;
     }
+}
+
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+
+
+
+/* Modal danh mục */
+.modalDM {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modalDM.show {
+    display: flex;
+}
+
+.modalDM .modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 350px;
+    border-radius: 6px;
+    animation: fadeIn .2s ease;
+}
+
+.modalDM .modal-content input[type='text'] {
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    transition: all 0.3s;
+}
+
+.modalDM .modal-content input[type='text']:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.4);
+    outline: none;
+}
+
+.modalDM .modal-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modalDM .modal-actions button {
+    border: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.modalDM .modal-actions .btnLuu {
+    color: #fff;
+    background: linear-gradient(90deg, var(--accent), #2ecc71);
+}
+
+.modal .modal-actions .btnDong {
+    color: black;
 }

@@ -199,6 +199,15 @@
           <label for="name">Tên sản phẩm *</label>
           <input id="name" name="name" type="text" placeholder="Ví dụ: Samsung Galaxy X..." required>
         </div>
+        <div class="form-group">
+          <label for="name">Danh mục *</label>
+          <select id="os" name="os" required>
+            <option value="">-- Chọn danh mục --</option>
+            <option value="iphone">Iphone</option>
+            <option value="samsung">Samsung</option>
+            <option value="xiaomi">Xiaomi</option>
+          </select>
+        </div>
 
         <div class="form-group">
           <label for="os">OS *</label>
