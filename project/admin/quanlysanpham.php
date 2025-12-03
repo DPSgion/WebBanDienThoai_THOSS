@@ -233,17 +233,12 @@
           <label for="pin">PIN</label>
           <input id="pin" name="pin" type="text" placeholder="Ví dụ: 5000mAh">
         </div>
-
-        <div class="form-group">
-          <label for="quantity">Số lượng (tùy chọn)</label>
-          <input id="quantity" name="quantity" type="number" min="0" placeholder="Số lượng kho">
-        </div>
       </div>
 
       <!-- Option header + add button -->
       <div class="option-bar">
         <div class="left">
-          <strong>Tùy chọn RAM - ROM - Giá</strong>
+          <strong>Tùy chọn RAM - ROM - Màu - Số lượng - Giá</strong>
         </div>
         <div>
           <button type="button" id="addOptionBtn" class="btn-add">+ Thêm option</button>
@@ -254,10 +249,12 @@
       <table class="options-table" id="optionsTable" aria-describedby="options-desc">
         <thead>
           <tr>
-            <th style="width:26%;">RAM</th>
-            <th style="width:26%;">ROM</th>
-            <th style="width:26%;">Giá (VNĐ)</th>
-            <th style="width:20%;">Hành động</th>
+            <th style="width:15%;">RAM</th>
+            <th style="width:15%;">ROM</th>
+            <th style="width:20%;">Màu</th>
+            <th style="width:15%;">Số lượng</th>
+            <th style="width:20%;">Giá (VNĐ)</th>
+            <th style="width:15%;">Hành động</th>
           </tr>
         </thead>
         <tbody id="optionsBody">

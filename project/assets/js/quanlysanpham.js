@@ -50,22 +50,24 @@ window.initQuanLySanPham = function () {
     });
 
     // ----- OPTION ROW -----
-    function createOptionRow({ ram = '', rom = '', price = '' } = {}) {
+    function createOptionRow({ ram = '', rom = '', color = '', quantity = '', price = '' } = {}) {
         const tr = document.createElement('tr');
 
         tr.innerHTML = `
-            <td><input type="text" class="small-input" placeholder="8GB" required value="${ram}"></td>
-            <td><input type="text" class="small-input" placeholder="128GB" required value="${rom}"></td>
-            <td><input type="number" class="small-input price-input" placeholder="6500000" min="0" step="1000" required value="${price}"></td>
-            <td style="text-align:right;">
-                <button type="button" class="btn-delete">Xóa</button>
-            </td>
-        `;
+        <td><input type="text" class="small-input" placeholder="8GB" required value="${ram}"></td>
+        <td><input type="text" class="small-input" placeholder="128GB" required value="${rom}"></td>
+        <td><input type="text" class="small-input" placeholder="Đen / Trắng / Xanh" required value="${color}"></td>
+        <td><input type="number" class="small-input" placeholder="SL" min="0" required value="${quantity}"></td>
+        <td><input type="number" class="small-input price-input" placeholder="6500000" min="0" step="1000" required value="${price}"></td>
+        <td style="text-align:center;">
+            <button type="button" class="btn-delete">Xóa</button>
+        </td>
+    `;
 
-        // gán sự kiện nút xóa
         tr.querySelector('.btn-delete').addEventListener('click', () => tr.remove());
         return tr;
     }
+
 
     addOptionBtn.addEventListener('click', () => {
         const row = createOptionRow();
@@ -96,7 +98,6 @@ window.initQuanLySanPham = function () {
             front_cam: form.front_cam.value,
             rear_cam: form.rear_cam.value,
             pin: form.pin.value,
-            quantity: Number(form.quantity.value) || 0,
             options: []
         };
 
@@ -106,19 +107,39 @@ window.initQuanLySanPham = function () {
             const inp = tr.querySelectorAll('input');
             const ram = inp[0].value.trim();
             const rom = inp[1].value.trim();
-            const price = Number(inp[2].value);
+            const color = inp[2].value.trim();
+            const quantity = Number(inp[3].value);
+            const price = Number(inp[4].value);
 
-            if (!ram || !rom || Number.isNaN(price)) error = true;
-            else data.options.push({ ram, rom, price });
-        });
+            if (!ram || !rom || !color || Number.isNaN(quantity) || Number.isNaN(price)) {
+                error = true;
+            } else {
+                data.options.push({ ram, rom, color, quantity, price });
+            }
+        }
+        );
+
 
         if (error) {
             alert("Lỗi dữ liệu option.");
             return;
         }
 
-        console.log("PRODUCT DATA:", data);
-        alert("Đã thu thập dữ liệu! Xem console.");
+        fetch('../../admin/actions/save_product.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    alert('Lưu sản phẩm thành công!');
+                    closeModal();
+                } else {
+                    alert('Lỗi: ' + res.message);
+                }
+            })
+            .catch(err => alert('Lỗi server: ' + err));
     });
 
 };
