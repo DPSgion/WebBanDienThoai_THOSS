@@ -1,6 +1,6 @@
 <?php
 require_once '../../config/config.php';
-require_once '../../includes/models/ProductModel.php';
+// require_once '../../includes/models/ProductModel.php';
 
 class ProductModel {
     private $pdo;

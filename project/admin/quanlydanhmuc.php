@@ -14,31 +14,32 @@
 </div>
 
 <table class="table-sp">
-    <tr>
-        <th>STT</th>
-        <th>Tên danh mục</th>
-        <th>Hành động</th>
-    </tr>
-    <tr>
-        <td>1</td>
-        <td>Iphone</td>
-        <td>
-            <button class="btn-edit">Sửa</button>
-            <button class="btn-delete">Xóa</button>
-        </td>
-    </tr>
-
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên danh mục</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id="tableDanhMuc">
+        <!-- Dữ liệu sẽ được load bằng JavaScript -->
+    </tbody>
 </table>
 
 <!-- Modal thêm danh mục -->
 <div id="modalDanhMuc" class="modalDM">
     <div class="modal-content">
         <h2>Thêm danh mục</h2>
-        <input type="text" id="tenDanhMucInput" placeholder="Nhập tên danh mục">
-        
-        <div class="modal-actions">
-            <button class="btnDong" id="closeModalDanhMucBtn">Đóng</button>
-            <button class="btnLuu" id="saveDanhMucBtn">Lưu</button>
-        </div>
+
+        <form id="formDanhMuc">
+            <input type="text" id="tenDanhMucInput" name="name" placeholder="Nhập tên danh mục">
+
+            <div class="modal-actions">
+                <button type="button" class="btnDong" id="closeModalDanhMucBtn">Đóng</button>
+                <button type="submit" class="btnLuu">Lưu</button>
+            </div>
+        </form>
+
     </div>
 </div>
+

@@ -30,10 +30,6 @@ window.initQuanLySanPham = function () {
 
         // xoá toàn bộ các option đang có
         optionsBody.innerHTML = '';
-
-        // thêm lại dòng mẫu nếu bạn muốn (tuỳ bạn)
-        // const example = createOptionRow({ ram: '8GB', rom: '128GB', price: 6500000 });
-        // optionsBody.appendChild(example);
     }
 
 

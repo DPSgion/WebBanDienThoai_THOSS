@@ -10,11 +10,13 @@
 </head>
 
 <?php
-$dashboard = '../assets/js/dashboard.js';
-$quanlydanhmuc = '../assets/js/quanlydanhmuc.js';
-$quanlysanpham = '../assets/js/quanlysanpham.js';
-$quanlydonhang = '../assets/js/quanlydonhang.js';
-$caidat = '../assets/js/caidat.js';
+
+$dashboard      = '../assets/js/dashboard.js';
+$quanlydanhmuc  = '../assets/js/quanlydanhmuc.js';
+$quanlysanpham  = '../assets/js/quanlysanpham.js';
+$quanlydonhang  = '../assets/js/quanlydonhang.js';
+$caidat         = '../assets/js/caidat.js';
+
 ?>
 
 <body>
