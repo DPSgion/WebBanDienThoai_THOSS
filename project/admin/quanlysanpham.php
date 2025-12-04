@@ -201,11 +201,9 @@
         </div>
         <div class="form-group">
           <label for="name">Danh mục *</label>
-          <select id="os" name="os" required>
+          <select id="danhmuc" name="danhmuc" required>
             <option value="">-- Chọn danh mục --</option>
-            <option value="iphone">Iphone</option>
-            <option value="samsung">Samsung</option>
-            <option value="xiaomi">Xiaomi</option>
+            
           </select>
         </div>
 

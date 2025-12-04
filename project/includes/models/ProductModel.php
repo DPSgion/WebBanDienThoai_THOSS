@@ -17,12 +17,13 @@ class ProductModel {
             // === 1) Thêm sản phẩm vào bảng san_pham ===
             $stmt = $this->pdo->prepare(
                 "INSERT INTO san_pham 
-                    (ten_san_pham, cpu, pin, man_hinh, os, camera_truoc, camera_sau) 
+                    (id_danh_muc, ten_san_pham, cpu, pin, man_hinh, os, camera_truoc, camera_sau) 
                  VALUES 
-                    (:name, :cpu, :pin, :screen, :os, :front_cam, :rear_cam)"
+                    (:id_category, :name, :cpu, :pin, :screen, :os, :front_cam, :rear_cam)"
             );
 
             $stmt->execute([
+                ':id_category' => $data['id_category'],
                 ':name' => $data['name'],
                 ':os' => $data['os'],
                 ':cpu' => $data['cpu'],

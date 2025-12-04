@@ -45,6 +45,23 @@ window.initQuanLySanPham = function () {
         if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
     });
 
+    // ----- Lấy danh mục -----
+    fetch('../../admin/actions/danhmuc/lay_danhmuc.php')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) return;
+
+            const select = document.getElementById('danhmuc');
+            data.data.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id_danh_muc;
+                option.textContent = cat.ten_danh_muc;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => console.error('Error:', err));
+
+
     // ----- OPTION ROW -----
     function createOptionRow({ ram = '', rom = '', color = '', quantity = '', price = '' } = {}) {
         const tr = document.createElement('tr');
@@ -87,6 +104,7 @@ window.initQuanLySanPham = function () {
         }
 
         const data = {
+            id_category: form.danhmuc.value,
             name: form.name.value.trim(),
             os: form.os.value,
             cpu: form.cpu.value,
@@ -101,8 +119,8 @@ window.initQuanLySanPham = function () {
 
         optionRows.forEach(tr => {
             const inp = tr.querySelectorAll('input');
-            const ram = inp[0].value.trim();
-            const rom = inp[1].value.trim();
+            const ram = inp[0].value.trim() + 'GB';
+            const rom = inp[1].value.trim() + 'GB';
             const color = inp[2].value.trim();
             const quantity = Number(inp[3].value);
             const price = Number(inp[4].value);
