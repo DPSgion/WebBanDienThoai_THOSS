@@ -1,6 +1,5 @@
 <?php
-require_once '../../config/config.php';
-// require_once '../../includes/models/ProductModel.php';
+require_once __DIR__ . '/../../config/config.php';
 
 class ProductModel {
     private $pdo;
@@ -65,5 +64,67 @@ class ProductModel {
             throw new Exception("Lỗi khi thêm sản phẩm: " . $e->getMessage());
         }
     }
+
+    public function getProducts() {
+        $sql = "
+            SELECT 
+                sp.id_san_pham,
+                sp.ten_san_pham,
+                sp.cpu,
+                sp.pin,
+                sp.man_hinh,
+                sp.os,
+                bt.id_bien_the,
+                bt.ram,
+                bt.rom,
+                bt.mau,
+                bt.gia,
+                bt.so_luong_ton
+            FROM san_pham sp
+            LEFT JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+            ORDER BY sp.id_san_pham, bt.gia ASC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteVariant($id_bien_the) {
+        try {
+            // Lấy id_san_pham của biến thể này
+            $stmt = $this->pdo->prepare("SELECT id_san_pham FROM bien_the WHERE id_bien_the = ?");
+            $stmt->execute([$id_bien_the]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                throw new Exception("Biến thể không tồn tại");
+            }
+
+            $product_id = $row['id_san_pham'];
+
+            // 1) Xóa biến thể
+            $stmtDel = $this->pdo->prepare("DELETE FROM bien_the WHERE id_bien_the = ?");
+            $stmtDel->execute([$id_bien_the]);
+
+            // 2) Kiểm tra số lượng biến thể còn lại
+            $stmtCount = $this->pdo->prepare("SELECT COUNT(*) as total FROM bien_the WHERE id_san_pham = ?");
+            $stmtCount->execute([$product_id]);
+            $count = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'];
+
+            // 3) Nếu hết biến thể → xóa luôn sản phẩm
+            if ($count == 0) {
+                $stmtDelSP = $this->pdo->prepare("DELETE FROM san_pham WHERE id_san_pham = ?");
+                $stmtDelSP->execute([$product_id]);
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+            throw new Exception("Không thể xóa biến thể: " . $e->getMessage());
+        }
+    }
+
+
 
 }

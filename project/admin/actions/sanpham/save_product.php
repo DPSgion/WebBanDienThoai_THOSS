@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once '../../config/config.php';
-require_once '../../includes/models/ProductModel.php';
+require_once __DIR__ . '/../../../config/config.php';
+require_once __DIR__ . '/../../../includes/models/ProductModel.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 if (!$data) {

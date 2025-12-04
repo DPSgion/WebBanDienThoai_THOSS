@@ -81,6 +81,85 @@ window.initQuanLySanPham = function () {
         return tr;
     }
 
+    function loadProducts() {
+        fetch('../../admin/actions/sanpham/lay_sanpham.php')
+            .then(res => res.json())
+            .then(res => {
+                if (!res.success) {
+                    console.error(res.message);
+                    return;
+                }
+
+                const tbody = document.querySelector('.table-sp');
+                tbody.innerHTML = `
+                <tr>
+                    <th>STT</th>
+                    <th>Tên sản phẩm</th>
+                    <th>CPU</th>
+                    <th>RAM - ROM</th>
+                    <th>Pin</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Hành động</th>
+                </tr>
+            `;
+
+                res.data.forEach((sp, index) => {
+                    const tr = document.createElement('tr');
+
+                    tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${sp.ten_san_pham}</td>
+                    <td>${sp.cpu ?? ''}</td>
+                    <td>${sp.ram} - ${sp.rom}</td>
+                    <td>${sp.pin ?? ''}</td>
+                    <td>${Number(sp.gia).toLocaleString()} VNĐ</td>
+                    <td>${sp.so_luong_ton}</td>
+                    <td>
+                        <button class="btn-edit" data-id="${sp.id_bien_the}">Sửa</button>
+                        <button class="btn-delete" data-id="${sp.id_bien_the}">Xóa</button>
+                    </td>
+                `;
+
+                    tbody.appendChild(tr);
+
+                });
+                
+                attachDeleteEvents();
+            })
+            .catch(err => {
+                console.error("Load sản phẩm lỗi:", err);
+            });
+    }
+
+    function attachDeleteEvents() {
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+
+                if (!confirm("Bạn chắc muốn xoá?")) return;
+
+                fetch('../../admin/actions/sanpham/xoa_bienthe_sanpham.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_bien_the: id })
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            alert("Xoá thành công");
+                            loadProducts(); // load lại danh sách
+                        } else {
+                            alert(res.message);
+                        }
+                    });
+            });
+        });
+    }
+
+
+
+
 
     addOptionBtn.addEventListener('click', () => {
         const row = createOptionRow();
@@ -139,7 +218,7 @@ window.initQuanLySanPham = function () {
             return;
         }
 
-        fetch('../../admin/actions/save_product.php', {
+        fetch('../../admin/actions/sanpham/save_product.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -149,11 +228,15 @@ window.initQuanLySanPham = function () {
                 if (res.success) {
                     alert('Lưu sản phẩm thành công!');
                     closeModal();
+                    loadProducts(); // reload bảng
                 } else {
                     alert('Lỗi: ' + res.message);
                 }
             })
             .catch(err => alert('Lỗi server: ' + err));
     });
+
+    loadProducts();
+
 
 };
