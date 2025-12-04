@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký — ĐIỆN THOẠI TRỰC TUYẾN</title>
+  <link rel="stylesheet" href="assets/css/stylesTC.css">
+  <link rel="stylesheet" href="assets/css/stylesRegister.css">
+</head>
+<body>
+
+  <header class="main-header">
+     <div class="header-top">
+        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
+      </div>
+  </header>
+
+  <main class="container login-page">
+    <div class="login-card">
+      <h2>Tạo tài khoản</h2>
+      <form id="registerForm">
+        <label class="field">
+          <div class="label">Họ và tên</div>
+          <input id="fullname" name="fullname" type="text" placeholder="Nguyễn Văn A" required>
+        </label>
+
+        <label class="field">
+          <div class="label">Email hoặc Số điện thoại</div>
+          <input id="identifier" name="identifier" type="text" placeholder="ví dụ: you@example.com hoặc 0123456789" required>
+        </label>
+
+        <label class="field">
+          <div class="label">Mật khẩu</div>
+          <input id="password" name="password" type="password" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
+        </label>
+
+        <label class="field">
+          <div class="label">Xác nhận mật khẩu</div>
+          <input id="password2" name="password2" type="password" placeholder="Nhập lại mật khẩu" required>
+        </label>
+
+        <label class="field row between">
+          <div class="remember"><input id="acceptTerms" type="checkbox"> Tôi đồng ý với điều khoản</div>
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Đăng ký</button>
+          <a class="btn outline" href="TrangChu.html">Hủy</a>
+        </div>
+      </form>
+
+      <div class="register-note">Đã có tài khoản? <a href="DangNhap.html">Đăng nhập</a></div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('fullname').value.trim();
+      const id = document.getElementById('identifier').value.trim();
+      const pw = document.getElementById('password').value;
+      const pw2 = document.getElementById('password2').value;
+      const terms = document.getElementById('acceptTerms').checked;
+      if(!name || !id || !pw || !pw2){ alert('Vui lòng điền tất cả các trường.'); return; }
+      if(pw.length < 6){ alert('Mật khẩu phải có ít nhất 6 ký tự.'); return; }
+      if(pw !== pw2){ alert('Mật khẩu và xác nhận mật khẩu không khớp.'); return; }
+      if(!terms){ if(!confirm('Bạn chưa đồng ý điều khoản. Tiếp tục?')) return; }
+      // demo: store basic user info in localStorage (for prototyping only)
+      const user = { name, id };
+      localStorage.setItem('demo_registered_user', JSON.stringify(user));
+      alert('Đăng ký thành công (demo). Bạn sẽ được chuyển tới trang chủ.');
+      window.location.href = 'TrangChu.html';
+    });
+
+    // danh mục dropdown behaviour (shared)
+    (function(){
+      document.querySelectorAll('.danh-container').forEach(dc=>{
+        const btn = dc.querySelector('.danh-muc');
+        const menu = dc.querySelector('.danh-menu');
+        if(!btn || !menu) return;
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
+        menu.addEventListener('click', (e)=> e.stopPropagation());
+      });
+      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
+
+</body>
+</html>

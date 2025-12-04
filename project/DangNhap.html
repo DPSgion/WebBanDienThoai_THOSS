@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng nhập — ĐIỆN THOẠI TRỰC TUYẾN</title>
+  <link rel="stylesheet" href="assets/css/stylesTC.css">
+  <link rel="stylesheet" href="assets/css/stylesLogin.css">
+</head>
+<body>
+
+  <header class="main-header">
+     <div class="header-top">
+        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
+      </div>
+  </header>
+
+  <main class="container login-page">
+    <div class="login-card">
+      <h2>Đăng nhập</h2>
+      <form id="loginForm">
+        <label class="field">
+          <div class="label">Email hoặc Số điện thoại</div>
+          <input id="identifier" name="identifier" type="text" placeholder="ví dụ: you@example.com hoặc 0123456789" required>
+        </label>
+
+        <label class="field">
+          <div class="label">Mật khẩu</div>
+          <input id="password" name="password" type="password" placeholder="Mật khẩu" required>
+        </label>
+
+
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Đăng nhập</button>
+          <a class="btn outline" href="TrangChu.html">Hủy</a>
+        </div>
+      </form>
+
+      <div class="register-note">Chưa có tài khoản? <a href="DangKy.html">Đăng ký</a></div>
+    </div>
+  </main>
+
+  <script>
+    // basic client-side demo login
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const id = document.getElementById('identifier').value.trim();
+      const pw = document.getElementById('password').value;
+      if(!id || !pw){ alert('Vui lòng điền đầy đủ thông tin.'); return; }
+      // demo: accept any non-empty credentials
+      if(document.getElementById('remember').checked){ localStorage.setItem('demo_user', id); }
+      alert('Đăng nhập thành công (demo).');
+      window.location.href = 'TrangChu.html';
+    });
+
+    // danh mục dropdown behaviour (shared)
+    (function(){
+      document.querySelectorAll('.danh-container').forEach(dc=>{
+        const btn = dc.querySelector('.danh-muc');
+        const menu = dc.querySelector('.danh-menu');
+        if(!btn || !menu) return;
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
+        menu.addEventListener('click', (e)=> e.stopPropagation());
+      });
+      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
+
+</body>
+</html>

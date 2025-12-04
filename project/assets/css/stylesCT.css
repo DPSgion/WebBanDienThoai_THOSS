@@ -20,6 +20,8 @@
 .search-input{width:60%;padding:10px;border:1px solid #ddd;border-radius:6px 0 0 6px}
 .search-btn{padding:10px;border:1px solid #ddd;border-left:0;background:#f7f7f7;border-radius:0 6px 6px 0}
 .icons-right{display:flex;align-items:center;gap:8px}
+/*SỬA*/
+.icons-right a{text-decoration: none;}
 .icon-btn{background:transparent;border:0;font-size:18px;cursor:pointer}
 .icon-btn, a.icon-btn{
   text-decoration: none;

@@ -9,17 +9,7 @@
 </head>
 <body>
 
-  <!-- TOP FAINT BAR -->
- <div class="topbar">
-    <div class="container topbar-inner">
-      <div class="socials">
-        <a href="#" class="social" aria-label="Facebook">🔵</a>
-        <a href="#" class="social" aria-label="Instagram">📸</a>
-        <a href="#" class="social" aria-label="YouTube">▶️</a>
-      </div>
-      <div class="hotline">📞 <strong>0123456789</strong></div>
-    </div>
-  </div>
+ 
 
   <!-- MAIN HEADER / NAV -->
   <header class="main-header">
@@ -34,20 +24,17 @@
       </div>
 
       <div class="icons-right">
-        <button class="icon-btn" aria-label="Yêu thích">❤</button>
+        <!--SỬA-->
+        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a href="GioHang.html" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+        <a id="accountLink" href="DangNhap.html">👤</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
             <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
             <li><a href="#">Samsung</a></li>
-            <li><a href="#">Xiaomi</a></li>
-            <li><a href="#">Google</a></li>
-            <li><a href="#">Realme</a></li>
-            <li><a href="#">Oppo</a></li>
-            <li><a href="#">Huawei</a></li>
-            <li><a href="#">iPad</a></li>
-            <li><a href="#">Phụ kiện</a></li>
+            <!--SỬA-->
+            <li><a href="#">Máy tính bảng</a></li>
           </ul>
         </div>
       </div>
@@ -160,36 +147,45 @@
     </div>
   </main>
 
-  <!-- Footer -->
+ <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="col">
         <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
       </div>
       <div class="col">
-        <h4>TÀI KHOẢN</h4>
-        <p>EMAIL <a href="#">contact@dienthoaitructuyen.com</a></p>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 1</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
         
-        <p>SDT <a href="#">0123456789</a></p>
+        <p>MSSV: <a href="#">...</a></p>
         
-        <div class="socials">🔵 📸 ▶️</div>
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>HỖ TRỢ</h4>
-        <a href="#">Chính sách đổi trả</a>
-        <a href="#">Bảo hành</a>
-        <a href="#">Liên hệ hỗ trợ</a>
-        <a href="#">Câu hỏi thường gặp</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 2</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>CHÍNH SÁCH</h4>
-        <a href="#">Giao hàng</a>
-        <a href="#">Bảo mật</a>
-        <a href="#">Điều khoản dịch vụ</a>
-        <a href="#">Bán hàng</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 3</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
     </div>
-    <div class="footer-bottom">© 2025 ĐIỆN THOẠI TRỰC TUYẾN</div>
+    <!--SỬA-->
+    <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
   </footer>
 
   <script>
@@ -261,5 +257,24 @@
       document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
     })();
   </script>
+
+  <!--SỬA-->
+  <script>
+  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
+  // localStorage.setItem('loggedIn', 'true');
+
+  const accountLink = document.getElementById("accountLink");
+  const isLoggedIn = localStorage.getItem("loggedIn");
+
+  if (isLoggedIn === "true") {
+    // Nếu đã đăng nhập → vào trang user
+    accountLink.href = "User.html";
+    accountLink.innerHTML = "👤";
+  } else {
+    // Nếu chưa đăng nhập → vào trang đăng nhập
+    accountLink.href = "DangNhap.html";
+    accountLink.innerHTML = "👤";
+  }
+</script>
 </body>
 </html>

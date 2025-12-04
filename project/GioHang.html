@@ -9,17 +9,7 @@
 </head>
 <body>
 
-  <!-- TOP BAR: socials left, hotline right -->
-  <div class="topbar">
-    <div class="container topbar-inner">
-      <div class="socials">
-        <a href="#" class="social" aria-label="Facebook">🔵</a>
-        <a href="#" class="social" aria-label="Instagram">📸</a>
-        <a href="#" class="social" aria-label="WhatsApp">🟢</a>
-      </div>
-      <div class="hotline">📞 <strong>0123 456 789</strong></div>
-    </div>
-  </div>
+  
 
   <!-- MAIN HEADER / NAV -->
   <header class="main-header">
@@ -34,20 +24,16 @@
       </div>
 
       <div class="icons-right">
-        <button class="icon-btn" aria-label="Yêu thích">❤</button>
-        <button class="icon-btn cart" aria-label="Giỏ hàng">🛒</button>
+        <!--SỬA-->
+        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
+        <a id="accountLink" href="DangNhap.html">👤</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
             <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
             <li><a href="#">Samsung</a></li>
-            <li><a href="#">Xiaomi</a></li>
-            <li><a href="#">Google</a></li>
-            <li><a href="#">Realme</a></li>
-            <li><a href="#">Oppo</a></li>
-            <li><a href="#">Huawei</a></li>
-            <li><a href="#">iPad</a></li>
-            <li><a href="#">Phụ kiện</a></li>
+            <!--SỬA-->
+            <li><a href="#">Máy tính bảng</a></li>
           </ul>
         </div>
       </div>
@@ -60,6 +46,11 @@
       <div class="cart-header">
         <h2>GIỎ HÀNG CỦA BẠN <span class="lock">🔒</span></h2>
       </div>
+      <!--SỬA-->
+      <div class="select-all">
+          <h4><input type="checkbox" id="selectAll"> TẤT CẢ</h4>
+      </div>
+      <!--END SỬA-->
 
       <div class="cart-list" id="cartList">
         <!-- product item template -->
@@ -132,18 +123,15 @@
       </div>
 
       <div class="cart-footer">
-        <div class="select-all">
-          <label><input type="checkbox" id="selectAll"> TẤT CẢ</label>
-        </div>
+        
         <div class="summary">
           <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
           <a id="checkout" class="btn checkout" href="ThanhToan.html">THANH TOÁN</a>
         </div>
       </div>
 
-      <div class="voucher">
-        <button class="btn voucher">CHỌN HOẶC NHẬP MÃ</button>
-      </div>
+      <!--SỬA-->
+      
     </div>
   </main>
   <!-- Footer -->
@@ -153,29 +141,38 @@
         <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
       </div>
       <div class="col">
-        <h4>TÀI KHOẢN</h4>
-        <p>EMAIL <a href="#">contact@dienthoaitructuyen.com</a></p>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 1</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
         
-        <p>SDT <a href="#">0123456789</a></p>
+        <p>MSSV: <a href="#">...</a></p>
         
-        <div class="socials">🔵 📸 ▶️</div>
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>HỖ TRỢ</h4>
-        <a href="#">Chính sách đổi trả</a>
-        <a href="#">Bảo hành</a>
-        <a href="#">Liên hệ hỗ trợ</a>
-        <a href="#">Câu hỏi thường gặp</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 2</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>CHÍNH SÁCH</h4>
-        <a href="#">Giao hàng</a>
-        <a href="#">Bảo mật</a>
-        <a href="#">Điều khoản dịch vụ</a>
-        <a href="#">Bán hàng</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 3</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
     </div>
-    <div class="footer-bottom">© 2025 ĐIỆN THOẠI TRỰC TUYẾN</div>
+    <!--SỬA-->
+    <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
   </footer>
 
   <script>
@@ -258,6 +255,25 @@
         document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
       })();
     </script>
-  
+
+  <!--SỬA-->
+  <script>
+  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
+  // localStorage.setItem('loggedIn', 'true');
+
+  const accountLink = document.getElementById("accountLink");
+  const isLoggedIn = localStorage.getItem("loggedIn");
+
+  if (isLoggedIn === "true") {
+    // Nếu đã đăng nhập → vào trang user
+    accountLink.href = "User.html";
+    accountLink.innerHTML = "👤";
+  } else {
+    // Nếu chưa đăng nhập → vào trang đăng nhập
+    accountLink.href = "DangNhap.html";
+    accountLink.innerHTML = "👤";
+  }
+</script>
+
 </body>
 </html>
