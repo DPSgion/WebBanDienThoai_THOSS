@@ -26,12 +26,13 @@
     </tbody>
 </table>
 
-<!-- Modal thêm danh mục -->
+<!-- Modal thêm/sửa danh mục -->
 <div id="modalDanhMuc" class="modalDM">
     <div class="modal-content">
-        <h2>Thêm danh mục</h2>
+        <h2 id="modalTitle">Thêm danh mục</h2>
 
         <form id="formDanhMuc">
+            <input type="hidden" id="idDanhMuc" name="id">
             <input type="text" id="tenDanhMucInput" name="name" placeholder="Nhập tên danh mục">
 
             <div class="modal-actions">
@@ -42,4 +43,3 @@
 
     </div>
 </div>
-

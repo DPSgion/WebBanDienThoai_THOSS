@@ -2,11 +2,15 @@ window.initQuanLyDanhMuc = function () {
 
     // DOM elements
     const modal = document.getElementById('modalDanhMuc');
+    const modalTitle = document.getElementById('modalTitle');
     const openBtn = document.getElementById('openModalDanhMucBtn');
     const closeBtn = document.getElementById('closeModalDanhMucBtn');
     const form = document.getElementById('formDanhMuc');
+    const inputId = document.getElementById('idDanhMuc');
     const inputName = document.getElementById('tenDanhMucInput');
     const tbody = document.getElementById('tableDanhMuc');
+
+    let isEditMode = false; // Biến để phân biệt thêm hay sửa
 
     // Kiểm tra phần tử HTML
     if (!modal || !openBtn || !closeBtn || !form || !tbody) {
@@ -15,7 +19,19 @@ window.initQuanLyDanhMuc = function () {
     }
 
     // -------- FUNCTIONS --------
-    function openModal() {
+    function openModal(mode = 'add', data = null) {
+        isEditMode = mode === 'edit';
+        
+        if (isEditMode && data) {
+            modalTitle.textContent = 'Sửa danh mục';
+            inputId.value = data.id;
+            inputName.value = data.name;
+        } else {
+            modalTitle.textContent = 'Thêm danh mục';
+            inputId.value = '';
+            inputName.value = '';
+        }
+
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
         setTimeout(() => inputName.focus(), 50);
@@ -25,11 +41,12 @@ window.initQuanLyDanhMuc = function () {
         modal.classList.remove('show');
         document.body.style.overflow = '';
         form.reset();
+        isEditMode = false;
     }
 
     // Load danh sách danh mục
     function loadDanhMuc() {
-        fetch("../../admin/actions/lay_danhmuc.php")
+        fetch("../../admin/actions/danhmuc/lay_danhmuc.php")
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
@@ -57,15 +74,69 @@ window.initQuanLyDanhMuc = function () {
                 <td>${index + 1}</td>
                 <td>${item.ten_danh_muc}</td>
                 <td>
-                    <button class="btn-edit" data-id="${item.id}">Sửa</button>
-                    <button class="btn-delete" data-id="${item.id}">Xóa</button>
+                    <button class="btn-edit" data-id="${item.id_danh_muc}" data-name="${item.ten_danh_muc}">Sửa</button>
+                    <button class="btn-delete" data-id="${item.id_danh_muc}">Xóa</button>
                 </td>
             </tr>
         `).join('');
+
+        // Gắn sự kiện
+        attachEditEvents();
+        attachDeleteEvents();
+    }
+
+    // Gắn sự kiện sửa
+    function attachEditEvents() {
+        const editBtns = document.querySelectorAll('.btn-edit');
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                openModal('edit', { id, name });
+            });
+        });
+    }
+
+    // Gắn sự kiện xóa
+    function attachDeleteEvents() {
+        const deleteBtns = document.querySelectorAll('.btn-delete');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const row = this.closest('tr');
+                const categoryName = row.querySelector('td:nth-child(2)').textContent;
+                
+                if (confirm(`Bạn có chắc muốn xóa danh mục "${categoryName}"?`)) {
+                    deleteCategory(id);
+                }
+            });
+        });
+    }
+
+    // Xóa danh mục
+    function deleteCategory(id) {
+        fetch("../../admin/actions/danhmuc/xoa_danhmuc.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    alert("Xóa danh mục thành công!");
+                    loadDanhMuc();
+                } else {
+                    alert("Lỗi: " + res.message);
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi server:", err);
+                alert("Lỗi khi xóa danh mục");
+            });
     }
 
     // -------- EVENTS --------
-    openBtn.addEventListener('click', openModal);
+    openBtn.addEventListener('click', () => openModal('add'));
     closeBtn.addEventListener('click', closeModal);
 
     // Đóng khi bấm ra ngoài
@@ -87,25 +158,37 @@ window.initQuanLyDanhMuc = function () {
             alert("Tên danh mục không được để trống.");
             return;
         }
-        fetch("../../admin/actions/luu_danhmuc.php", {
+
+        const url = isEditMode 
+            ? "../../admin/actions/danhmuc/sua_danhmuc.php" 
+            : "../../admin/actions/danhmuc/luu_danhmuc.php";
+
+        const data = isEditMode 
+            ? { id: inputId.value, name } 
+            : { name };
+
+        fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name })
+            body: JSON.stringify(data)
         })
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
-                    // alert("Thêm danh mục thành công!");
+                    // alert(isEditMode ? "Cập nhật danh mục thành công!" : "Thêm danh mục thành công!");
                     closeModal();
-                    // location.reload();
+                    loadDanhMuc();
                 } else {
                     alert("Lỗi: " + res.message);
                 }
             })
-            .catch(err => console.log("Lỗi server: " + err));
+            .catch(err => {
+                console.error("Lỗi server:", err);
+                alert("Lỗi server");
+            });
     });
 
     // -------- KHỞI TẠO --------
-    loadDanhMuc(); // Load dữ liệu khi trang vừa mở
+    loadDanhMuc();
 
 };

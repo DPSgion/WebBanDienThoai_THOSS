@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once '../../includes/models/DanhmucModel.php';
+require_once __DIR__ . '/../../../config/config.php';
+require_once __DIR__ . '/../../../includes/models/DanhmucModel.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
