@@ -8,17 +8,7 @@
 </head>
 <body>
 
-  <!-- Top small bar -->
-  <div class="topbar">
-    <div class="container topbar-inner">
-      <div class="socials">
-        <a href="#" class="social" aria-label="Facebook">🔵</a>
-        <a href="#" class="social" aria-label="Instagram">📸</a>
-        <a href="#" class="social" aria-label="YouTube">▶️</a>
-      </div>
-      <div class="hotline">📞 <strong>0123456789</strong></div>
-    </div>
-  </div>
+  
 
   <!-- Main header split into two rows: logo row and controls row -->
   <header class="main-header">
@@ -34,7 +24,16 @@
           <!-- Bordered area containing categories, search and menu -->
           <div class="header-bottom-border">
             <div class="categories-short">
-              <button class="cat-btn">☰ Danh mục</button>
+              <!--SỬA-->
+              <div class="danh-container">
+                <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
+                <ul class="danh-menu" role="menu">
+                  <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
+                  <li><a href="#">Samsung</a></li>
+                  <li><a href="#">Máy tính bảng</a></li>
+                </ul>
+              </div>
+              <!--END SỬA-->
             </div>
 
             <div class="search-wrap">
@@ -43,27 +42,14 @@
             </div>
 
             <nav class="main-nav" aria-label="Main navigation">
-              <a href="#">TRANG CHỦ</a>
-              <a href="#">SẢN PHỦ</a>
-              <a href="#">TIN TỨC</a>
-              <a href="#">GIỚI THIỆU</a>
+              <!--SỬA-->
+              <a href="SanPham.html">📱SẢN PHẨM</a>
+              <a href="GioHang.html">🛒GIỎ HÀNG</a>
+              <a id="accountLink" href="DangNhap.html">👤TÀI KHOẢN</a>
+              <!--END SỬA-->
             </nav>
             <!-- Contact block moved inside the bordered area (right side) -->
-            <div class="contact-block">
-              <button class="phone-btn" aria-label="hotline">
-                <span class="phone-icon">📞</span>
-                <span class="hotline-text">
-                  <span class="hotline-label">Hotline</span>
-                  <span class="hotline-number">0123456789</span>
-                </span>
-              </button>
-              <div class="quick-icons">
-                <button title="Tìm" class="qi">🔍</button>
-                <button title="Giỏ hàng" class="qi">🛒</button>
-                <button title="Tài khoản" class="qi">👤</button>
-                <button title="Chat" class="qi">💬</button>
-              </div>
-            </div>
+            <!--SỬA-->
           </div>
         </div>
       </div>
@@ -94,8 +80,6 @@
           </div>
 
 
-        <button class="carousel-control prev" aria-label="Previous slide">‹</button>
-        <button class="carousel-control next" aria-label="Next slide">›</button>
 
         <div class="carousel-dots" aria-hidden="false"></div>
       </div>
@@ -114,14 +98,11 @@
   <section class="categories container">
     <h3 class="categories-title">Danh mục sản phẩm</h3>
     <div class="categories-list">
-      <div class="cat">📱 Samsung</div>
-      <div class="cat">📱 iPhone</div>
-      <div class="cat">📱 Xiaomi</div>
-      <div class="cat">📱 Google</div>
-      <div class="cat">📱 Realme</div>
-      <div class="cat">📱 Oppo</div>
-      <div class="cat">📱 Huawei</div>
-      <div class="cat">📱 iPad</div>
+      <!--SỬA-->
+      <div class="cat"><a href="TimKiem.html">📱 iPhone</a></div>
+      <div class="cat"><a href=""></a>📱 Samsung</div>
+      <div class="cat"><a href=""></a>📱 Máy tính bảng</div>
+      <!-- END SỬA-->
     </div>
   </section>
 
@@ -138,8 +119,7 @@
           </div>
           
         </div>
-        <button class="sub-control prev" aria-label="Previous sub slide">‹</button>
-        <button class="sub-control next" aria-label="Next sub slide">›</button>
+        <!--SỬA-->
         <div class="sub-dots"></div>
       </div>
     </div>
@@ -274,30 +254,130 @@
         <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
       </div>
       <div class="col">
-        <h4>TÀI KHOẢN</h4>
-        <p>EMAIL <a href="#">contact@dienthoaitructuyen.com</a></p>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 1</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
         
-        <p>SDT <a href="#">0123456789</a></p>
+        <p>MSSV: <a href="#">...</a></p>
         
-        <div class="socials">🔵 📸 ▶️</div>
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>HỖ TRỢ</h4>
-        <a href="#">Chính sách đổi trả</a>
-        <a href="#">Bảo hành</a>
-        <a href="#">Liên hệ hỗ trợ</a>
-        <a href="#">Câu hỏi thường gặp</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 2</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
       <div class="col">
-        <h4>CHÍNH SÁCH</h4>
-        <a href="#">Giao hàng</a>
-        <a href="#">Bảo mật</a>
-        <a href="#">Điều khoản dịch vụ</a>
-        <a href="#">Bán hàng</a>
+        <!--SỬA-->
+        <h4>THÀNH VIÊN 3</h4>
+        <p>Họ & Tên: <a href="#">...</a></p>
+        
+        <p>MSSV: <a href="#">...</a></p>
+        
+        <p>Email: <a href="#">...</a></p>
+        <!--END SỬA-->
       </div>
     </div>
-    <div class="footer-bottom">© 2025 ĐIỆN THOẠI TRỰC TUYẾN</div>
+    <!--SỬA-->
+    <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
   </footer>
+
+<!--SỬA THÊM CHAT-->
+  <!-- Chat widget -->
+  <div class="chat-widget" aria-live="polite">
+    <div id="chatPanel" class="chat-panel" aria-hidden="true">
+      <div class="chat-header">
+        <div class="title">Trợ lý bán hàng</div>
+        <button id="chatClose" aria-label="Đóng chat" style="background:transparent;border:0;color:rgba(255,255,255,0.9);font-size:20px;cursor:pointer">✕</button>
+      </div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="message bot">Chào bạn! Mình có thể giúp gì hôm nay?</div>
+      </div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="Nhập câu hỏi của bạn..." aria-label="Nhập tin nhắn">
+        <button id="chatSend">Gửi</button>
+      </div>
+    </div>
+    <button id="chatToggle" class="chat-toggle" aria-label="Mở chat">💬</button>
+  </div>
+
+  <script>
+    (function(){
+      const panel = document.getElementById('chatPanel');
+      const toggle = document.getElementById('chatToggle');
+      const closeBtn = document.getElementById('chatClose');
+      const input = document.getElementById('chatInput');
+      const messages = document.getElementById('chatMessages');
+
+      function openChat(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); input.focus(); }
+      function closeChat(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); }
+
+      toggle.addEventListener('click', ()=>{
+        if(panel.classList.contains('open')) closeChat(); else openChat();
+      });
+      closeBtn.addEventListener('click', closeChat);
+
+      function appendMessage(text, who){
+        const div = document.createElement('div');
+        div.className = 'message ' + (who==='user'? 'user':'bot');
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      document.getElementById('chatSend').addEventListener('click', ()=>{
+        const v = input.value.trim(); if(!v) return; appendMessage(v,'user'); input.value='';
+        // demo bot reply
+        setTimeout(()=>{ appendMessage('Cảm ơn! Chúng tôi đã nhận yêu cầu: "'+v+'". Nhân viên sẽ liên hệ sớm.', 'bot'); }, 700);
+      });
+
+      input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('chatSend').click(); } });
+
+      // close on outside click
+      document.addEventListener('click', (e)=>{ if(!e.target.closest('.chat-widget') && panel.classList.contains('open')) closeChat(); });
+    })();
+  </script>
+  <!--END SỬA THÊM CHAT-->
+
+  <script>
+    // danh mục dropdown (shared behavior)
+    (function(){
+      document.querySelectorAll('.danh-container').forEach(dc=>{
+        const btn = dc.querySelector('.danh-muc');
+        const menu = dc.querySelector('.danh-menu');
+        if(!btn || !menu) return;
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
+        menu.addEventListener('click', (e)=> e.stopPropagation());
+      });
+      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
+
+
+<!--SỬA-->
+  <script>
+  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
+  // localStorage.setItem('loggedIn', 'true');
+
+  const accountLink = document.getElementById("accountLink");
+  const isLoggedIn = localStorage.getItem("loggedIn");
+
+  if (isLoggedIn === "true") {
+    // Nếu đã đăng nhập → vào trang user
+    accountLink.href = "User.html";
+    accountLink.innerHTML = "👤TÀI KHOẢN";
+  } else {
+    // Nếu chưa đăng nhập → vào trang đăng nhập
+    accountLink.href = "DangNhap.html";
+    accountLink.innerHTML = "👤TÀI KHOẢN";
+  }
+</script>
 
 </body>
 </html>

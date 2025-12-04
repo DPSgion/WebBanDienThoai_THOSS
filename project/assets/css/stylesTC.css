@@ -33,6 +33,8 @@ body{font-family:Segoe UI, Roboto, Arial, sans-serif;margin:0;color:#111;backgro
 .categories-short{flex:0 0 auto}
 .cat-btn{background:#f3f4f6;border:1px solid #e6edf3;padding:8px 12px;border-radius:8px;font-weight:700}
 
+    
+
 /* search in middle */
 .search-wrap{flex:1;display:flex;justify-content:center}
 .search{width:100%;max-width:420px;padding:8px 12px;border-radius:6px 0 0 6px;border:1px solid #e5e7eb}
@@ -42,15 +44,9 @@ body{font-family:Segoe UI, Roboto, Arial, sans-serif;margin:0;color:#111;backgro
 .main-nav{display:flex;gap:14px;flex:0 0 auto}
 .main-nav a{text-decoration:none;color:#111;font-weight:700}
 
-/* contact block on the right (outside border) */
-.contact-block{display:flex;flex-direction:column;align-items:center;gap:6px}
-.phone-btn{background:#F7C35F;color:#fff;border:0;padding:10px;border-radius:8px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
-.phone-icon{font-size:16px;line-height:1}
-.hotline-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
-.hotline-label{font-size:11px;opacity:0.95}
-.hotline-number{font-size:13px;font-weight:800}
-.quick-icons{display:flex;flex-direction:row;gap:8px;margin-top:6px;align-items:center}
-.quick-icons .qi{background:transparent;border:0;padding:6px 6px;border-radius:6px;font-size:14px}
+
+/*SỬA*/
+
 
 /* Main banner */
 .main-banner{background:#16296d;color:#fff;padding:0}
@@ -85,8 +81,42 @@ body{font-family:Segoe UI, Roboto, Arial, sans-serif;margin:0;color:#111;backgro
 /* Categories */
 .categories{padding:18px 0}
 .categories-title{text-align:center;font-size:18px;font-weight:800;margin-bottom:12px;color:var(--brand)}
-.categories-list{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
+/*SỬA */
+.categories-list .cat a{ text-decoration: none;color:#111;  }
+/*END SỬA*/
+.categories-list{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center; }
 .cat{background:#f8fafc;border:1px solid #e6edf3;padding:10px 12px;border-radius:8px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:110px}
+
+/*SỬA*/
+.danh-container{position:relative}
+.danh-container .danh-muc{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:#f2f2f2;border:0;padding:8px 10px;border-radius:6px}
+.danh-menu{position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid #e6edf3;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.06);min-width:220px;display:none;z-index:50;padding:8px 0}
+.danh-menu li{list-style:none}
+.danh-menu a{display:block;padding:8px 12px;color:#111;text-decoration:none;font-weight:700}
+.danh-menu a:hover{background:#f5f7f6}
+.danh-container.open .danh-menu{display:block}
+
+/*SỬA THEM CHAT*/
+/* Floating chat widget */
+.chat-widget{position:fixed;right:20px;bottom:20px;z-index:9999;font-family:inherit}
+.chat-toggle{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:0;box-shadow:0 8px 20px rgba(37,99,235,0.24);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+.chat-panel{position:fixed;right:20px;bottom:90px;width:360px;max-width:92vw;height:480px;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(2,6,23,0.2);display:none;flex-direction:column;overflow:hidden}
+.chat-panel.open{display:flex}
+.chat-header{background:linear-gradient(90deg,#2563eb,#7c3aed);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+.chat-header .title{font-weight:800}
+.chat-messages{flex:1;padding:12px;overflow:auto;background:#f7fafc}
+.message{max-width:78%;padding:8px 10px;border-radius:10px;margin-bottom:8px;font-size:14px;line-height:1.3}
+.message.bot{background:#eef2ff;color:#0f172a;border-bottom-left-radius:2px}
+.message.user{background:#2563eb;color:#fff;margin-left:auto;border-bottom-right-radius:2px}
+.chat-input{display:flex;gap:8px;padding:10px;border-top:1px solid #eef2f6;background:#fff}
+.chat-input input{flex:1;padding:10px;border:1px solid #e6eefb;border-radius:8px}
+.chat-input button{background:#2563eb;color:#fff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+/*END SỬA*/
+
+@media(max-width:520px){
+  .chat-panel{right:12px;left:12px;bottom:80px;width:auto;height:60vh}
+  .chat-toggle{right:12px;bottom:12px}
+}
 
 /* Sub banner */
 .sub-banner{background:#16296d;color:#fff;padding:18px 0;margin:18px 0}
@@ -99,8 +129,7 @@ body{font-family:Segoe UI, Roboto, Arial, sans-serif;margin:0;color:#111;backgro
 .sub-text{font-size:18px;font-weight:700}
 .sub-graphic{font-size:28px}
 .sub-control{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.25);color:#fff;border:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.sub-control.prev{left:8px}
-.sub-control.next{right:8px}
+/*SỬA*/
 .sub-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;display:flex;gap:8px}
 .sub-dots button{width:8px;height:8px;border-radius:50%;border:0;background:rgba(255,255,255,0.5);cursor:pointer}
 .sub-dots button.active{background:#fff}

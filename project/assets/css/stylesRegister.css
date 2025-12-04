@@ -1,0 +1,23 @@
+/* registration page styles — reuse login layout rules where possible */
+.main-header{background:#fff;padding:12px 0;border-bottom:1px solid #eee}
+.header-top{display:flex;justify-content:center;padding:6px 0}
+.logo{background:#C3D5C4;color:#000000;padding:25px 20px;border-radius:50px 0px 50px 0px;font-weight:900}
+
+.login-page{display:flex;align-items:center;justify-content:center;padding:48px 16px}
+.login-card{width:480px;max-width:96vw;background:#fff;border-radius:12px;padding:24px;border:1px solid #eef3f8;box-shadow:0 8px 30px rgba(2,6,23,0.06);}
+.login-card h2{margin:0 0 14px;font-size:22px}
+.field{display:block;margin-bottom:12px}
+.field .label{font-size:15px;color:#333;margin-bottom:8px}
+.field input{width:100%;padding:10px 12px;border:1px solid #878787;border-radius:8px;margin-bottom: 6px;}
+.row.between{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.remember{font-size:13px;display:flex;align-items:center;gap:8px}
+.remember input[type="checkbox"]{width:16px;height:16px;margin:0 8px 0 0;vertical-align:middle}
+.link{color:var(--accent-start);text-decoration:none}
+.actions{display:flex;gap:10px;align-items:center}
+.actions button{background-color: #3b6b3e;color: white;}
+.register-note{margin-top:12px;font-size:14px;text-align:center}
+
+@media(max-width:520px){
+  .login-card{padding:16px}
+  .login-page{padding:20px}
+}
