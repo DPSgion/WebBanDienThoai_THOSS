@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ĐIỆN THOẠI TRỰC TUYẾN</title>
   <link rel="stylesheet" href="assets\css\stylesTC.css">
 </head>
+
 <body>
 
-  
+
 
   <!-- Main header split into two rows: logo row and controls row -->
   <header class="main-header">
@@ -45,7 +47,7 @@
               <!--SỬA-->
               <a href="SanPham.html">📱SẢN PHẨM</a>
               <a href="GioHang.html">🛒GIỎ HÀNG</a>
-              <a id="accountLink" href="DangNhap.html">👤TÀI KHOẢN</a>
+              <a id="accountLink" href="login.php">👤TÀI KHOẢN</a>
               <!--END SỬA-->
             </nav>
             <!-- Contact block moved inside the bordered area (right side) -->
@@ -78,20 +80,21 @@
               </div>
             </div>
           </div>
-
-
-
-        <div class="carousel-dots" aria-hidden="false"></div>
+          <div class="carousel-dots" aria-hidden="false"></div>
+        </div>
       </div>
-    </div>
   </section>
 
   <!-- Services -->
   <section class="services container">
-    <div class="service">🚚<div>Giao hàng tận nơi</div></div>
-    <div class="service">🔁<div>Hỗ trợ đổi trả 30 ngày</div></div>
-    <div class="service">🔒<div>100% thanh toán an toàn</div></div>
-    <div class="service">✔️<div>Cam kết sản phẩm chính hãng</div></div>
+    <div class="service">🚚<div>Giao hàng tận nơi</div>
+    </div>
+    <div class="service">🔁<div>Hỗ trợ đổi trả 30 ngày</div>
+    </div>
+    <div class="service">🔒<div>100% thanh toán an toàn</div>
+    </div>
+    <div class="service">✔️<div>Cam kết sản phẩm chính hãng</div>
+    </div>
   </section>
 
   <!-- Categories -->
@@ -117,7 +120,7 @@
               <div class="sub-graphic">📱📱📱📱</div>
             </div>
           </div>
-          
+
         </div>
         <!--SỬA-->
         <div class="sub-dots"></div>
@@ -257,9 +260,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 1</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -267,9 +270,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 2</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -277,9 +280,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 3</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -288,13 +291,14 @@
     <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
   </footer>
 
-<!--SỬA THÊM CHAT-->
+  <!--SỬA THÊM CHAT-->
   <!-- Chat widget -->
   <div class="chat-widget" aria-live="polite">
     <div id="chatPanel" class="chat-panel" aria-hidden="true">
       <div class="chat-header">
         <div class="title">Trợ lý bán hàng</div>
-        <button id="chatClose" aria-label="Đóng chat" style="background:transparent;border:0;color:rgba(255,255,255,0.9);font-size:20px;cursor:pointer">✕</button>
+        <button id="chatClose" aria-label="Đóng chat"
+          style="background:transparent;border:0;color:rgba(255,255,255,0.9);font-size:20px;cursor:pointer">✕</button>
       </div>
       <div id="chatMessages" class="chat-messages">
         <div class="message bot">Chào bạn! Mình có thể giúp gì hôm nay?</div>
@@ -308,76 +312,85 @@
   </div>
 
   <script>
-    (function(){
+    (function() {
       const panel = document.getElementById('chatPanel');
       const toggle = document.getElementById('chatToggle');
       const closeBtn = document.getElementById('chatClose');
       const input = document.getElementById('chatInput');
       const messages = document.getElementById('chatMessages');
 
-      function openChat(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); input.focus(); }
-      function closeChat(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); }
+      function openChat() {
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden', 'false');
+        input.focus();
+      }
 
-      toggle.addEventListener('click', ()=>{
-        if(panel.classList.contains('open')) closeChat(); else openChat();
+      function closeChat() {
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden', 'true');
+      }
+
+      toggle.addEventListener('click', () => {
+        if (panel.classList.contains('open')) closeChat();
+        else openChat();
       });
       closeBtn.addEventListener('click', closeChat);
 
-      function appendMessage(text, who){
+      function appendMessage(text, who) {
         const div = document.createElement('div');
-        div.className = 'message ' + (who==='user'? 'user':'bot');
+        div.className = 'message ' + (who === 'user' ? 'user' : 'bot');
         div.textContent = text;
         messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
       }
 
-      document.getElementById('chatSend').addEventListener('click', ()=>{
-        const v = input.value.trim(); if(!v) return; appendMessage(v,'user'); input.value='';
+      document.getElementById('chatSend').addEventListener('click', () => {
+        const v = input.value.trim();
+        if (!v) return;
+        appendMessage(v, 'user');
+        input.value = '';
         // demo bot reply
-        setTimeout(()=>{ appendMessage('Cảm ơn! Chúng tôi đã nhận yêu cầu: "'+v+'". Nhân viên sẽ liên hệ sớm.', 'bot'); }, 700);
+        setTimeout(() => {
+          appendMessage('Cảm ơn! Chúng tôi đã nhận yêu cầu: "' + v + '". Nhân viên sẽ liên hệ sớm.', 'bot');
+        }, 700);
       });
 
-      input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('chatSend').click(); } });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('chatSend').click();
+        }
+      });
 
       // close on outside click
-      document.addEventListener('click', (e)=>{ if(!e.target.closest('.chat-widget') && panel.classList.contains('open')) closeChat(); });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.chat-widget') && panel.classList.contains('open')) closeChat();
+      });
     })();
   </script>
   <!--END SỬA THÊM CHAT-->
 
   <script>
     // danh mục dropdown (shared behavior)
-    (function(){
-      document.querySelectorAll('.danh-container').forEach(dc=>{
+    (function() {
+      document.querySelectorAll('.danh-container').forEach(dc => {
         const btn = dc.querySelector('.danh-muc');
         const menu = dc.querySelector('.danh-menu');
-        if(!btn || !menu) return;
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
-        menu.addEventListener('click', (e)=> e.stopPropagation());
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
+        });
+        menu.addEventListener('click', (e) => e.stopPropagation());
       });
-      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
+        dc.classList.remove('open');
+        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
+      }));
     })();
   </script>
 
-
-<!--SỬA-->
-  <script>
-  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
-  // localStorage.setItem('loggedIn', 'true');
-
-  const accountLink = document.getElementById("accountLink");
-  const isLoggedIn = localStorage.getItem("loggedIn");
-
-  if (isLoggedIn === "true") {
-    // Nếu đã đăng nhập → vào trang user
-    accountLink.href = "User.html";
-    accountLink.innerHTML = "👤TÀI KHOẢN";
-  } else {
-    // Nếu chưa đăng nhập → vào trang đăng nhập
-    accountLink.href = "DangNhap.html";
-    accountLink.innerHTML = "👤TÀI KHOẢN";
-  }
-</script>
-
 </body>
+
 </html>
