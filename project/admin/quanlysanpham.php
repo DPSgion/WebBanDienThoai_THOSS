@@ -138,10 +138,16 @@
           <label for="pin">PIN</label>
           <input id="pin" name="pin" type="text" placeholder="Ví dụ: 5000mAh">
         </div>
+
+        <div id="image-preview-container"></div>
+        <input type="hidden" id="images_to_delete" name="images_to_delete">
+        <input type="hidden" id="product_id" name="product_id">
+
+
         
         <div class="form-group">
           <label for="hinhanh">Hình ảnh</label>
-          <input id="hinhanh" name="hinhanh" type="file" multiple required>
+          <input id="hinhanh" name="hinhanh" type="file" multiple>
         </div>
       </div>
 
