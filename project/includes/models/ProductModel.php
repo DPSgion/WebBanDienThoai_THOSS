@@ -8,16 +8,15 @@ class ProductModel {
         $this->pdo = $pdo;
     }
 
-    public function addProduct($data) {
+    public function addProduct($data, $images) {
         try {
-            // BẮT ĐẦU TRANSACTION để tránh lỗi thêm sản phẩm nhưng biến thể không thêm
             $this->pdo->beginTransaction();
 
-            // === 1) Thêm sản phẩm vào bảng san_pham ===
+            // 1) thêm sản phẩm
             $stmt = $this->pdo->prepare(
                 "INSERT INTO san_pham 
                     (id_danh_muc, ten_san_pham, cpu, pin, man_hinh, os, camera_truoc, camera_sau) 
-                 VALUES 
+                VALUES 
                     (:id_category, :name, :cpu, :pin, :screen, :os, :front_cam, :rear_cam)"
             );
 
@@ -35,11 +34,11 @@ class ProductModel {
             $product_id = $this->pdo->lastInsertId();
 
 
-            // === 2) Thêm các biến thể sản phẩm ===
+            // 2) thêm biến thể
             $stmtOpt = $this->pdo->prepare(
                 "INSERT INTO bien_the 
                     (id_san_pham, ram, rom, mau, gia, so_luong_ton)
-                 VALUES
+                VALUES
                     (:id_san_pham, :ram, :rom, :mau, :gia, :so_luong)"
             );
 
@@ -54,9 +53,36 @@ class ProductModel {
                 ]);
             }
 
-            // Xác nhận giao dịch
-            $this->pdo->commit();
 
+            // 3) upload hình
+            if ($images && isset($images['name'])) {
+
+                $uploadPath = __DIR__ . '/../../uploads/';
+                if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
+
+                $stmtImg = $this->pdo->prepare(
+                    "INSERT INTO anh_san_pham (id_san_pham, duong_dan_anh)
+                    VALUES (?, ?)"
+                );
+
+                for ($i = 0; $i < count($images['name']); $i++) {
+
+                    $tmp = $images['tmp_name'][$i];
+                    $name = time() . "_" . basename($images['name'][$i]);
+                    $dest = $uploadPath . $name;
+
+
+                    if (!move_uploaded_file($tmp, $dest)) {
+                        throw new Exception("Upload ảnh thất bại");
+                    }
+
+                    // lưu đường dẫn vào DB
+                    $stmtImg->execute([$product_id, $name]);
+                }
+            }
+
+
+            $this->pdo->commit();
             return $product_id;
 
         } catch (Exception $e) {
@@ -64,6 +90,7 @@ class ProductModel {
             throw new Exception("Lỗi khi thêm sản phẩm: " . $e->getMessage());
         }
     }
+
 
     public function getProducts() {
         $sql = "
@@ -112,8 +139,23 @@ class ProductModel {
             $stmtCount->execute([$product_id]);
             $count = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'];
 
-            // 3) Nếu hết biến thể → xóa luôn sản phẩm
+            // 3) Nếu hết biến thể → xóa luôn sản phẩm và hình ảnh trong folder uploads
             if ($count == 0) {
+                // Xóa ảnh trong bảng + file ảnh
+                $stmtImg = $this->pdo->prepare("SELECT duong_dan_anh FROM anh_san_pham WHERE id_san_pham = ?");
+                $stmtImg->execute([$product_id]);
+                $images = $stmtImg->fetchAll(PDO::FETCH_ASSOC);
+
+                // Xóa file
+                $uploadPath = __DIR__ . '/../../uploads/';
+
+                foreach ($images as $img) {
+                    $file = $uploadPath . $img['duong_dan_anh'];
+                    if (file_exists($file)) {
+                        unlink($file);
+                    }
+                }
+
                 $stmtDelSP = $this->pdo->prepare("DELETE FROM san_pham WHERE id_san_pham = ?");
                 $stmtDelSP->execute([$product_id]);
             }

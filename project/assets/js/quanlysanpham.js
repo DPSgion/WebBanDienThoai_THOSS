@@ -124,7 +124,7 @@ window.initQuanLySanPham = function () {
                     tbody.appendChild(tr);
 
                 });
-                
+
                 attachDeleteEvents();
             })
             .catch(err => {
@@ -182,59 +182,50 @@ window.initQuanLySanPham = function () {
             return;
         }
 
-        const data = {
-            id_category: form.danhmuc.value,
-            name: form.name.value.trim(),
-            os: form.os.value,
-            cpu: form.cpu.value,
-            screen: form.screen.value,
-            front_cam: form.front_cam.value,
-            rear_cam: form.rear_cam.value,
-            pin: form.pin.value,
-            options: []
-        };
+        const fd = new FormData();
+        fd.append('id_category', form.danhmuc.value);
+        fd.append('name', form.name.value.trim());
+        fd.append('os', form.os.value);
+        fd.append('cpu', form.cpu.value);
+        fd.append('screen', form.screen.value);
+        fd.append('front_cam', form.front_cam.value);
+        fd.append('rear_cam', form.rear_cam.value);
+        fd.append('pin', form.pin.value);
 
-        let error = false;
+        // append ảnh
+        const files = document.getElementById('hinhanh').files;
+        for (let i = 0; i < files.length; i++) {
+            fd.append('images[]', files[i]);
+        }
 
-        optionRows.forEach(tr => {
+        // append options
+        optionRows.forEach((tr, index) => {
             const inp = tr.querySelectorAll('input');
-            const ram = inp[0].value.trim() + 'GB';
-            const rom = inp[1].value.trim() + 'GB';
-            const color = inp[2].value.trim();
-            const quantity = Number(inp[3].value);
-            const price = Number(inp[4].value);
 
-            if (!ram || !rom || !color || Number.isNaN(quantity) || Number.isNaN(price)) {
-                error = true;
-            } else {
-                data.options.push({ ram, rom, color, quantity, price });
-            }
-        }
-        );
-
-
-        if (error) {
-            alert("Lỗi dữ liệu option.");
-            return;
-        }
+            fd.append(`options[${index}][ram]`, inp[0].value.trim() + 'GB');
+            fd.append(`options[${index}][rom]`, inp[1].value.trim() + 'GB');
+            fd.append(`options[${index}][color]`, inp[2].value.trim());
+            fd.append(`options[${index}][quantity]`, inp[3].value);
+            fd.append(`options[${index}][price]`, inp[4].value);
+        });
 
         fetch('../../admin/actions/sanpham/save_product.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: fd
         })
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
                     alert('Lưu sản phẩm thành công!');
                     closeModal();
-                    loadProducts(); // reload bảng
+                    loadProducts();
                 } else {
                     alert('Lỗi: ' + res.message);
                 }
             })
-            .catch(err => alert('Lỗi server: ' + err));
+            .catch(err => console.log('Lỗi server: ' + err));
     });
+
 
     loadProducts();
 

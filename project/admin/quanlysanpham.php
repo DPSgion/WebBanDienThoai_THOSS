@@ -138,6 +138,11 @@
           <label for="pin">PIN</label>
           <input id="pin" name="pin" type="text" placeholder="Ví dụ: 5000mAh">
         </div>
+        
+        <div class="form-group">
+          <label for="hinhanh">Hình ảnh</label>
+          <input id="hinhanh" name="hinhanh" type="file" multiple required>
+        </div>
       </div>
 
       <!-- Option header + add button -->
