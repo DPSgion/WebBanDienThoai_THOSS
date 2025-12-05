@@ -23,33 +23,6 @@
     </div>
 
     <div>
-        <label for="filter-ram">RAM</label>
-        <select id="filter-ram">
-            <option value="">Tất cả</option>
-            <option>4GB</option>
-            <option>6GB</option>
-            <option>8GB</option>
-            <option>12GB</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="filter-rom">ROM</label>
-        <select id="filter-rom">
-            <option value="">Tất cả</option>
-            <option>64GB</option>
-            <option>128GB</option>
-            <option>256GB</option>
-            <option>512GB</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="filter-pin">Pin ≥</label>
-        <input type="number" id="filter-pin" placeholder="mAh">
-    </div>
-
-    <div>
         <label for="filter-gia">Giá ≤</label>
         <input type="number" id="filter-gia" placeholder="VNĐ">
     </div>

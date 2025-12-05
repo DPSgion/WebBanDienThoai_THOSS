@@ -12,6 +12,8 @@ window.initQuanLySanPham = function () {
     const productIdInput = document.getElementById('product_id');
     const hinhanhInput = document.getElementById('hinhanh');
 
+    let allProducts = [];
+
     if (!modal || !openBtn || !closeBtn || !form) {
         console.error("Thiếu phần tử HTML. Kiểm tra lại id trong HTML.");
         return;
@@ -98,38 +100,12 @@ window.initQuanLySanPham = function () {
             .then(res => res.json())
             .then(res => {
                 if (!res.success) return console.error(res.message);
-                const tbody = document.querySelector('.table-sp');
-                tbody.innerHTML = `
-                    <tr>
-                        <th>STT</th>
-                        <th>Tên sản phẩm</th>
-                        <th>CPU</th>
-                        <th>RAM - ROM</th>
-                        <th>Pin</th>
-                        <th>Giá</th>
-                        <th>Số lượng</th>
-                        <th>Hành động</th>
-                    </tr>
-                `;
-                res.data.forEach((sp, index) => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${sp.ten_san_pham}</td>
-                        <td>${sp.cpu ?? ''}</td>
-                        <td>${sp.ram} - ${sp.rom}</td>
-                        <td>${sp.pin ?? ''}</td>
-                        <td>${Number(sp.gia).toLocaleString()} VNĐ</td>
-                        <td>${sp.so_luong_ton}</td>
-                        <td>
-                            <button class="btn-edit" data-id="${sp.id_san_pham}">Sửa</button>
-                            <button class="btn-delete" data-id="${sp.id_bien_the}">Xóa</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-                attachDeleteEvents();
-                attachEditEvents();
+
+                // Lưu dữ liệu gốc
+                allProducts = res.data;
+
+                // Hiển thị sản phẩm
+                displayProducts(allProducts);
             })
             .catch(err => console.error("Load sản phẩm lỗi:", err));
     }
@@ -157,6 +133,99 @@ window.initQuanLySanPham = function () {
         });
     }
 
+    // Hàm hiển thị sản phẩm
+    // Hàm hiển thị sản phẩm (giữ nguyên định dạng cũ)
+    function displayProducts(products) {
+        const tbody = document.querySelector('.table-sp');
+        tbody.innerHTML = `
+        <tr>
+            <th>STT</th>
+            <th>Tên sản phẩm</th>
+            <th>CPU</th>
+            <th>RAM - ROM</th>
+            <th>Pin</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Hành động</th>
+        </tr>
+    `;
+
+        if (products.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="8" style="text-align:center;">Không tìm thấy sản phẩm</td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        products.forEach((sp, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${sp.ten_san_pham}</td>
+            <td>${sp.cpu ?? ''}</td>
+            <td>${sp.ram} - ${sp.rom}</td>
+            <td>${sp.pin ?? ''}</td>
+            <td>${Number(sp.gia).toLocaleString()} VNĐ</td>
+            <td>${sp.so_luong_ton}</td>
+            <td>
+                <button class="btn-edit" data-id="${sp.id_san_pham}">Sửa</button>
+                <button class="btn-delete" data-id="${sp.id_bien_the}">Xóa</button>
+            </td>
+        `;
+            tbody.appendChild(tr);
+        });
+
+        attachDeleteEvents();
+        attachEditEvents();
+    }
+    // Hàm lọc và sắp xếp
+    function filterAndSortProducts() {
+        // Lấy giá trị từ các input
+        const searchTerm = document.querySelector('input[name="tensp"]').value.toLowerCase().trim();
+        const filterOS = document.getElementById('filter-os').value.toLowerCase();
+        const filterPrice = document.getElementById('filter-gia').value;
+        const filterQuantity = document.getElementById('filter-soluong').value;
+        const sortBy = document.getElementById('sort-by').value;
+
+        // Bước 1: Lọc sản phẩm
+        let filtered = allProducts.filter(sp => {
+            // Lọc theo tên
+            const matchName = !searchTerm || sp.ten_san_pham.toLowerCase().includes(searchTerm);
+
+            // Lọc theo OS
+            const matchOS = !filterOS || (sp.os && sp.os.toLowerCase() === filterOS);
+
+            // Lọc theo giá (≤)
+            const matchPrice = !filterPrice || Number(sp.gia) <= Number(filterPrice);
+
+            // Lọc theo số lượng (≥)
+            const matchQuantity = !filterQuantity || Number(sp.so_luong_ton) >= Number(filterQuantity);
+
+            return matchName && matchOS && matchPrice && matchQuantity;
+        });
+
+        // Bước 2: Sắp xếp
+        if (sortBy) {
+            filtered.sort((a, b) => {
+                switch (sortBy) {
+                    case 'gia-asc':
+                        return Number(a.gia) - Number(b.gia);
+                    case 'gia-desc':
+                        return Number(b.gia) - Number(a.gia);
+                    case 'soluong-asc':
+                        return Number(a.so_luong_ton) - Number(b.so_luong_ton);
+                    case 'soluong-desc':
+                        return Number(b.so_luong_ton) - Number(a.so_luong_ton);
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        // Hiển thị kết quả
+        displayProducts(filtered);
+    }
+
     function attachEditEvents() {
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -165,8 +234,8 @@ window.initQuanLySanPham = function () {
             });
         });
     }
-    
-    
+
+
     // ----- Edit modal -----
     function openEditModal(id) {
         // Mở modal với chế độ edit
@@ -313,5 +382,13 @@ window.initQuanLySanPham = function () {
     });
 
 
+    // Gắn sự kiện cho các input lọc và sắp xếp
+    document.querySelector('input[name="tensp"]').addEventListener('input', filterAndSortProducts);
+    document.getElementById('filter-os').addEventListener('change', filterAndSortProducts);
+    document.getElementById('filter-gia').addEventListener('input', filterAndSortProducts);
+    document.getElementById('filter-soluong').addEventListener('input', filterAndSortProducts);
+    document.getElementById('sort-by').addEventListener('change', filterAndSortProducts);
+
+    // Gọi loadProducts() để load dữ liệu ban đầu
     loadProducts();
 };
