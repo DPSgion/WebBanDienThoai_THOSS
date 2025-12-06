@@ -22,42 +22,78 @@ function get_all_categories($pdo)
   }
 }
 
-/**
- * Hàm lấy danh sách tất cả Sản phẩm và giá thấp nhất
- * @param PDO $pdo
- * @return array
- */
-function get_all_products_with_min_price($pdo)
-{
-  try {
-    $sql = "
-            SELECT 
-                sp.id_san_pham, 
-                sp.ten_san_pham, 
-                MIN(bt.gia) AS gia_thap_nhat,
-                ap.duong_dan_anh
-            FROM san_pham sp
-            JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
-            LEFT JOIN anh_san_pham ap ON sp.id_san_pham = ap.id_san_pham
-            GROUP BY sp.id_san_pham
-            ORDER BY sp.id_san_pham DESC
-        ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
+$romFilter   = $_GET['rom']   ?? '';
+$osFilter    = $_GET['os']    ?? '';
+$priceFilter = $_GET['price'] ?? '';
+$colorFilter = $_GET['color'] ?? '';
+
+$sqlAll = "SELECT 
+    sp.id_san_pham,
+    sp.ten_san_pham,
+    MIN(bt.gia) AS gia,
+    (
+        SELECT duong_dan_anh 
+        FROM anh_san_pham 
+        WHERE id_san_pham = sp.id_san_pham 
+        LIMIT 1
+    ) AS hinh_anh
+FROM san_pham sp
+LEFT JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+WHERE 1 ";
+
+
+// Lọc ROM
+if (!empty($romFilter)) {
+  $sqlAll .= " AND bt.rom = :rom ";
+}
+
+// Lọc OS (KHÔNG dùng param)
+if (!empty($osFilter)) {
+  if ($osFilter === 'iOS') {
+    $sqlAll .= " AND sp.os LIKE 'iOS%'";
+  } elseif ($osFilter === 'Android') {
+    $sqlAll .= " AND sp.os LIKE 'Android%'";
   }
 }
+
+// Lọc màu sắc
+if (!empty($colorFilter)) {
+  $sqlAll .= " AND bt.mau = :color ";
+}
+
+$sqlAll .= " GROUP BY sp.id_san_pham ";
+
+// Lọc giá
+if ($priceFilter == "low_high") {
+  $sqlAll .= " ORDER BY gia ASC ";
+}
+if ($priceFilter == "high_low") {
+  $sqlAll .= " ORDER BY gia DESC ";
+}
+
+$stmt = $pdo->prepare($sqlAll);
+
+// Bind đúng tham số nào có trong SQL
+if (!empty($romFilter)) {
+  $stmt->bindParam(':rom', $romFilter);
+}
+
+if (!empty($colorFilter)) {
+  $stmt->bindParam(':color', $colorFilter);
+}
+
+// KHÔNG bindParam(':os') vì SQL không có :os !!!!
+
+$stmt->execute();
+$allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 // --- THỰC THI CHÍNH ---
 
 // Lấy danh sách danh mục
 $categories = get_all_categories($pdo);
 
-// Lấy danh sách tất cả sản phẩm
-$all_products = get_all_products_with_min_price($pdo);
 
 // Lấy thông tin người dùng cho Header
 $user_name = isset($_SESSION['ho_ten']) ? $_SESSION['ho_ten'] : 'TÀI KHOẢN';
@@ -74,6 +110,26 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
   <title>Tìm kiếm & Lọc — ĐIỆN THOẠI TRỰC TUYẾN</title>
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesSanPham.css">
+  <style>
+    .filter-menu li a {
+      text-decoration: none;
+      color: inherit;
+      /* Giữ nguyên màu chữ như li */
+      display: block;
+      /* Giúp hover toàn dòng */
+    }
+
+    .filter-menu a.active {
+      font-weight: bold;
+      color: #ff3b30;
+    }
+
+    .filter-menu a.active {
+      background: #f0f0f0;
+      border-radius: 6px;
+      color: #d00;
+    }
+  </style>
 </head>
 
 <body>
@@ -111,36 +167,39 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
       <div class="filter-item">
         <button class="filter-btn">Bộ nhớ (ROM) <span class="arrow">▾</span></button>
         <ul class="filter-menu">
-          <li>32GB</li>
-          <li>64GB</li>
-          <li>128GB</li>
-          <li>256GB</li>
-          <li>512GB</li>
+          <li><a href="SanPham.php?rom=&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">All</a></li>
+          <li><a class="<?= (($_GET['rom'] ?? '') == '32GB') ? 'active' : '' ?>" href="SanPham.php?rom=32GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">32GB</a></li>
+          <li><a class="<?= (($_GET['rom'] ?? '') == '64GB') ? 'active' : '' ?>" href="SanPham.php?rom=64GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">64GB</a></li>
+          <li><a class="<?= (($_GET['rom'] ?? '') == '128GB') ? 'active' : '' ?>" href="SanPham.php?rom=128GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">128GB</a></li>
+          <li><a class="<?= (($_GET['rom'] ?? '') == '256GB') ? 'active' : '' ?>" href="SanPham.php?rom=256GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">256GB</a></li>
+          <li><a class="<?= (($_GET['rom'] ?? '') == '512GB') ? 'active' : '' ?>" href="SanPham.php?rom=512GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">512GB</a></li>
         </ul>
       </div>
       <div class="filter-item">
         <button class="filter-btn">Hệ điều hành <span class="arrow">▾</span></button>
         <ul class="filter-menu">
-          <li>Android</li>
-          <li>IOS</li>
+          <li><a href="SanPham.php?os=&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">All</a></li>
+          <li><a class="<?= (($_GET['os'] ?? '') == 'iOS') ? 'active' : '' ?>" href="SanPham.php?os=iOS&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">iOS</a></li>
+          <li><a class="<?= (($_GET['os'] ?? '') == 'Android') ? 'active' : '' ?>" href="SanPham.php?os=Android&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Android</a></li>
         </ul>
       </div>
       <div class="filter-item">
         <button class="filter-btn">Giá <span class="arrow">▾</span></button>
         <ul class="filter-menu">
-          <li>Từ thấp đến cao</li>
-          <li>Từ cao đến thấp</li>
-          <li>Giá giảm nhiều</li>
+          <li><a href="SanPham.php?price=&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Mặc định</a></li>
+          <li><a class="<?= (($_GET['price'] ?? '') == 'low_high') ? 'active' : '' ?>" href="SanPham.php?price=low_high&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Giá thấp → cao</a></li>
+          <li><a class="<?= (($_GET['price'] ?? '') == 'high_low') ? 'active' : '' ?>" href="SanPham.php?price=high_low&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Giá cao → thấp</a></li>
         </ul>
       </div>
 
       <div class="filter-item">
         <button class="filter-btn">Màu sắc <span class="arrow">▾</span></button>
         <ul class="filter-menu">
-          <li>Cam</li>
-          <li>Đỏ</li>
-          <li>Trắng</li>
-          <li>Đen</li>
+          <li><a href="SanPham.php?color=&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Tất cả</a></li>
+          <li><a class="<?= (($_GET['color'] ?? '') == 'Orange') ? 'active' : '' ?>" href="SanPham.php?color=Orange&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Cam</a></li>
+          <li><a class="<?= (($_GET['color'] ?? '') == 'Red') ? 'active' : '' ?>" href="SanPham.php?color=Red&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Đỏ</a></li>
+          <li><a class="<?= (($_GET['color'] ?? '') == 'White') ? 'active' : '' ?>" href="SanPham.php?color=White&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Trắng</a></li>
+          <li><a class="<?= (($_GET['color'] ?? '') == 'Black') ? 'active' : '' ?>" href="SanPham.php?color=Black&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Đen</a></li>
         </ul>
       </div>
     </div>
@@ -148,230 +207,32 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
     <!-- iPhone chính hãng -->
     <section class="section-grid">
       <div class="section-header">
-        <h2>iPhone chính hãng</h2>
+        <h2>Tất cả sản phẩm</h2>
       </div>
       <div class="products-grid">
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <a href="ChiTietSanPham.html" aria-label="Xem chi tiết iPhone 17 Pro">
-            <img src="uploads/products/iphone17.webp" alt="iPhone 17 Pro" class="prod-img">
-            <div class="prod-name">iPhone 17 Pro</div>
-          </a>
-          <div class="prod-prices">
-            <div class="sale">38.999.000đ</div>
-            <div class="orig">41.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone 16 pro max.webp" alt="iPhone 16 Pro" class="prod-img">
-          <div class="prod-name">iPhone 16 Pro</div>
-          <div class="prod-prices">
-            <div class="sale">36.999.000đ</div>
-            <div class="orig">39.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone 15 pro max.webp" alt="iPhone 15 Pro" class="prod-img">
-          <div class="prod-name">iPhone 15 Pro</div>
-          <div class="prod-prices">
-            <div class="sale">33.999.000đ</div>
-            <div class="orig">36.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iphone.jpg" alt="iPhone X" class="prod-img">
-          <div class="prod-name">iPhone X</div>
-          <div class="prod-prices">
-            <div class="sale">18.999.000đ</div>
-            <div class="orig">21.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone Air.webp" alt="iPhone Air" class="prod-img">
-          <div class="prod-name">iPhone Air</div>
-          <div class="prod-prices">
-            <div class="sale">24.999.000đ</div>
-            <div class="orig">27.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone 15 pro max.webp" alt="iPhone 15 Pro" class="prod-img">
-          <div class="prod-name">iPhone 15 Pro</div>
-          <div class="prod-prices">
-            <div class="sale">33.999.000đ</div>
-            <div class="orig">36.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone 16 pro max.webp" alt="iPhone 16 Pro" class="prod-img">
-          <div class="prod-name">iPhone 16 Pro</div>
-          <div class="prod-prices">
-            <div class="sale">36.999.000đ</div>
-            <div class="orig">39.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <a href="ChiTietSanPham.html" aria-label="Xem chi tiết iPhone 17 Pro">
-            <img src="uploads/products/iphone17.webp" alt="iPhone 17 Pro" class="prod-img">
-            <div class="prod-name">iPhone 17 Pro</div>
-          </a>
-          <div class="prod-prices">
-            <div class="sale">38.999.000đ</div>
-            <div class="orig">41.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iPhone 15 pro max.webp" alt="iPhone 15 Pro" class="prod-img">
-          <div class="prod-name">iPhone 15 Pro</div>
-          <div class="prod-prices">
-            <div class="sale">33.999.000đ</div>
-            <div class="orig">36.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/iphone.jpg" alt="iPhone X" class="prod-img">
-          <div class="prod-name">iPhone X</div>
-          <div class="prod-prices">
-            <div class="sale">18.999.000đ</div>
-            <div class="orig">21.990.000đ</div>
-          </div>
-        </div>
-      </div>
+        <?php foreach ($allProducts as $p): ?>
+          <div class="product-card">
+            <div class="label">Trả góp 0%</div>
+            <button class="fav">♡</button>
 
-      <div class="see-more">
-        <button class="btn see">XEM THÊM →</button>
-      </div>
-    </section>
+            <a href="ChiTietSanPham.php?id=<?= $p['id_san_pham'] ?>" aria-label="Xem chi tiết <?= $p['ten_san_pham'] ?>">
+              <img src="<?= $p['hinh_anh'] ?>" alt="<?= $p['ten_san_pham'] ?>" class="prod-img">
+              <div class="prod-name"><?= $p['ten_san_pham'] ?></div>
+            </a>
 
-    <!--samsung -->
-    <section class="section-grid">
-      <div class="section-header">
-        <h2>SamSung chính hãng</h2>
-      </div>
-      <div class="products-grid">
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <a href="ChiTietSanPham.html" aria-label="Xem chi tiết iPhone 17 Pro (Cũ)">
-            <img src="uploads/products/samsung galaxy A17.webp" alt="samsung galaxy A17" class="prod-img">
-            <div class="prod-name">SamSung A 17 </div>
-          </a>
-          <div class="prod-prices">
-            <div class="sale">28.999.000đ</div>
-            <div class="orig">31.990.000đ</div>
+            <?php if ($p['gia'] === null): ?>
+              <div class="prod-prices">
+                <div class="sale">Liên hệ</div>
+              </div>
+            <?php else: ?>
+              <div class="prod-prices">
+                <div class="sale"><?= number_format($p['gia'], 0, ',', '.') ?>đ</div>
+                <div class="orig"><?= number_format($p['gia'] * 1.08, 0, ',', '.') ?>đ</div>
+              </div>
+            <?php endif; ?>
           </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung Ultra S25.webp" alt="SamSung Ultra S25" class="prod-img">
-          <div class="prod-name">SamSung Ultra S25</div>
-          <div class="prod-prices">
-            <div class="sale">24.599.000đ</div>
-            <div class="orig">27.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/samsung galaxy z fLIP7.webp" alt="samsung galaxy z fLIP7" class="prod-img">
-          <div class="prod-name">samsung galaxy z fLIP7</div>
-          <div class="prod-prices">
-            <div class="sale">26.999.000đ</div>
-            <div class="orig">29.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/Samsung.webp" alt="SamSung" class="prod-img">
-          <div class="prod-name">SamSung</div>
-          <div class="prod-prices">
-            <div class="sale">9.999.000đ</div>
-            <div class="orig">12.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung A14.jpg" alt="SamSung A14" class="prod-img">
-          <div class="prod-name">SamSung A14</div>
-          <div class="prod-prices">
-            <div class="sale">14.999.000đ</div>
-            <div class="orig">17.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung A24.webp" alt="SamSung A24" class="prod-img">
-          <div class="prod-name">SamSung A24</div>
-          <div class="prod-prices">
-            <div class="sale">24.599.000đ</div>
-            <div class="orig">27.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung A55.jpg" alt="SamSung A55" class="prod-img">
-          <div class="prod-name">SamSung A55</div>
-          <div class="prod-prices">
-            <div class="sale">26.999.000đ</div>
-            <div class="orig">29.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <a href="ChiTietSanPham.html" aria-label="Xem chi tiết iPhone 17 Pro (Cũ)">
-            <img src="uploads/products/SamSung M14.jpg" alt="SamSung M14" class="prod-img">
-            <div class="prod-name">SamSung M14</div>
-          </a>
-          <div class="prod-prices">
-            <div class="sale">28.999.000đ</div>
-            <div class="orig">31.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung S23.jpg" alt="SamSung S23" class="prod-img">
-          <div class="prod-name">SamSung S23</div>
-          <div class="prod-prices">
-            <div class="sale">24.599.000đ</div>
-            <div class="orig">27.990.000đ</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="label">Trả góp 0%</div>
-          <button class="fav">♡</button>
-          <img src="uploads/products/SamSung S25.avif" alt="SamSung S25" class="prod-img">
-          <div class="prod-name">SamSung S25</div>
-          <div class="prod-prices">
-            <div class="sale">9.999.000đ</div>
-            <div class="orig">12.990.000đ</div>
-          </div>
-        </div>
+        <?php endforeach; ?>
+
       </div>
 
       <div class="see-more">
