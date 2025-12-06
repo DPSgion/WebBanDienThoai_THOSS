@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3308
--- Thời gian đã tạo: Th12 04, 2025 lúc 03:48 PM
+-- Thời gian đã tạo: Th12 06, 2025 lúc 03:16 PM
 -- Phiên bản máy phục vụ: 9.1.0
 -- Phiên bản PHP: 8.3.14
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `anh_san_pham` (
   `duong_dan_anh` varchar(255) NOT NULL,
   PRIMARY KEY (`id_anh`),
   KEY `id_san_pham` (`id_san_pham`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `anh_san_pham`
@@ -45,7 +45,8 @@ INSERT INTO `anh_san_pham` (`id_anh`, `id_san_pham`, `duong_dan_anh`) VALUES
 (2, 14, 'uploads/products/iphone 15 pro max.webp'),
 (3, 15, 'uploads/products/iphone 16 pro max.webp'),
 (4, 16, 'uploads/products/iphone13 pro max.webp'),
-(5, 17, 'uploads/products/iphone17.webp');
+(5, 17, 'uploads/products/iphone17.webp'),
+(6, 22, 'uploads/products/iphone.jpg');
 
 -- --------------------------------------------------------
 
@@ -187,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `nguoi_dung` (
   `vai_tro` enum('admin','khachhang') DEFAULT 'khachhang',
   PRIMARY KEY (`id_nguoi_dung`),
   UNIQUE KEY `sdt` (`sdt`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `nguoi_dung`
@@ -195,7 +196,8 @@ CREATE TABLE IF NOT EXISTS `nguoi_dung` (
 
 INSERT INTO `nguoi_dung` (`id_nguoi_dung`, `ho_ten`, `sdt`, `mat_khau`, `vai_tro`) VALUES
 (1, 'Admin', '123', '$2y$12$uUX9sJFZu1fjW5l6N1opCOlSO5T5CpZtyTWidRrClzKgmBiTBoE9q', 'admin'),
-(3, 'Nguyễn Trọng Tín', '0123456789', '$2y$10$UCiIdU7YmE4l92.IBdg3meQMszpyaZk0MhDaRjqaYkzFQfLvrABt2', 'khachhang');
+(3, 'Nguyễn Trọng Tín', '0123456789', '$2y$10$UCiIdU7YmE4l92.IBdg3meQMszpyaZk0MhDaRjqaYkzFQfLvrABt2', 'khachhang'),
+(4, 'Nguyễn Trọng Tín', '0792132904', '$2y$10$QbURf0xZfrdtWVE3F6n81ODpPz1.GrqBxLsqVm4hrKkuZp/KV7.Qe', 'khachhang');
 
 -- --------------------------------------------------------
 
