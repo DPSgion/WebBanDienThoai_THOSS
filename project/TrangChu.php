@@ -83,7 +83,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
 
             <nav class="main-nav" aria-label="Main navigation">
               <!--SỬA-->
-              <a href="SanPham.html">📱SẢN PHẨM</a>
+              <a href="SanPham.php">📱SẢN PHẨM</a>
               <a href="GioHang.html">🛒GIỎ HÀNG</a>
               <a id="accountLink" href="">
                 <?php

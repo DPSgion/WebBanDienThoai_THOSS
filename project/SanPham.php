@@ -1,5 +1,73 @@
+<?php
+session_start();
+include 'config/config.php'; 
+
+// --- CÁC HÀM XỬ LÝ DATABASE ---
+
+/**
+ * Hàm lấy danh sách tất cả Danh mục
+ * @param PDO $pdo
+ * @return array
+ */
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+
+/**
+ * Hàm lấy danh sách tất cả Sản phẩm và giá thấp nhất
+ * @param PDO $pdo
+ * @return array
+ */
+function get_all_products_with_min_price($pdo)
+{
+  try {
+    $sql = "
+            SELECT 
+                sp.id_san_pham, 
+                sp.ten_san_pham, 
+                MIN(bt.gia) AS gia_thap_nhat,
+                ap.duong_dan_anh
+            FROM san_pham sp
+            JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+            LEFT JOIN anh_san_pham ap ON sp.id_san_pham = ap.id_san_pham
+            GROUP BY sp.id_san_pham
+            ORDER BY sp.id_san_pham DESC
+        ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+
+// --- THỰC THI CHÍNH ---
+
+// Lấy danh sách danh mục
+$categories = get_all_categories($pdo);
+
+// Lấy danh sách tất cả sản phẩm
+$all_products = get_all_products_with_min_price($pdo);
+
+// Lấy thông tin người dùng cho Header
+$user_name = isset($_SESSION['ho_ten']) ? $_SESSION['ho_ten'] : 'TÀI KHOẢN';
+$account_link = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ? 'logout.php' : 'login.php';
+$account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ? '👤XIN CHÀO, ' . htmlspecialchars($user_name) : '👤TÀI KHOẢN';
+
+?>
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,34 +75,30 @@
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesSanPham.css">
 </head>
+
 <body>
-
-  
-
   <!-- MAIN HEADER / NAV -->
   <header class="main-header">
     <div class="container header-row">
       <div class="logo-left">
         <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
       </div>
-
       <div class="search-center">
-        <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
-        <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+        <form action="TimKiem.php" method="GET">
+          <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
+          <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+        </form>
       </div>
-
       <div class="icons-right">
-        <!--SỬA-->
-        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.html" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
-        <a id="accountLink" href="DangNhap.html">👤</a>
+        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
+        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+        <a id="accountLink" href="DangNhap.php">👤</a>
         <div class="danh-container">
-          <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
+          <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-            <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
-            <li><a href="#">Samsung</a></li>
-            <!--SỬA-->
-            <li><a href="#">Máy tính bảng</a></li>
+            <?php foreach ($categories as $cat): ?>
+              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
@@ -43,9 +107,7 @@
 
 
   <main class="container search-page">
-    <!-- Filter bar -->
     <div class="filter-bar">
-      <!--SỬA-->
       <div class="filter-item">
         <button class="filter-btn">Bộ nhớ (ROM) <span class="arrow">▾</span></button>
         <ul class="filter-menu">
@@ -81,8 +143,6 @@
           <li>Đen</li>
         </ul>
       </div>
-      <!--END SỬA-->
-      
     </div>
 
     <!-- iPhone chính hãng -->
@@ -329,9 +389,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 1</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -339,9 +399,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 2</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -349,9 +409,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 3</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -362,53 +422,61 @@
 
   <script>
     // simple dropdown toggle for filter bar
-    document.querySelectorAll('.filter-item').forEach(fi=>{
+    document.querySelectorAll('.filter-item').forEach(fi => {
       const btn = fi.querySelector('.filter-btn');
       const menu = fi.querySelector('.filter-menu');
-      if(!menu) return;
-      btn.addEventListener('click', ()=>{
+      if (!menu) return;
+      btn.addEventListener('click', () => {
         const open = menu.style.display === 'block';
-        document.querySelectorAll('.filter-menu').forEach(m=>m.style.display='none');
+        document.querySelectorAll('.filter-menu').forEach(m => m.style.display = 'none');
         menu.style.display = open ? 'none' : 'block';
       });
     });
     // close menus on outside click
-    document.addEventListener('click', (e)=>{
-      if(!e.target.closest('.filter-item')){
-        document.querySelectorAll('.filter-menu').forEach(m=>m.style.display='none');
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.filter-item')) {
+        document.querySelectorAll('.filter-menu').forEach(m => m.style.display = 'none');
       }
     });
   </script>
   <script>
     // danh mục dropdown (shared behavior)
-    (function(){
-      document.querySelectorAll('.danh-container').forEach(dc=>{
+    (function() {
+      document.querySelectorAll('.danh-container').forEach(dc => {
         const btn = dc.querySelector('.danh-muc');
         const menu = dc.querySelector('.danh-menu');
-        if(!btn || !menu) return;
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
-        menu.addEventListener('click', (e)=> e.stopPropagation());
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
+        });
+        menu.addEventListener('click', (e) => e.stopPropagation());
       });
-      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
+        dc.classList.remove('open');
+        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
+      }));
     })();
   </script>
   <!--SỬA-->
   <script>
-  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
-  // localStorage.setItem('loggedIn', 'true');
+    // Giả sử sau khi đăng nhập bạn lưu trạng thái:
+    // localStorage.setItem('loggedIn', 'true');
 
-  const accountLink = document.getElementById("accountLink");
-  const isLoggedIn = localStorage.getItem("loggedIn");
+    const accountLink = document.getElementById("accountLink");
+    const isLoggedIn = localStorage.getItem("loggedIn");
 
-  if (isLoggedIn === "true") {
-    // Nếu đã đăng nhập → vào trang user
-    accountLink.href = "User.html";
-    accountLink.innerHTML = "👤";
-  } else {
-    // Nếu chưa đăng nhập → vào trang đăng nhập
-    accountLink.href = "DangNhap.html";
-    accountLink.innerHTML = "👤";
-  }
-</script>
+    if (isLoggedIn === "true") {
+      // Nếu đã đăng nhập → vào trang user
+      accountLink.href = "User.html";
+      accountLink.innerHTML = "👤";
+    } else {
+      // Nếu chưa đăng nhập → vào trang đăng nhập
+      accountLink.href = "DangNhap.html";
+      accountLink.innerHTML = "👤";
+    }
+  </script>
 </body>
+
 </html>
