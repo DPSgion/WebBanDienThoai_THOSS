@@ -22,8 +22,8 @@
 
       <div class="icons-right">
         <!--SỬA-->
-        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.html" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
+        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
         <div class="danh-container">
           <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
