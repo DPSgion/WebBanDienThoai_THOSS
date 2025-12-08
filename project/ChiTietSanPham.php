@@ -44,6 +44,20 @@ foreach ($variants as $v) {
 
 // Giá thấp nhất
 $minPrice = min(array_column($variants, 'gia'));
+//Ham Lay Danh Muc
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+$categories = get_all_categories($pdo);
 ?>
 <!doctype html>
 <html lang="vi">
@@ -80,10 +94,9 @@ $minPrice = min(array_column($variants, 'gia'));
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-            <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
-            <li><a href="#">Samsung</a></li>
-            <!--SỬA-->
-            <li><a href="#">Máy tính bảng</a></li>
+          <?php foreach ($categories as $cat): ?>
+              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
@@ -203,8 +216,8 @@ $minPrice = min(array_column($variants, 'gia'));
           </div>
 
           <div class="purchase-actions">
-            <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
-            <button id="buyNow" class="btn primary">Mua ngay</button>
+           <a id="addCart" class="btn outline" href="GioHang.php">Thêm vào giỏ hàng</a>
+            <a id="buyNow" class="btn primary" href="ThanhToan.php">Mua ngay</a>
           </div>
       </aside>
     </div>

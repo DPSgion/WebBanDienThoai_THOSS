@@ -25,9 +25,9 @@
 
       <div class="icons-right">
         <!--SỬA-->
-        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.html" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
-         <a id="accountLink" href="DangNhap.html">👤</a>
+        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
+        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+         <a id="accountLink" href="User.php">👤</a>
         <div class="danh-container">
           <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
@@ -392,23 +392,5 @@
       document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
     })();
   </script>
-  <!--SỬA-->
-  <script>
-  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
-  // localStorage.setItem('loggedIn', 'true');
-
-  const accountLink = document.getElementById("accountLink");
-  const isLoggedIn = localStorage.getItem("loggedIn");
-
-  if (isLoggedIn === "true") {
-    // Nếu đã đăng nhập → vào trang user
-    accountLink.href = "User.html";
-    accountLink.innerHTML = "👤";
-  } else {
-    // Nếu chưa đăng nhập → vào trang đăng nhập
-    accountLink.href = "DangNhap.html";
-    accountLink.innerHTML = "👤";
-  }
-</script>
 </body>
 </html>

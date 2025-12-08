@@ -84,8 +84,8 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
             <nav class="main-nav" aria-label="Main navigation">
               <!--SỬA-->
               <a href="SanPham.php">📱SẢN PHẨM</a>
-              <a href="GioHang.html">🛒GIỎ HÀNG</a>
-              <a id="accountLink" href="">
+              <a href="GioHang.php">🛒GIỎ HÀNG</a>
+              <a id="accountLink" href="User.php">
                 <?php
                 if (isset($_SESSION['ho_ten'])) {
                   echo "👤 Xin chào, " . $_SESSION['ho_ten'];

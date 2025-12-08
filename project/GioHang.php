@@ -1,3 +1,22 @@
+<?php
+  session_start();
+  include_once 'config/config.php'; 
+  // Lấy danh mục
+  function get_all_categories($pdo)
+  {
+    try {
+      $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute();
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      // Log lỗi
+      return [];
+    }
+  }
+
+  $categories = get_all_categories($pdo);
+?>
 <!doctype html>
 <html lang="vi">
 <head>
@@ -24,16 +43,14 @@
       </div>
 
       <div class="icons-right">
-        <!--SỬA-->
-        <a href="TrangChu.html" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a id="accountLink" href="DangNhap.html">👤</a>
+        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
+        <a id="accountLink" href="User.php">👤</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-            <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
-            <li><a href="#">Samsung</a></li>
-            <!--SỬA-->
-            <li><a href="#">Máy tính bảng</a></li>
+             <?php foreach ($categories as $cat): ?>
+              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
@@ -85,7 +102,7 @@
             <div class="item-price price-red">14.599.000 đ</div>
             <div class="item-controls">
               <div class="qty-box">
-                <button class="qty-btn qty-minus">−</button>
+                <button class="qty-btn qty-minus">-</button>
                 <input class="qty-input" type="number" value="1" min="1">
                 <button class="qty-btn qty-plus">+</button>
               </div>
@@ -126,7 +143,7 @@
         
         <div class="summary">
           <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
-          <a id="checkout" class="btn checkout" href="ThanhToan.html">THANH TOÁN</a>
+          <a id="checkout" class="btn checkout" href="ThanhToan.php">THANH TOÁN</a>
         </div>
       </div>
 
@@ -255,25 +272,6 @@
         document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
       })();
     </script>
-
-  <!--SỬA-->
-  <script>
-  // Giả sử sau khi đăng nhập bạn lưu trạng thái:
-  // localStorage.setItem('loggedIn', 'true');
-
-  const accountLink = document.getElementById("accountLink");
-  const isLoggedIn = localStorage.getItem("loggedIn");
-
-  if (isLoggedIn === "true") {
-    // Nếu đã đăng nhập → vào trang user
-    accountLink.href = "User.html";
-    accountLink.innerHTML = "👤";
-  } else {
-    // Nếu chưa đăng nhập → vào trang đăng nhập
-    accountLink.href = "DangNhap.html";
-    accountLink.innerHTML = "👤";
-  }
-</script>
 
 </body>
 </html>

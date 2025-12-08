@@ -1,3 +1,22 @@
+<?php
+   session_start();
+   include_once 'config/config.php'; 
+   // Lấy danh mục
+   function get_all_categories($pdo)
+   {
+     try {
+       $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+       $stmt = $pdo->prepare($sql);
+       $stmt->execute();
+       return $stmt->fetchAll(PDO::FETCH_ASSOC);
+     } catch (PDOException $e) {
+       // Log lỗi
+       return [];
+     }
+   }
+ 
+   $categories = get_all_categories($pdo);
+?>
 <!doctype html>
 <html lang="vi">
 <head>
@@ -27,10 +46,9 @@
         <div class="danh-container">
           <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-            <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
-            <li><a href="#">Samsung</a></li>
-            <!--SỬA-->
-            <li><a href="#">Máy tính bảng</a></li>
+          <?php foreach ($categories as $cat): ?>
+              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
