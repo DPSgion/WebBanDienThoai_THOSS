@@ -1,7 +1,7 @@
 <?php
 //File này hỗ trợ Chi tiết sản phẩm
 
-require_once "config/config.php";
+require_once "/project/config/config.php";
 
 $id = $_GET['id'] ?? '';
 $rom = $_GET['rom'] ?? '';

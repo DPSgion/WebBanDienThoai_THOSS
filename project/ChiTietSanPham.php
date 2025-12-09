@@ -1,6 +1,5 @@
 <?php
-require "config/config.php";  // file kết nối CSDL
-
+require_once "config/config.php";  // file kết nối CSDL
 // kiểm tra id
 if (!isset($_GET['id']) || empty($_GET['id'])) {
   die("Không tìm thấy sản phẩm.");
@@ -8,7 +7,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $id = $_GET['id'];
 
-// 1️⃣ Lấy thông tin sản phẩm
+//Lấy thông tin sản phẩm
 $sql = "SELECT * FROM san_pham WHERE id_san_pham = :id LIMIT 1";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['id' => $id]);
@@ -18,13 +17,13 @@ if (!$product) {
   die("Sản phẩm không tồn tại.");
 }
 
-// 2️⃣ Lấy danh sách biến thể (ROM, màu, giá)
+//Lấy danh sách biến thể (ROM, màu, giá)
 $sqlVar = "SELECT * FROM bien_the WHERE id_san_pham = :id ORDER BY gia ASC";
 $stmtVar = $pdo->prepare($sqlVar);
 $stmtVar->execute(['id' => $id]);
 $variants = $stmtVar->fetchAll(PDO::FETCH_ASSOC);
 
-// 3️⃣ Lấy danh sách ảnh
+//Lấy danh sách ảnh
 $sqlImg = "SELECT * FROM anh_san_pham WHERE id_san_pham = :id";
 $stmtImg = $pdo->prepare($sqlImg);
 $stmtImg->execute(['id' => $id]);
@@ -44,6 +43,7 @@ foreach ($variants as $v) {
 
 // Giá thấp nhất
 $minPrice = min(array_column($variants, 'gia'));
+
 //Ham Lay Danh Muc
 function get_all_categories($pdo)
 {
@@ -53,11 +53,28 @@ function get_all_categories($pdo)
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   } catch (PDOException $e) {
-    // Log lỗi
     return [];
   }
 }
 $categories = get_all_categories($pdo);
+
+//Lấy id_biến thể được chọn để sang GioHang
+$sqlVariant = "SELECT id_bien_the, gia 
+               FROM bien_the 
+               WHERE id_san_pham = :id 
+                 AND rom = :rom 
+                 AND mau = :color
+               LIMIT 1";
+
+$stmtV = $pdo->prepare($sqlVariant);
+$stmtV->execute([
+  'id' => $product['id_san_pham'],
+  'rom' => $romList[0],
+  'color' => $colorList[0]
+]);
+$defaultVariant = $stmtV->fetch(PDO::FETCH_ASSOC);
+
+$default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
 ?>
 <!doctype html>
 <html lang="vi">
@@ -71,9 +88,6 @@ $categories = get_all_categories($pdo);
 </head>
 
 <body>
-
-
-
   <!-- MAIN HEADER / NAV -->
   <header class="main-header">
     <div class="container header-row">
@@ -89,12 +103,12 @@ $categories = get_all_categories($pdo);
       <div class="icons-right">
         <!--SỬA-->
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒</a>
         <a id="accountLink" href="User.php">👤</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-          <?php foreach ($categories as $cat): ?>
+            <?php foreach ($categories as $cat): ?>
               <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
             <?php endforeach; ?>
           </ul>
@@ -106,7 +120,7 @@ $categories = get_all_categories($pdo);
   <!-- MAIN CONTENT -->
   <main class="container product-page">
     <div class="product-grid">
-      <!-- LEFT COLUMN -->
+
       <section class="left-col">
         <div class="product-gallery">
           <button class="slide-btn prev" aria-label="Previous">◀</button>
@@ -154,7 +168,6 @@ $categories = get_all_categories($pdo);
       <!-- RIGHT COLUMN -->
       <aside class="right-col">
         <h1 class="product-title"><?= $product['ten_san_pham'] ?></h1>
-
         <div class="variants">
           <div class="variant-group">
             <label class="variant-label">Bộ nhớ:</label>
@@ -216,7 +229,16 @@ $categories = get_all_categories($pdo);
           </div>
 
           <div class="purchase-actions">
-           <a id="addCart" class="btn outline" href="GioHang.php">Thêm vào giỏ hàng</a>
+
+            <form action="add_to_cart.php" method="POST">
+              <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
+              <!-- sẽ cập nhật bằng JS -->
+              <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
+              <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
+              <input type="hidden" name="qty" id="qtyHidden" value="1">
+
+              <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
+            </form>
             <a id="buyNow" class="btn primary" href="ThanhToan.php">Mua ngay</a>
           </div>
       </aside>
@@ -338,36 +360,69 @@ $categories = get_all_categories($pdo);
       }));
     })();
 
-    //XỬ lí giá của Backend
+    //XỬ lí giá của Backend gửi lên để người dùng chọn
     document
       .querySelectorAll('#storageOptions button, #colorOptions button')
       .forEach(btn => btn.addEventListener('click', updatePrice));
 
     function updatePrice() {
-
       const activeRom = document.querySelector('#storageOptions .active');
       const activeColor = document.querySelector('#colorOptions .active');
-
       if (!activeRom || !activeColor) return;
-
       const rom = activeRom.dataset.value;
       const color = activeColor.dataset.color;
       const id = "<?= $id ?>";
-
-      fetch(`getPrice.php?id=${id}&rom=${rom}&color=${color}`)
+      fetch(`/project/includes/functionsKhachHang/getPrice.php?id=${id}&rom=${rom}&color=${color}`)
         .then(res => res.text())
         .then(price => {
-
-          // Nếu giá là liên hệ
           if (price === "LH") {
             document.querySelector('.price-red').innerText = "Liên hệ";
             return;
           }
-
           // Nếu giá là số thì format
           price = Number(price);
           document.querySelector('.price-red').innerText =
             price.toLocaleString("vi-VN") + "đ";
+        });
+    }
+
+    //Khi ấn THêm giỏ hàng
+    // ROM
+    document.querySelectorAll('#storageOptions .variant').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('romInput').value = btn.dataset.value;
+      });
+    });
+
+    // COLOR
+    document.querySelectorAll('#colorOptions .color').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('colorInput').value = btn.dataset.color;
+      });
+    });
+
+    // QTY
+    document.getElementById('qtyPlus').onclick = e => {
+      e.preventDefault();
+      let q = Number(qtyInput.value) + 1;
+      qtyInput.value = q;
+      qtyHidden.value = q;
+    };
+    document.getElementById('qtyMinus').onclick = e => {
+      e.preventDefault();
+      let q = Math.max(1, Number(qtyInput.value) - 1);
+      qtyInput.value = q;
+      qtyHidden.value = q;
+    };
+
+    function loadVariant() {
+      let rom = document.querySelector('#storageOptions .active').dataset.value;
+      let color = document.querySelector('#colorOptions .active').dataset.color;
+
+      fetch(`get_variant.php?id=<?= $product['id_san_pham'] ?>&rom=${rom}&color=${color}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('idBienTheInput').value = data.id_bien_the;
         });
     }
   </script>

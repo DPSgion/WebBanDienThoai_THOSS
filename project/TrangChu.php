@@ -94,7 +94,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
                 }
                 ?>
               </a>
-              <!--END SỬA-->
+             <a href="logout.php">Đăng xuất</a>
             </nav>
             <!-- Contact block moved inside the bordered area (right side) -->
             <!--SỬA-->

@@ -1,24 +1,50 @@
 <?php
-  session_start();
-  include_once 'config/config.php'; 
-  // Lấy danh mục
-  function get_all_categories($pdo)
-  {
-    try {
-      $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-      $stmt = $pdo->prepare($sql);
-      $stmt->execute();
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-      // Log lỗi
-      return [];
-    }
+session_start();
+include_once 'config/config.php';
+// Lấy danh mục
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
   }
+}
+$categories = get_all_categories($pdo);
 
-  $categories = get_all_categories($pdo);
+$id_user = $_SESSION['id_nguoi_dung'];
+
+$sql = "SELECT ghct.*, bt.gia, sp.ten_san_pham, asp.duong_dan_anh
+        FROM gio_hang_chi_tiet ghct
+        JOIN bien_the bt ON ghct.id_bien_the = bt.id_bien_the
+        JOIN san_pham sp ON bt.id_san_pham = sp.id_san_pham
+        LEFT JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
+        WHERE ghct.id_gio_hang = (SELECT id_gio_hang FROM gio_hang WHERE id_nguoi_dung = ? LIMIT 1)";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$id_user]);
+$cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//
+if (isset($_GET['delete'])) {
+  $id_delete = $_GET['delete'];
+
+  // Xóa trong database
+  $sql = "DELETE FROM gio_hang_chi_tiet WHERE id_chi_tiet = ?";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute([$id_delete]);
+
+  // Load lại trang
+  header("Location: GioHang.php");
+  exit();
+}
 ?>
+
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -26,29 +52,25 @@
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesCart.css">
 </head>
+
 <body>
-
-  
-
   <!-- MAIN HEADER / NAV -->
   <header class="main-header">
     <div class="container header-row">
       <div class="logo-left">
         <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
       </div>
-
       <div class="search-center">
         <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
         <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
       </div>
-
       <div class="icons-right">
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a id="accountLink" href="User.php">👤</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-             <?php foreach ($categories as $cat): ?>
+            <?php foreach ($categories as $cat): ?>
               <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
             <?php endforeach; ?>
           </ul>
@@ -63,127 +85,80 @@
       <div class="cart-header">
         <h2>GIỎ HÀNG CỦA BẠN <span class="lock">🔒</span></h2>
       </div>
-      <!--SỬA-->
       <div class="select-all">
-          <h4><input type="checkbox" id="selectAll"> TẤT CẢ</h4>
+        <h4><input type="checkbox" id="selectAll"> TẤT CẢ</h4>
       </div>
-      <!--END SỬA-->
-
       <div class="cart-list" id="cartList">
         <!-- product item template -->
-        <div class="cart-item" data-price="38999000">
-          <div class="item-left">
-            <img src="uploads/products/iphone17.webp" alt="iPhone 17 pro max 256GB, Cam" class="item-thumb">
-          </div>
-          <div class="item-mid">
-            <div class="item-name">iPhone 17 pro max 256GB, Cam</div>
-            <div class="item-price price-red">38.999.000 đ</div>
-            <div class="item-controls">
-              <div class="qty-box">
-                <button class="qty-btn qty-minus">−</button>
-                <input class="qty-input" type="number" value="1" min="1">
-                <button class="qty-btn qty-plus">+</button>
+        <?php if (!empty($cart_items)):
+          foreach ($cart_items as $item): ?>
+            <div class="cart-item" data-price="<?= $item['gia'] ?>">
+              <div class="item-left">
+                <img src="uploads/products/<?= $item['duong_dan_anh'] ?? '' ?>" alt="" class="item-thumb">
               </div>
-              <button class="btn choose">CHỌN</button>
-            </div>
-          </div>
-          <div class="item-right">
-            <button class="del">×</button>
-            <label class="select-wrap"><input type="checkbox" class="select-item"> Chọn</label>
-          </div>
-        </div>
-
-        <div class="cart-item" data-price="14599000">
-          <div class="item-left">
-            <img src="uploads/products/Readme-pro.jpg" alt="Readme 256GB, Xanh lam" class="item-thumb">
-          </div>
-          <div class="item-mid">
-            <div class="item-name">Readme 256GB, Xanh lam</div>
-            <div class="item-price price-red">14.599.000 đ</div>
-            <div class="item-controls">
-              <div class="qty-box">
-                <button class="qty-btn qty-minus">-</button>
-                <input class="qty-input" type="number" value="1" min="1">
-                <button class="qty-btn qty-plus">+</button>
+              <div class="item-mid">
+                <div class="item-name"><?= $item['ten_san_pham'] ?></div>
+                <div class="item-price price-red">
+                  <?= $item['gia'] === null ? 'Liên hệ' : number_format($item['gia'], 0, ',', '.') . 'đ' ?>
+                </div>
+                <div class="item-controls">
+                  <div class="qty-box">
+                    <button class="qty-btn qty-minus">−</button>
+                    <input class="qty-input" type="number" value="<?= $item['so_luong'] ?>" min="1">
+                    <button class="qty-btn qty-plus">+</button>
+                  </div>
+                  <button class="btn choose">CHỌN</button>
+                </div>
               </div>
-              <button class="btn choose">CHỌN</button>
-            </div>
-          </div>
-          <div class="item-right">
-            <button class="del">×</button>
-            <label class="select-wrap"><input type="checkbox" class="select-item"> Chọn</label>
-          </div>
-        </div>
-
-        <div class="cart-item" data-price="17599000">
-          <div class="item-left">
-            <img src="uploads/products/iPhone 15 pro max.webp" alt="iPhone 17 pro max 256GB, Hồng" class="item-thumb">
-          </div>
-          <div class="item-mid">
-            <div class="item-name">iPhone 17 pro max 256GB, Hồng</div>
-            <div class="item-price price-red">17.599.000 đ</div>
-            <div class="item-controls">
-              <div class="qty-box">
-                <button class="qty-btn qty-minus">−</button>
-                <input class="qty-input" type="number" value="1" min="1">
-                <button class="qty-btn qty-plus">+</button>
+              <div class="item-right">
+                <button class="del" data-key="<?= $item['id_chi_tiet'] ?>">×</button>
+                <label class="select-wrap"><input type="checkbox" class="select-item"> Chọn</label>
               </div>
-              <button class="btn choose">CHỌN</button>
             </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p>Giỏ hàng hiện đang trống</p>
+        <?php endif; ?>
+        <div class="cart-footer">
+          <div class="summary">
+            <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
+            <a id="checkout" class="btn checkout" href="ThanhToan.php">THANH TOÁN</a>
           </div>
-          <div class="item-right">
-            <button class="del">×</button>
-            <label class="select-wrap"><input type="checkbox" class="select-item"> Chọn</label>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="cart-footer">
-        
-        <div class="summary">
-          <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
-          <a id="checkout" class="btn checkout" href="ThanhToan.php">THANH TOÁN</a>
         </div>
       </div>
-
-      <!--SỬA-->
-      
-    </div>
   </main>
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="col">
         <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
       </div>
       <div class="col">
-        <!--SỬA-->
+
         <h4>THÀNH VIÊN 1</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
+
       </div>
       <div class="col">
-        <!--SỬA-->
+
         <h4>THÀNH VIÊN 2</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
+
       </div>
       <div class="col">
         <!--SỬA-->
         <h4>THÀNH VIÊN 3</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -193,9 +168,8 @@
   </footer>
 
   <script>
-    // Cart JS: selection, qty, total, delete
-    (function(){
-      function formatVND(n){
+    (function() {
+      function formatVND(n) {
         return n.toLocaleString('vi-VN') + ' VND';
       }
 
@@ -203,11 +177,15 @@
       const totalBtn = document.getElementById('totalBtn');
       const selectAll = document.getElementById('selectAll');
 
-      function computeTotal(){
+      function computeTotal() {
         let sum = 0;
-        cartList.querySelectorAll('.cart-item').forEach(item=>{
+        cartList.querySelectorAll('.cart-item').forEach(item => {
           const chk = item.querySelector('.select-item');
-          if(chk && chk.checked){
+          if (chk && chk.checked) {
+            if (price === "LH") {
+              document.querySelector('.price-red').innerText = "Liên hệ";
+              return;
+            }
             const price = Number(item.dataset.price || 0);
             const qty = Number(item.querySelector('.qty-input').value || 1);
             sum += price * qty;
@@ -217,61 +195,65 @@
       }
 
       // quantity handlers
-      cartList.addEventListener('click', (e)=>{
-        if(e.target.matches('.qty-plus')){
+      cartList.addEventListener('click', (e) => {
+        if (e.target.matches('.qty-plus')) {
           const input = e.target.parentElement.querySelector('.qty-input');
           input.value = Math.max(1, Number(input.value) + 1);
           computeTotal();
-        } else if(e.target.matches('.qty-minus')){
+        } else if (e.target.matches('.qty-minus')) {
           const input = e.target.parentElement.querySelector('.qty-input');
           input.value = Math.max(1, Number(input.value) - 1);
           computeTotal();
-        } else if(e.target.matches('.del')){
-          const item = e.target.closest('.cart-item');
-          if(item) item.remove();
-          computeTotal();
-        } else if(e.target.matches('.choose')){
-          const item = e.target.closest('.cart-item');
-          const chk = item.querySelector('.select-item');
-          if(chk){ chk.checked = !chk.checked; }
-          computeTotal();
+        } else if (e.target.matches('.del')) {
+          const key = e.target.dataset.key;
+
+          if (confirm("Xóa sản phẩm này khỏi giỏ hàng?")) {
+            window.location.href = "GioHang.php?delete=" + key;
+          }
         }
       });
 
       // checkbox change handlers
-      cartList.addEventListener('change', (e)=>{
-        if(e.target.matches('.select-item')){
+      cartList.addEventListener('change', (e) => {
+        if (e.target.matches('.select-item')) {
           computeTotal();
         }
-        if(e.target.matches('.qty-input')){
+        if (e.target.matches('.qty-input')) {
           e.target.value = Math.max(1, Number(e.target.value));
           computeTotal();
         }
       });
 
-      selectAll.addEventListener('change', ()=>{
+      selectAll.addEventListener('change', () => {
         const checked = selectAll.checked;
-        cartList.querySelectorAll('.select-item').forEach(c=> c.checked = checked);
+        cartList.querySelectorAll('.select-item').forEach(c => c.checked = checked);
         computeTotal();
       });
 
       // initial total
       computeTotal();
     })();
-  </script>
-    <script>
-      // danh mục dropdown (shared behavior)
-      (function(){
-        document.querySelectorAll('.danh-container').forEach(dc=>{
-          const btn = dc.querySelector('.danh-muc');
-          const menu = dc.querySelector('.danh-menu');
-          if(!btn || !menu) return;
-          btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
-          menu.addEventListener('click', (e)=> e.stopPropagation());
+
+    // danh mục dropdown (shared behavior)
+    (function() {
+      document.querySelectorAll('.danh-container').forEach(dc => {
+        const btn = dc.querySelector('.danh-muc');
+        const menu = dc.querySelector('.danh-menu');
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
         });
-        document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
-      })();
-    </script>
+        menu.addEventListener('click', (e) => e.stopPropagation());
+      });
+      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
+        dc.classList.remove('open');
+        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
+      }));
+    })();
+  </script>
 
 </body>
+
 </html>
