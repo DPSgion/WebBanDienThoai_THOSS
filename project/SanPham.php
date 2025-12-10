@@ -2,8 +2,6 @@
 session_start();
 include 'config/config.php'; 
 
-// --- CÁC HÀM XỬ LÝ DATABASE ---
-
 /**
  * Hàm lấy danh sách tất cả Danh mục
  * @param PDO $pdo
@@ -149,6 +147,7 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
         <a id="accountLink" href="User.php">👤</a>
+        <a href="logout.php" class="icon-btn cart">🚪</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
