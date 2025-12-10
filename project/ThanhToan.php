@@ -1,24 +1,86 @@
 <?php
-  session_start();
-  include_once 'config/config.php'; 
-  // Lấy danh mục
-  function get_all_categories($pdo)
-  {
-    try {
-      $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-      $stmt = $pdo->prepare($sql);
-      $stmt->execute();
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-      // Log lỗi
-      return [];
-    }
+session_start();
+include_once 'config/config.php';
+
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['id_nguoi_dung'])) {
+  header("Location: Login.php");
+  exit();
+}
+
+$id_nguoi_dung = $_SESSION['id_nguoi_dung'];
+
+/* Lấy danh mục */
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    return [];
+  }
+}
+
+$categories = get_all_categories($pdo);
+
+$is_buy_now = false;
+if (!empty($_POST['id_bien_the'])) {
+  // TRƯỜNG HỢP MUA NGAY
+  $is_buy_now = true;
+
+  $sql = "SELECT bt.gia, bt.rom, bt.mau, sp.ten_san_pham, asp.duong_dan_anh
+            FROM bien_the bt
+            JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
+            join anh_san_pham asp on asp.id_san_pham = sp.id_san_pham
+            WHERE bt.id_bien_the = ?";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute([$_POST['id_bien_the']]);
+  $buy_now_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if (!$buy_now_item) {
+    die("Sản phẩm không tồn tại!");
   }
 
-  $categories = get_all_categories($pdo);
+  $buy_now_item['so_luong'] = $_POST['qty'] ?? 1;
+  $subtotal = $buy_now_item['gia'] * $buy_now_item['so_luong'];
+} else {
+  // TRƯỜNG HỢP TỪ GIỎ HÀNG
+  if (!empty($_POST['selected_items'])) {
+    $ids = json_decode($_POST['selected_items'], true);
+    $selected_items = $ids;
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+    $sql = "SELECT ghct.id_chi_tiet,ghct.id_bien_the, ghct.so_luong,
+                   bt.gia, bt.rom, bt.mau,
+                   sp.ten_san_pham, asp.duong_dan_anh
+            FROM gio_hang_chi_tiet ghct
+            JOIN gio_hang gh ON gh.id_gio_hang = ghct.id_gio_hang
+            JOIN bien_the bt ON bt.id_bien_the = ghct.id_bien_the
+            JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
+            JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
+            WHERE ghct.id_chi_tiet IN ($placeholders)";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($ids);
+
+    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  if (!$cart_items) {
+    die("Giỏ hàng rỗng!");
+  }
+
+  $subtotal = 0;
+  foreach ($cart_items as $item) {
+    $subtotal += $item['gia'] * $item['so_luong'];
+  }
+}
 ?>
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -26,6 +88,7 @@
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesCheckout.css">
 </head>
+
 <body>
   <header class="main-header">
     <div class="container header-row">
@@ -42,10 +105,11 @@
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </a>
         <a id="accountLink" href="User.php">👤</a>
+        <a href="logout.php" class="icon-btn cart">🚪</a>
         <div class="danh-container">
           <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-          <?php foreach ($categories as $cat): ?>
+            <?php foreach ($categories as $cat): ?>
               <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
             <?php endforeach; ?>
           </ul>
@@ -58,23 +122,34 @@
     <h1>Thanh toán</h1>
     <div class="checkout-grid">
       <section class="checkout-left">
-        <form id="checkoutForm">
-          <h2>Thông tin người đặt</h2>
-          <!--SỬA-->
+        <form action="./includes/functionsKhachHang/xu_ly_dat_hang.php" method="POST">
+
+          <h2>Thông tin giao hàng</h2>
 
           <div class="form-row">
-            <label>Địa chỉ nhận hàng <input name="address" type="text" required></label>
+            <label>Địa chỉ nhận hàng
+              <input name="address" type="text" required>
+            </label>
           </div>
 
           <div class="form-row">
-            <label>Tỉnh / Thành <input name="city" type="text" required></label>
-            <label>Quận / Huyện <input name="district" type="text" required></label>
+            <label>Tỉnh / Thành
+              <input name="city" type="text" required>
+            </label>
+
+            <label>Quận / Huyện
+              <input name="district" type="text" required>
+            </label>
           </div>
-
-          <!--SỬA-->
-
+          <input type="hidden" name="id_bien_the" value="<?= $_POST['id_bien_the'] ?? '' ?>">
+          <input type="hidden" name="qty" value="<?= $buy_now_item['so_luong'] ?? '' ?>">
+          <?php if (!empty($selected_items) && is_array($selected_items)): ?>
+            <?php foreach ($selected_items as $chi_tiet_id): ?>
+              <input type="hidden" name="selected_items[]" value="<?= htmlspecialchars($chi_tiet_id) ?>">
+            <?php endforeach; ?>
+          <?php endif; ?>
           <div class="actions">
-            <button type="submit" class="btn primary"></a>Đặt hàng và thanh toán</button>
+            <button type="submit" class="btn primary">Đặt hàng và thanh toán</button>
             <a class="btn outline" href="GioHang.php">Quay lại giỏ hàng</a>
           </div>
         </form>
@@ -83,60 +158,44 @@
       <aside class="checkout-right">
         <h2>Đơn hàng của bạn</h2>
         <div class="order-list">
-          <div class="order-item">
-            <div class="order-card" data-price="38999000">
-              <img src="uploads/products/iphone17.webp" alt="iPhone 17 pro max 256GB, Cam" class="prod-thumb">
-              <div class="order-mid">
-                <div class="prod-name">iPhone 17 pro max 256GB, Cam</div>
-                <div class="prod-meta">256GB • Cam</div>
-                <div class="qty-controls">
-                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
-                  <input class="qty-input" type="number" min="1" value="1">
-                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
+          <?php if ($is_buy_now): ?>
+            <div class="order-item">
+              <div class="order-card">
+                <img src="uploads/products/<?= $buy_now_item['duong_dan_anh'] ?>" class="prod-thumb">
+                <div class="order-mid">
+                  <div class="prod-name"><?= $buy_now_item['ten_san_pham'] ?></div>
+                  <div class="prod-meta"><?= $buy_now_item['rom'] ?>GB • <?= $buy_now_item['mau'] ?></div>
+                  <div>Số lượng: <?= $buy_now_item['so_luong'] ?></div>
+                </div>
+                <div class="order-price">
+                  <span class="price-red"><?= number_format($buy_now_item['gia']) ?>đ</span>
                 </div>
               </div>
-              <div class="order-price"> <span class="price-red">38.999.000đ</span> </div>
             </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-card" data-price="14599000">
-              <img src="uploads/products/Readme-pro.jpg" alt="Readme 256GB, Xanh lam" class="prod-thumb">
-              <div class="order-mid">
-                <div class="prod-name">Readme 256GB, Xanh lam</div>
-                <div class="prod-meta">256GB • Xanh lam</div>
-                <div class="qty-controls">
-                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
-                  <input class="qty-input" type="number" min="1" value="1">
-                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
+          <?php else: ?>
+            <?php foreach ($cart_items as $item): ?>
+              <div class="order-item">
+                <div class="order-card" data-price="38999000">
+                  <img src="uploads/products/<?= $item['duong_dan_anh'] ?>" class="prod-thumb">
+                  <div class="order-mid">
+                    <div class="prod-name"><?= htmlspecialchars($item['ten_san_pham']) ?></div>
+                    <div class="prod-meta"><?= $item['rom'] ?>GB • <?= $item['mau'] ?></div>
+                    <div>Số lượng: <?= $item['so_luong'] ?></div>
+                  </div>
+                  <div class="order-price">
+                    <span class="price-red"><?= number_format($item['gia']) ?>đ</span>
+                  </div>
                 </div>
               </div>
-              <div class="order-price"> <span class="price-red">14.599.000đ</span> </div>
-            </div>
-          </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
 
-          <div class="order-item">
-            <div class="order-card" data-price="17599000">
-              <img src="uploads/products/iphone17.webp" alt="iPhone 17 pro max 256GB, Hồng" class="prod-thumb">
-              <div class="order-mid">
-                <div class="prod-name">iPhone 17 pro max 256GB, Hồng</div>
-                <div class="prod-meta">256GB • Hồng</div>
-                <div class="qty-controls">
-                  <button class="qty-btn qty-minus" aria-label="Giảm">−</button>
-                  <input class="qty-input" type="number" min="1" value="1">
-                  <button class="qty-btn qty-plus" aria-label="Tăng">+</button>
-                </div>
-              </div>
-              <div class="order-price"> <span class="price-red">17.599.000đ</span> </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="summary">
-          <div class="row"><span>Tạm tính</span><span class="value">72.998.000đ</span></div>
-          <div class="row"><span>Phí vận chuyển</span><span class="value">0đ</span></div>
-          <div class="row total"><span>Tổng cộng</span><span class="value">72.998.000đ</span></div>
-        </div>
+          <div class="summary">
+            <div class="row"><span>Tạm tính</span><span class="value"><?= number_format($subtotal) ?>đ</span></div>
+            <div class="row"><span>Phí vận chuyển</span><span class="value">0đ</span></div>
+            <div class="row total"><span>Tổng cộng</span><span class="value"><?= number_format($subtotal) ?>đ</span></div>
+          </div>
       </aside>
     </div>
   </main>
@@ -150,9 +209,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 1</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -160,9 +219,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 2</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -170,9 +229,9 @@
         <!--SỬA-->
         <h4>THÀNH VIÊN 3</h4>
         <p>Họ & Tên: <a href="#">...</a></p>
-        
+
         <p>MSSV: <a href="#">...</a></p>
-        
+
         <p>Email: <a href="#">...</a></p>
         <!--END SỬA-->
       </div>
@@ -183,16 +242,17 @@
 
   <script>
     // payment method toggle
-    document.querySelectorAll('input[name="pay"]').forEach(r=> r.addEventListener('change', (e)=>{
+    document.querySelectorAll('input[name="pay"]').forEach(r => r.addEventListener('change', (e) => {
       const card = document.getElementById('cardDetails');
-      if(e.target.value === 'card') card.style.display = 'block'; else card.style.display = 'none';
+      if (e.target.value === 'card') card.style.display = 'block';
+      else card.style.display = 'none';
     }));
 
     // simple submit handler
-    document.getElementById('checkoutForm').addEventListener('submit', function(e){
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      if(!fd.get('name') || !fd.get('phone') || !fd.get('address')){
+      if (!fd.get('name') || !fd.get('phone') || !fd.get('address')) {
         alert('Vui lòng điền đầy đủ thông tin giao hàng.');
         return;
       }
@@ -201,11 +261,17 @@
     });
 
     // qty controls for checkout order list + totals
-    function parseNumber(str){ return Number(String(str).replace(/[^0-9]/g,'')) || 0; }
-    function formatVND(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ'; }
-    function recalcTotals(){
+    function parseNumber(str) {
+      return Number(String(str).replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function formatVND(n) {
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+    }
+
+    function recalcTotals() {
       let subtotal = 0;
-      document.querySelectorAll('.order-card').forEach(card=>{
+      document.querySelectorAll('.order-card').forEach(card => {
         const price = Number(card.dataset.price) || 0;
         const qty = Number(card.querySelector('.qty-input').value) || 1;
         subtotal += price * qty;
@@ -213,36 +279,47 @@
       const subtEl = document.querySelector('.summary .row .value');
       // set first .value to subtotal and last to total
       const values = document.querySelectorAll('.summary .value');
-      if(values.length>=1) values[0].textContent = formatVND(subtotal);
-      if(values.length>=3) values[2].textContent = formatVND(subtotal);
+      if (values.length >= 1) values[0].textContent = formatVND(subtotal);
+      if (values.length >= 3) values[2].textContent = formatVND(subtotal);
     }
 
-    document.querySelectorAll('.qty-minus').forEach(btn=> btn.addEventListener('click', (e)=>{
+    document.querySelectorAll('.qty-minus').forEach(btn => btn.addEventListener('click', (e) => {
       const input = btn.parentElement.querySelector('.qty-input');
-      input.value = Math.max(1, Number(input.value)-1);
+      input.value = Math.max(1, Number(input.value) - 1);
       recalcTotals();
     }));
-    document.querySelectorAll('.qty-plus').forEach(btn=> btn.addEventListener('click', (e)=>{
+    document.querySelectorAll('.qty-plus').forEach(btn => btn.addEventListener('click', (e) => {
       const input = btn.parentElement.querySelector('.qty-input');
-      input.value = Math.max(1, Number(input.value)+1);
+      input.value = Math.max(1, Number(input.value) + 1);
       recalcTotals();
     }));
-    document.querySelectorAll('.qty-input').forEach(inp=> inp.addEventListener('change', ()=>{ if(Number(inp.value)<1) inp.value=1; recalcTotals(); }));
+    document.querySelectorAll('.qty-input').forEach(inp => inp.addEventListener('change', () => {
+      if (Number(inp.value) < 1) inp.value = 1;
+      recalcTotals();
+    }));
 
     // initial totals
     recalcTotals();
 
     // danh mục dropdown (shared behavior)
-    (function(){
-      document.querySelectorAll('.danh-container').forEach(dc=>{
+    (function() {
+      document.querySelectorAll('.danh-container').forEach(dc => {
         const btn = dc.querySelector('.danh-muc');
         const menu = dc.querySelector('.danh-menu');
-        if(!btn || !menu) return;
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
-        menu.addEventListener('click', (e)=> e.stopPropagation());
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
+        });
+        menu.addEventListener('click', (e) => e.stopPropagation());
       });
-      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
+        dc.classList.remove('open');
+        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
+      }));
     })();
   </script>
 </body>
+
 </html>

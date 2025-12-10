@@ -1,24 +1,38 @@
 <?php
-   session_start();
-   include_once 'config/config.php'; 
-   // Lấy danh mục
-   function get_all_categories($pdo)
-   {
-     try {
-       $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-       $stmt = $pdo->prepare($sql);
-       $stmt->execute();
-       return $stmt->fetchAll(PDO::FETCH_ASSOC);
-     } catch (PDOException $e) {
-       // Log lỗi
-       return [];
-     }
-   }
- 
-   $categories = get_all_categories($pdo);
+session_start();
+include_once 'config/config.php';
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['id_nguoi_dung'])) {
+  header("Location: Login.php");
+  exit();
+}
+
+$id_nguoi_dung = $_SESSION['id_nguoi_dung'];
+
+
+// Lấy danh mục
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+$categories = get_all_categories($pdo);
+//Lấy lịch sử mua hàng
+$sql = "SELECT * FROM don_hang WHERE id_nguoi_dung = ? ORDER BY ngay_dat DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$id_nguoi_dung]);
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -26,6 +40,7 @@
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesUser.css">
 </head>
+
 <body>
 
   <header class="main-header">
@@ -43,10 +58,11 @@
         <!--SỬA-->
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
+        <a href="logout.php" class="icon-btn cart">🚪</a>
         <div class="danh-container">
           <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
-          <?php foreach ($categories as $cat): ?>
+            <?php foreach ($categories as $cat): ?>
               <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
             <?php endforeach; ?>
           </ul>
@@ -62,17 +78,12 @@
         <form id="profileForm">
           <label class="field">
             <div class="label">Họ và tên</div>
-            <input id="fullname" name="fullname" type="text" placeholder="Nguyễn Văn A" required>
+            <input id="fullname" name="fullname" type="text" required>
           </label>
 
           <label class="field">
             <div class="label">Số điện thoại</div>
-            <input id="phone" name="phone" type="tel" placeholder="0123456789">
-          </label>
-
-          <label class="field">
-            <div class="label">Địa chỉ hiện tại</div>
-            <textarea id="currentAddress" name="currentAddress" rows="2" placeholder="Địa chỉ nhận hàng"></textarea>
+            <input id="phone" name="phone" type="text" readonly>
           </label>
 
           <label class="field">
@@ -92,175 +103,112 @@
 
           <div class="actions">
             <button type="submit" class="btn primary">Lưu thông tin</button>
-            <a class="btn outline" href="TrangChu.html">Quay lại</a>
+            <a class="btn outline" href="TrangChu.php ">Quay lại</a>
           </div>
         </form>
 
         <hr>
 
-        <!--CHƯA XÁC NHẬN -->
-        <h3>Địa chỉ đã lưu</h3>
-        <div id="addresses" class="addresses"></div>
 
-        <div class="add-address">
-          <textarea id="newAddress" rows="2" placeholder="Thêm địa chỉ mới"></textarea>
-          <div style="margin-top:8px"><button id="addAddrBtn" class="btn">Thêm địa chỉ</button></div>
-        </div>
       </section>
 
       <section class="orders-card">
         <h2>Lịch sử mua hàng</h2>
-        <div id="orders" class="orders"></div>
+        <?php if (empty($orders)): ?>
+          <div class="muted">Chưa có đơn hàng nào.</div>
+        <?php else: ?>
+          <?php foreach ($orders as $o): ?>
+            <div class="order-item">
+              <div class="order-head">
+                <div><strong>Đơn #<?= $o['id_don_hang'] ?></strong> — <?= $o['ngay_dat'] ?></div>
+                <div class="order-right">
+                  <?= $o['trang_thai'] ?> •
+                  <strong><?= number_format($o['tong_tien']) ?>₫</strong>
+                </div>
+              </div>
+
+              <div class="order-actions">
+                <a href="hoa_don.php?id=<?= $o['id_don_hang'] ?>" class="btn small">
+                  Xem chi tiết
+                </a>
+              </div>
+            </div>
+          <?php endforeach; ?>
+
+        <?php endif; ?>
       </section>
     </div>
   </main>
 
+
   <script>
     // shared dropdown behavior
-    (function(){
-      document.querySelectorAll('.danh-container').forEach(dc=>{
+    (function() {
+      document.querySelectorAll('.danh-container').forEach(dc => {
         const btn = dc.querySelector('.danh-muc');
         const menu = dc.querySelector('.danh-menu');
-        if(!btn || !menu) return;
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); dc.classList.toggle('open'); btn.setAttribute('aria-expanded', dc.classList.contains('open'))});
-        menu.addEventListener('click', (e)=> e.stopPropagation());
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
+        });
+        menu.addEventListener('click', (e) => e.stopPropagation());
       });
-      document.addEventListener('click', ()=> document.querySelectorAll('.danh-container').forEach(dc=>{ dc.classList.remove('open'); dc.querySelector('.danh-muc')?.setAttribute('aria-expanded','false'); }));
+      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
+        dc.classList.remove('open');
+        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
+      }));
     })();
 
-    // Profile and addresses
-    function getProfile(){
-      const raw = localStorage.getItem('demo_user_profile') || localStorage.getItem('demo_registered_user');
-      if(!raw) return {};
-      try{ return JSON.parse(raw); }catch(e){ return {}; }
-    }
 
-    function saveProfile(p){ localStorage.setItem('demo_user_profile', JSON.stringify(p)); }
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("includes/functionsKhachHang/getUser.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) return;
+          document.getElementById("fullname").value = data.ho_ten;
+          document.getElementById("phone").value = data.sdt;
+        });
 
-    function getAddresses(){
-      const raw = localStorage.getItem('demo_user_addresses');
-      if(!raw) return [];
-      try{ return JSON.parse(raw); }catch(e){ return []; }
-    }
+      // Submit form
+      document.getElementById("profileForm").addEventListener("submit", function(e) {
+        e.preventDefault();
 
-    function saveAddresses(list){ localStorage.setItem('demo_user_addresses', JSON.stringify(list)); }
+        const formData = new FormData(this);
 
-    function renderAddresses(){
-      const container = document.getElementById('addresses'); container.innerHTML='';
-      const list = getAddresses();
-      if(list.length===0){ container.innerHTML='<div class="muted">Chưa có địa chỉ đã lưu.</div>'; return; }
-      list.forEach((a, idx)=>{
-        const div = document.createElement('div'); div.className='address-item';
-        div.innerHTML = `<div class="addr-text">${a}</div><div class="addr-actions"><button data-idx="${idx}" class="btn small edit">Sửa</button> <button data-idx="${idx}" class="btn small danger del">Xóa</button></div>`;
-        container.appendChild(div);
+        fetch("includes/functionsKhachHang/updateUser.php", {
+            method: "POST",
+            body: formData
+          })
+          .then(res => res.text())
+          .then(code => {
+            switch (code) {
+              case "OK":
+                alert("Cập nhật thành công!");
+                break;
+              case "NAME_EMPTY":
+                alert("Vui lòng nhập họ tên.");
+                break;
+              case "WRONG_PASSWORD":
+                alert("Mật khẩu hiện tại không đúng!");
+                break;
+              case "PW_TOO_SHORT":
+                alert("Mật khẩu mới phải có ít nhất 6 ký tự.");
+                break;
+              default:
+                alert("Lỗi không xác định: " + code);
+            }
+
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("confirmPassword").value = "";
+          });
       });
-      // bind buttons
-      container.querySelectorAll('.edit').forEach(b=> b.addEventListener('click', (e)=>{
-        const idx = +e.target.dataset.idx; const list = getAddresses();
-        const nv = prompt('Chỉnh sửa địa chỉ', list[idx]); if(nv===null) return; list[idx]=nv.trim(); saveAddresses(list); renderAddresses();
-      }));
-      container.querySelectorAll('.del').forEach(b=> b.addEventListener('click', (e)=>{
-        const idx = +e.target.dataset.idx; if(!confirm('Xóa địa chỉ này?')) return; const list = getAddresses(); list.splice(idx,1); saveAddresses(list); renderAddresses();
-      }));
-    }
 
-    document.getElementById('addAddrBtn').addEventListener('click', ()=>{
-      const v = document.getElementById('newAddress').value.trim(); if(!v){ alert('Vui lòng nhập địa chỉ.'); return; }
-      const list = getAddresses(); list.unshift(v); saveAddresses(list); document.getElementById('newAddress').value=''; renderAddresses();
     });
-
-    // Orders
-    function getOrders(){
-      const raw = localStorage.getItem('demo_orders');
-      if(!raw) return null;
-      try{ return JSON.parse(raw); }catch(e){ return null; }
-    }
-
-    function seedOrders(){
-      const sample = [
-        { id:'DH20251203-001', date:'2025-12-03', total:'5.990.000₫', status:'Đã giao', items:[{name:'iPhone 17 Pro Max', qty:1, price:'31.990.000₫'}] },
-        { id:'DH20251120-004', date:'2025-11-20', total:'1.990.000₫', status:'Đang xử lý', items:[{name:'Ốp lưng iPhone', qty:2, price:'99.000₫'}] }
-      ];
-      localStorage.setItem('demo_orders', JSON.stringify(sample));
-      return sample;
-    }
-
-    function renderOrders(){
-      const container = document.getElementById('orders'); container.innerHTML='';
-      let list = getOrders(); if(!list) list = seedOrders();
-      if(list.length===0){ container.innerHTML='<div class="muted">Chưa có đơn hàng.</div>'; return; }
-      list.forEach((o, idx)=>{
-        const div = document.createElement('div'); div.className='order-item';
-        let itemsHtml = o.items.map(it=>`<div class="order-line">${it.name} × ${it.qty} — ${it.price}</div>`).join('');
-        div.innerHTML = `<div class="order-head"><div><strong>${o.id}</strong> — ${o.date}</div><div class="order-right">${o.status} • <strong>${o.total}</strong></div></div>
-          <div class="order-actions"><button class="btn small toggle" data-idx="${idx}">Chi tiết</button></div>
-          <div class="order-details" data-idx="${idx}" style="display:none">${itemsHtml}</div>`;
-        container.appendChild(div);
-      });
-      container.querySelectorAll('.toggle').forEach(btn=> btn.addEventListener('click', (e)=>{
-        const idx = btn.dataset.idx; const det = container.querySelector('.order-details[data-idx="'+idx+'"]'); det.style.display = det.style.display==='none'? 'block':'none';
-      }));
-    }
-
-    // profile form save + password change handling
-    document.getElementById('profileForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const name = document.getElementById('fullname').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const addr = document.getElementById('currentAddress').value.trim();
-      const currentPw = document.getElementById('currentPassword').value;
-      const newPw = document.getElementById('newPassword').value;
-      const confirmPw = document.getElementById('confirmPassword').value;
-
-      if(!name){ alert('Vui lòng nhập họ và tên.'); return; }
-
-      // handle password change if user provided a new password
-      if(newPw){
-        if(newPw.length < 6){ alert('Mật khẩu mới phải có ít nhất 6 ký tự.'); return; }
-        if(newPw !== confirmPw){ alert('Mật khẩu mới và xác nhận không khớp.'); return; }
-
-        // check existing stored password (if any)
-        const storedPw = localStorage.getItem('demo_user_password') || (function(){
-          const reg = localStorage.getItem('demo_registered_user');
-          if(!reg) return null; try{ const r = JSON.parse(reg); return r.password || null; }catch(e){return null}
-        })();
-
-        if(storedPw){
-          if(!currentPw){ alert('Vui lòng nhập mật khẩu hiện tại để thay đổi mật khẩu.'); return; }
-          if(currentPw !== storedPw){ alert('Mật khẩu hiện tại không đúng.'); return; }
-        }
-
-        // save new password (demo only)
-        localStorage.setItem('demo_user_password', newPw);
-        // also update demo_registered_user if present
-        const regRaw = localStorage.getItem('demo_registered_user');
-        if(regRaw){ try{ const r = JSON.parse(regRaw); r.password = newPw; localStorage.setItem('demo_registered_user', JSON.stringify(r)); }catch(e){} }
-      }
-
-      const p = { name, phone, address: addr };
-      saveProfile(p);
-      // clear password inputs after success
-      document.getElementById('currentPassword').value = '';
-      document.getElementById('newPassword').value = '';
-      document.getElementById('confirmPassword').value = '';
-      alert('Thông tin đã được lưu (demo).' + (newPw? ' Mật khẩu đã được cập nhật.':''));
-    });
-
-    function init(){
-      const p = getProfile();
-      if(p.name) document.getElementById('fullname').value = p.name;
-      if(p.phone) document.getElementById('phone').value = p.phone;
-      if(p.address) document.getElementById('currentAddress').value = p.address;
-      // ensure addresses array exists
-      if(!localStorage.getItem('demo_user_addresses')){
-        const arr = p.address? [p.address] : [];
-        localStorage.setItem('demo_user_addresses', JSON.stringify(arr));
-      }
-      renderAddresses(); renderOrders();
-    }
-
-    init();
   </script>
 
 </body>
+
 </html>
