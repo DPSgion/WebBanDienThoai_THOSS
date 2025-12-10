@@ -22,6 +22,11 @@ $sqlVar = "SELECT * FROM bien_the WHERE id_san_pham = :id ORDER BY gia ASC";
 $stmtVar = $pdo->prepare($sqlVar);
 $stmtVar->execute(['id' => $id]);
 $variants = $stmtVar->fetchAll(PDO::FETCH_ASSOC);
+if (empty($variants)) {
+  $hasVariant = false;
+} else {
+  $hasVariant = true;
+}
 
 //Lấy danh sách ảnh
 $sqlImg = "SELECT * FROM anh_san_pham WHERE id_san_pham = :id";
@@ -35,14 +40,22 @@ $mainImage = $images[0]['duong_dan_anh'] ?? 'uploads/no-image.png';
 // Tạo list màu và ROM
 $romList = [];
 $colorList = [];
-
+// Chuẩn bị dữ liệu biến thể đầy đủ để lọc hợp lệ bên JS
+$variantMap = [];
 foreach ($variants as $v) {
-  if (!in_array($v['rom'], $romList)) $romList[] = $v['rom'];
-  if (!in_array($v['mau'], $colorList)) $colorList[] = $v['mau'];
+  $variantMap[] = [
+    "rom" => $v["rom"],
+    "mau" => $v["mau"]
+  ];
 }
 
-// Giá thấp nhất
-$minPrice = min(array_column($variants, 'gia'));
+if ($hasVariant) {
+  foreach ($variants as $v) {
+    if (!in_array($v['rom'], $romList)) $romList[] = $v['rom'];
+    if (!in_array($v['mau'], $colorList)) $colorList[] = $v['mau'];
+  }
+}
+
 
 //Ham Lay Danh Muc
 function get_all_categories($pdo)
@@ -67,14 +80,18 @@ $sqlVariant = "SELECT id_bien_the, gia
                LIMIT 1";
 
 $stmtV = $pdo->prepare($sqlVariant);
-$stmtV->execute([
-  'id' => $product['id_san_pham'],
-  'rom' => $romList[0],
-  'color' => $colorList[0]
-]);
-$defaultVariant = $stmtV->fetch(PDO::FETCH_ASSOC);
+$defaultVariant = null;
+$default_id_bien_the = null;
 
-$default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
+if ($hasVariant) {
+  $stmtV->execute([
+    'id' => $product['id_san_pham'],
+    'rom' => $romList[0],
+    'color' => $colorList[0]
+  ]);
+  $defaultVariant = $stmtV->fetch(PDO::FETCH_ASSOC);
+  $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
+}
 ?>
 <!doctype html>
 <html lang="vi">
@@ -85,6 +102,15 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
   <title>Chi tiết sản phẩm — ĐIỆN THOẠI TRỰC TUYẾN</title>
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesCT.css">
+  <style>
+    .variant.invalid {
+      opacity: 0.4;
+    }
+
+    .variant.valid {
+      opacity: 1;
+    }
+  </style>
 </head>
 
 <body>
@@ -105,6 +131,7 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒</a>
         <a id="accountLink" href="User.php">👤</a>
+        <a href="logout.php" class="icon-btn cart">🚪</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
@@ -169,36 +196,44 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
       <aside class="right-col">
         <h1 class="product-title"><?= $product['ten_san_pham'] ?></h1>
         <div class="variants">
-          <div class="variant-group">
-            <label class="variant-label">Bộ nhớ:</label>
-            <div class="variant-options" id="storageOptions">
-              <?php foreach ($romList as $i => $rom): ?>
-                <button class="variant opt <?= $i == 0 ? 'active' : '' ?>" data-value="<?= $rom ?>">
-                  <?= $rom ?>
-                </button>
-              <?php endforeach; ?>
-            </div>
-
+          <?php if ($hasVariant): ?>
             <div class="variant-group">
-              <label class="variant-label">Màu sắc:</label>
-              <div class="variant-options" id="colorOptions">
-                <?php foreach ($colorList as $i => $color): ?>
-                  <button class="variant color <?= $i == 0 ? 'active' : '' ?>" data-color="<?= $color ?>">
-                    <?= ucfirst($color) ?>
+              <label class="variant-label">Bộ nhớ:</label>
+              <div class="variant-options" id="storageOptions">
+                <?php foreach ($romList as $i => $rom): ?>
+                  <button class="variant opt <?= $i == 0 ? 'active' : '' ?>" data-value="<?= $rom ?>">
+                    <?= $rom ?>
                   </button>
                 <?php endforeach; ?>
               </div>
-            </div>
-          </div>
 
+              <div class="variant-group">
+                <label class="variant-label">Màu sắc:</label>
+                <div class="variant-options" id="colorOptions">
+                  <?php foreach ($colorList as $i => $color): ?>
+                    <button class="variant color <?= $i == 0 ? 'active' : '' ?>" data-color="<?= $color ?>">
+                      <?= ucfirst($color) ?>
+                    </button>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            </div>
+          <?php else: ?>
+            <h3 class="coming-soon">Sản phẩm Sắp ra mắt</h3>
+          <?php endif; ?>
           <?php
-          $displayPrice = $variantPrice ?? ($minPrice ?? 0);
+          if (!$hasVariant) {
+            $displayPrice = 'Sắp ra mắt';
+          } else {
+            $displayPrice = 'Liên hệ';
+          }
           ?>
           <div class="price-block">
             <div class="original-price">Giá gốc: <span class="strike">41.999.000đ</span></div>
             <div class="sale-price">
               Giá: <span class="price-red">
-                <?= number_format((float)$displayPrice, 0, ',', '.') ?>đ
+                <?php if (is_string($displayPrice)) echo $displayPrice;
+                else echo number_format((float)$displayPrice, 0, ',', '.') ?>
               </span>
             </div>
           </div>
@@ -229,17 +264,27 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
           </div>
 
           <div class="purchase-actions">
+            <?php if ($hasVariant): ?>
+              <form action="./includes/functionsKhachHang/add_to_cart.php" method="POST">
+                <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
+                <!-- sẽ cập nhật bằng JS -->
+                <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
+                <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
+                <input type="hidden" name="qty" id="qtyHidden" value="1">
 
-            <form action="add_to_cart.php" method="POST">
-              <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
-              <!-- sẽ cập nhật bằng JS -->
-              <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
-              <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
-              <input type="hidden" name="qty" id="qtyHidden" value="1">
+                <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
+              </form>
+              <form id="buyNowForm" action="ThanhToan.php" method="POST">
+                <input type="hidden" name="id_bien_the" id="buyNow_idBienThe">
+                <input type="hidden" name="rom" id="buyNow_rom">
+                <input type="hidden" name="color" id="buyNow_color">
+                <input type="hidden" name="qty" id="buyNow_qty">
 
-              <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
-            </form>
-            <a id="buyNow" class="btn primary" href="ThanhToan.php">Mua ngay</a>
+                <button type="submit" id="buyNowBtn" class="btn primary">Mua ngay</button>
+              </form>
+            <?php else: ?>
+              <p style="color:red; font-weight:bold;">Sản phẩm đang về hàng – Sắp ra mắt</p>
+            <?php endif; ?>
           </div>
       </aside>
     </div>
@@ -361,9 +406,70 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
     })();
 
     //XỬ lí giá của Backend gửi lên để người dùng chọn
-    document
-      .querySelectorAll('#storageOptions button, #colorOptions button')
-      .forEach(btn => btn.addEventListener('click', updatePrice));
+    const productId = <?= $id ?>;
+    const variantMap = <?= json_encode($variantMap) ?>;
+    //hàm tìm rom hợp lệ theo màu
+    function getValidRoms(color) {
+      return variantMap
+        .filter(v => v.mau === color)
+        .map(v => v.rom);
+    }
+    //hàm tìm màu hợp lệ theo rom
+    function getValidColors(rom) {
+      return variantMap
+        .filter(v => v.rom === rom)
+        .map(v => v.mau);
+    }
+    //khi chọn rom
+    document.querySelectorAll('#storageOptions .variant').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rom = btn.dataset.value;
+        const validColors = getValidColors(rom);
+
+        document.querySelectorAll('#colorOptions .color').forEach(colorBtn => {
+          const c = colorBtn.dataset.color;
+
+          if (validColors.includes(c)) {
+            colorBtn.classList.add('valid');
+            colorBtn.classList.remove('invalid');
+          } else {
+            colorBtn.classList.add('invalid');
+            colorBtn.classList.remove('valid');
+          }
+        });
+
+        updatePrice();
+      });
+    });
+    //khi chọn màu
+    document.querySelectorAll('#colorOptions .color').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const color = btn.dataset.color;
+        const validRoms = getValidRoms(color);
+
+        // Nếu ROM hiện tại KHÔNG hợp lệ => tự động chọn ROM hợp lệ đầu tiên
+        let activeRom = document.querySelector('#storageOptions .active');
+        if (!validRoms.includes(activeRom.dataset.value)) {
+          const romToSelect = validRoms[0];
+          document.querySelector(`#storageOptions .variant[data-value="${romToSelect}"]`).click();
+        }
+
+        // Tô màu hợp lệ / không hợp lệ cho ROM
+        document.querySelectorAll('#storageOptions .variant').forEach(romBtn => {
+          const r = romBtn.dataset.value;
+          if (validRoms.includes(r)) {
+            romBtn.classList.add('valid');
+            romBtn.classList.remove('invalid');
+          } else {
+            romBtn.classList.add('invalid');
+            romBtn.classList.remove('valid');
+          }
+        });
+
+        updatePrice();
+      });
+    });
+
 
     function updatePrice() {
       const activeRom = document.querySelector('#storageOptions .active');
@@ -371,8 +477,8 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
       if (!activeRom || !activeColor) return;
       const rom = activeRom.dataset.value;
       const color = activeColor.dataset.color;
-      const id = "<?= $id ?>";
-      fetch(`/project/includes/functionsKhachHang/getPrice.php?id=${id}&rom=${rom}&color=${color}`)
+
+      fetch(`/project/includes/functionsKhachHang/getPrice.php?id=${productId}&rom=${rom}&color=${color}`)
         .then(res => res.text())
         .then(price => {
           if (price === "LH") {
@@ -414,17 +520,67 @@ $default_id_bien_the = $defaultVariant['id_bien_the'] ?? null;
       qtyInput.value = q;
       qtyHidden.value = q;
     };
+    document.getElementById("addCart").addEventListener("click", function(e) {
+      const price = document.querySelector('.price-red').innerText.trim();
 
-    function loadVariant() {
-      let rom = document.querySelector('#storageOptions .active').dataset.value;
-      let color = document.querySelector('#colorOptions .active').dataset.color;
+      if (price === "Liên hệ") {
+        e.preventDefault(); // Chặn gửi form
+        alert("Sản phẩm này không có giá. Vui lòng liên hệ cửa hàng.");
+        return false;
+      }
 
-      fetch(`get_variant.php?id=<?= $product['id_san_pham'] ?>&rom=${rom}&color=${color}`)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('idBienTheInput').value = data.id_bien_the;
+      // cập nhật qty hidden
+      document.getElementById('qtyHidden').value = document.getElementById('qtyInput').value;
+    });
+
+
+    // ===== XỬ LÍ MUA NGAY =====
+    document.getElementById("buyNowBtn").addEventListener("click", function(e) {
+      e.preventDefault(); // chặn submit mặc định
+
+      const price = document.querySelector('.price-red').innerText.trim();
+      if (price === "Liên hệ") {
+        alert("Sản phẩm này không có giá. Vui lòng liên hệ cửa hàng.");
+        return;
+      }
+
+      const activeRom = document.querySelector('#storageOptions .active');
+      const activeColor = document.querySelector('#colorOptions .active');
+      const qty = document.getElementById('qtyInput').value;
+
+      if (!activeRom || !activeColor) {
+        alert("Vui lòng chọn ROM và màu sắc!");
+        return;
+      }
+
+      const rom = activeRom.dataset.value;
+      const color = activeColor.dataset.color;
+      fetch(`/project/includes/functionsKhachHang/getIdBienThe.php?id=${productId}&rom=${rom}&color=${color}`)
+        .then(res => res.text())
+        .then(raw => {
+          const id_bt = raw.trim();
+          console.log("getIdBienThe trả về (raw):", raw);
+          console.log("getIdBienThe trả về (trim):", id_bt);
+
+          if (!id_bt || id_bt === "0") {
+            alert("Biến thể không tồn tại! (getIdBienThe trả về 0)");
+            return;
+          }
+
+          // Gán vào input hidden
+          document.getElementById("buyNow_idBienThe").value = id_bt;
+          document.getElementById("buyNow_rom").value = rom;
+          document.getElementById("buyNow_color").value = color;
+          document.getElementById("buyNow_qty").value = qty;
+
+          // Submit form
+          document.getElementById("buyNowForm").submit();
+        })
+        .catch(err => {
+          console.error("Lỗi fetch getIdBienThe:", err);
+          alert("Không lấy được biến thể. Vui lòng thử lại.");
         });
-    }
+    });
   </script>
 
 </body>

@@ -67,6 +67,7 @@ if (isset($_GET['delete'])) {
       <div class="icons-right">
         <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
         <a id="accountLink" href="User.php">👤</a>
+        <a href="logout.php" class="icon-btn cart">🚪</a>
         <div class="danh-container">
           <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
           <ul class="danh-menu" role="menu">
@@ -107,7 +108,6 @@ if (isset($_GET['delete'])) {
                     <input class="qty-input" type="number" value="<?= $item['so_luong'] ?>" min="1">
                     <button class="qty-btn qty-plus">+</button>
                   </div>
-                  <button class="btn choose">CHỌN</button>
                 </div>
               </div>
               <div class="item-right">
@@ -122,7 +122,10 @@ if (isset($_GET['delete'])) {
         <div class="cart-footer">
           <div class="summary">
             <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
-            <a id="checkout" class="btn checkout" href="ThanhToan.php">THANH TOÁN</a>
+            <form id="checkoutForm" action="ThanhToan.php" method="POST">
+              <input type="hidden" name="selected_items" id="selectedItems">
+              <button type="submit" class="btn checkout">THANH TOÁN</button>
+            </form>
           </div>
         </div>
       </div>
@@ -172,7 +175,6 @@ if (isset($_GET['delete'])) {
       function formatVND(n) {
         return n.toLocaleString('vi-VN') + ' VND';
       }
-
       const cartList = document.getElementById('cartList');
       const totalBtn = document.getElementById('totalBtn');
       const selectAll = document.getElementById('selectAll');
@@ -181,19 +183,17 @@ if (isset($_GET['delete'])) {
         let sum = 0;
         cartList.querySelectorAll('.cart-item').forEach(item => {
           const chk = item.querySelector('.select-item');
+
           if (chk && chk.checked) {
-            if (price === "LH") {
-              document.querySelector('.price-red').innerText = "Liên hệ";
-              return;
-            }
             const price = Number(item.dataset.price || 0);
             const qty = Number(item.querySelector('.qty-input').value || 1);
+
             sum += price * qty;
           }
         });
+
         totalBtn.textContent = 'TỔNG CỘNG: ' + formatVND(sum);
       }
-
       // quantity handlers
       cartList.addEventListener('click', (e) => {
         if (e.target.matches('.qty-plus')) {
@@ -252,6 +252,27 @@ if (isset($_GET['delete'])) {
         dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
       }));
     })();
+
+    // BACK END Lấy nhưng biến thể được chọn đẩy qua thanh toán
+    document.getElementById("checkoutForm").addEventListener("submit", function(e) {
+      let ids = [];
+
+      document.querySelectorAll(".cart-item").forEach(item => {
+        const chk = item.querySelector(".select-item");
+        if (chk.checked) {
+          ids.push(item.querySelector(".del").dataset.key);
+          // dataset.key = id_chi_tiet
+        }
+      });
+
+      if (ids.length === 0) {
+        alert("Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.");
+        e.preventDefault();
+        return;
+      }
+
+      document.getElementById("selectedItems").value = JSON.stringify(ids);
+    });
   </script>
 
 </body>
