@@ -23,33 +23,6 @@
     </div>
 
     <div>
-        <label for="filter-ram">RAM</label>
-        <select id="filter-ram">
-            <option value="">Tất cả</option>
-            <option>4GB</option>
-            <option>6GB</option>
-            <option>8GB</option>
-            <option>12GB</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="filter-rom">ROM</label>
-        <select id="filter-rom">
-            <option value="">Tất cả</option>
-            <option>64GB</option>
-            <option>128GB</option>
-            <option>256GB</option>
-            <option>512GB</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="filter-pin">Pin ≥</label>
-        <input type="number" id="filter-pin" placeholder="mAh">
-    </div>
-
-    <div>
         <label for="filter-gia">Giá ≤</label>
         <input type="number" id="filter-gia" placeholder="VNĐ">
     </div>
@@ -138,10 +111,16 @@
           <label for="pin">PIN</label>
           <input id="pin" name="pin" type="text" placeholder="Ví dụ: 5000mAh">
         </div>
+
+        <div id="image-preview-container"></div>
+        <input type="hidden" id="images_to_delete" name="images_to_delete">
+        <input type="hidden" id="product_id" name="product_id">
+
+
         
         <div class="form-group">
           <label for="hinhanh">Hình ảnh</label>
-          <input id="hinhanh" name="hinhanh" type="file" multiple required>
+          <input id="hinhanh" name="hinhanh" type="file" multiple>
         </div>
       </div>
 
