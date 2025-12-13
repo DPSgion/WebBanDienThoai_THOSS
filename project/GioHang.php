@@ -97,7 +97,7 @@ if (isset($_GET['delete'])) {
           foreach ($cart_items as $item): ?>
             <div class="cart-item" data-price="<?= $item['gia'] ?>">
               <div class="item-left">
-                <img src="uploads/products/<?= $item['duong_dan_anh'] ?? '' ?>" alt="" class="item-thumb">
+                <img src="<?= $item['duong_dan_anh'] ?? '' ?>" alt="" class="item-thumb">
               </div>
               <div class="item-mid">
                 <div class="item-name"><?= $item['ten_san_pham'] ?></div>

@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1:3308
--- Thời gian đã tạo: Th12 06, 2025 lúc 03:16 PM
--- Phiên bản máy phục vụ: 9.1.0
--- Phiên bản PHP: 8.3.14
+-- Host: 127.0.0.1:3306
+-- Generation Time: Dec 13, 2025 at 03:54 PM
+-- Server version: 9.1.0
+-- PHP Version: 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `bandienthoai`
+-- Database: `bandienthoai`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `anh_san_pham`
+-- Table structure for table `anh_san_pham`
 --
 
 DROP TABLE IF EXISTS `anh_san_pham`;
@@ -34,24 +34,43 @@ CREATE TABLE IF NOT EXISTS `anh_san_pham` (
   `duong_dan_anh` varchar(255) NOT NULL,
   PRIMARY KEY (`id_anh`),
   KEY `id_san_pham` (`id_san_pham`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `anh_san_pham`
+-- Dumping data for table `anh_san_pham`
 --
 
 INSERT INTO `anh_san_pham` (`id_anh`, `id_san_pham`, `duong_dan_anh`) VALUES
-(1, 13, 'uploads/products/iphone 13 pro max.webp'),
-(2, 14, 'uploads/products/iphone 15 pro max.webp'),
-(3, 15, 'uploads/products/iphone 16 pro max.webp'),
-(4, 16, 'uploads/products/iphone13 pro max.webp'),
-(5, 17, 'uploads/products/iphone17.webp'),
-(6, 22, 'uploads/products/iphone.jpg');
+(7, 23, 'uploads/1765638267_samsung-galaxy-a17-5g.jpg'),
+(8, 23, 'uploads/1765638267_samsung-galaxy-a17-5g-2.jpg'),
+(9, 23, 'uploads/1765638267_samsung-galaxy-a17-5g-3.jpg'),
+(10, 24, 'uploads/1765638530_z-fold7.jpg'),
+(11, 24, 'uploads/1765638530_z-fold7-2.jpg'),
+(12, 24, 'uploads/1765638530_z-fold7-3.jpg'),
+(13, 25, 'uploads/1765638787_a56.jpg'),
+(14, 25, 'uploads/1765638787_a56-2.jpg'),
+(15, 25, 'uploads/1765638787_a56-3.jpg'),
+(16, 26, 'uploads/1765639097_iphone17pro.jpg'),
+(17, 26, 'uploads/1765639097_iphone17pro-1.jpg'),
+(18, 26, 'uploads/1765639097_iphone17pro-2.jpg'),
+(19, 27, 'uploads/1765639333_iphone16.jpg'),
+(20, 27, 'uploads/1765639333_iphone16-1.jpg'),
+(21, 27, 'uploads/1765639333_iphone16-2.jpg'),
+(22, 28, 'uploads/1765639488_xiaomi15t.jpg'),
+(23, 28, 'uploads/1765639488_xiaomi15t-1.jpg'),
+(24, 28, 'uploads/1765639488_xiaomi15t-2.jpg'),
+(25, 29, 'uploads/1765639637_xiaomi15.jpg'),
+(26, 29, 'uploads/1765639637_xiaomi15-1.jpg'),
+(27, 29, 'uploads/1765639637_xiaomi15-2.jpg'),
+(28, 29, 'uploads/1765639637_xiaomi15-3.jpg'),
+(29, 46, 'uploads/1765640912_17promax.jpg'),
+(30, 46, 'uploads/1765640912_17promax-1.jpg'),
+(31, 46, 'uploads/1765640912_17promax-2.jpg');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `bien_the`
+-- Table structure for table `bien_the`
 --
 
 DROP TABLE IF EXISTS `bien_the`;
@@ -65,25 +84,44 @@ CREATE TABLE IF NOT EXISTS `bien_the` (
   `so_luong_ton` int DEFAULT '0',
   PRIMARY KEY (`id_bien_the`),
   KEY `id_san_pham` (`id_san_pham`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `bien_the`
+-- Dumping data for table `bien_the`
 --
 
 INSERT INTO `bien_the` (`id_bien_the`, `id_san_pham`, `ram`, `rom`, `mau`, `gia`, `so_luong_ton`) VALUES
-(21, 13, '8GB', '256GB', 'Titan Natural', 29990000.00, 10),
-(22, 13, '8GB', '512GB', 'Titan Blue', 33990000.00, 8),
-(23, 14, '6GB', '128GB', 'Black', 21990000.00, 12),
-(24, 14, '6GB', '256GB', 'Pink', 23990000.00, 5),
-(25, 15, '6GB', '256GB', 'Purple', 27990000.00, 7),
-(26, 16, '4GB', '128GB', 'Red', 14990000.00, 15),
-(27, 22, '4GB', '64GB', 'White', 9990000.00, 20);
+(38, 26, '12GB', '256GB', 'Cam Vũ Trụ', 34990000.00, 12),
+(39, 26, '12GB', '512GB', 'Cam Vũ Trụ', 41490000.00, 32),
+(40, 26, '12GB', '1TB', 'Cam Vũ Trụ', 47990000.00, 5),
+(41, 26, '12GB', '256GB', 'Xanh Đậm', 34990000.00, 12),
+(42, 26, '12GB', '512GB', 'Xanh Đậm', 41490000.00, 24),
+(43, 26, '12GB', '1TB', 'Xanh Đậm', 47990000.00, 1),
+(46, 24, '12GB', '256GB', 'Xanh Navy', 46990000.00, 10),
+(47, 24, '12GB', '512GB', 'Xanh Navy', 50990000.00, 12),
+(48, 24, '12GB', '256GB', 'Đen', 46990000.00, 14),
+(49, 24, '12GB', '512GB', 'Đen', 50990000.00, 16),
+(50, 25, '12GB', '256GB', 'Xám', 10280000.00, 22),
+(51, 25, '8GB', '128GB', 'Hồng', 9410000.00, 17),
+(52, 25, '8GB', '256GB', 'Hồng', 9590000.00, 22),
+(53, 25, '12GB', '256GB', 'Đen', 10280000.00, 22),
+(54, 27, '8GB', '128GB', 'Xanh Lưu Ly', 21290000.00, 7),
+(55, 27, '8GB', '128GB', 'Đen', 21290000.00, 12),
+(56, 27, '8GB', '128GB', 'Hồng', 21290000.00, 21),
+(57, 28, '12GB', '256GB', 'Vàng', 18490000.00, 21),
+(58, 28, '12GB', '256GB', 'Xám', 18490000.00, 11),
+(59, 28, '12GB', '256GB', 'Đen', 18490000.00, 14),
+(60, 29, '6GB', '128GB', 'Xám', 4990000.00, 18),
+(61, 29, '8GB', '128GB', 'Xám', 4990000.00, 24),
+(94, 46, '12GB', '256GB', 'Cam Vũ Trụ', 37990000.00, 12),
+(95, 46, '12GB', '512GB', 'Cam Vũ Trụ', 44490000.00, 11),
+(98, 23, '8GB', '128GB', 'Xám', 6190000.00, 10),
+(99, 23, '8GB', '256GB', 'Xám', 7090000.00, 10);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chi_tiet_don_hang`
+-- Table structure for table `chi_tiet_don_hang`
 --
 
 DROP TABLE IF EXISTS `chi_tiet_don_hang`;
@@ -101,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `chi_tiet_don_hang` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `danh_muc`
+-- Table structure for table `danh_muc`
 --
 
 DROP TABLE IF EXISTS `danh_muc`;
@@ -109,24 +147,21 @@ CREATE TABLE IF NOT EXISTS `danh_muc` (
   `id_danh_muc` int NOT NULL AUTO_INCREMENT,
   `ten_danh_muc` varchar(100) NOT NULL,
   PRIMARY KEY (`id_danh_muc`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `danh_muc`
+-- Dumping data for table `danh_muc`
 --
 
 INSERT INTO `danh_muc` (`id_danh_muc`, `ten_danh_muc`) VALUES
-(5, 'Xiaomi'),
-(6, 'Iphone'),
-(8, 'SSS'),
-(9, 'iPhone'),
-(10, 'Samsung'),
-(11, 'Xiaomi');
+(12, 'Samsung'),
+(13, 'Iphone'),
+(14, 'Xiaomi');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `don_hang`
+-- Table structure for table `don_hang`
 --
 
 DROP TABLE IF EXISTS `don_hang`;
@@ -144,7 +179,7 @@ CREATE TABLE IF NOT EXISTS `don_hang` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `gio_hang`
+-- Table structure for table `gio_hang`
 --
 
 DROP TABLE IF EXISTS `gio_hang`;
@@ -154,12 +189,19 @@ CREATE TABLE IF NOT EXISTS `gio_hang` (
   `ngay_tao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_gio_hang`),
   KEY `id_nguoi_dung` (`id_nguoi_dung`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `gio_hang`
+--
+
+INSERT INTO `gio_hang` (`id_gio_hang`, `id_nguoi_dung`, `ngay_tao`) VALUES
+(1, 5, '2025-12-13 15:51:02');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `gio_hang_chi_tiet`
+-- Table structure for table `gio_hang_chi_tiet`
 --
 
 DROP TABLE IF EXISTS `gio_hang_chi_tiet`;
@@ -171,12 +213,19 @@ CREATE TABLE IF NOT EXISTS `gio_hang_chi_tiet` (
   PRIMARY KEY (`id_chi_tiet`),
   KEY `id_gio_hang` (`id_gio_hang`),
   KEY `id_bien_the` (`id_bien_the`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `gio_hang_chi_tiet`
+--
+
+INSERT INTO `gio_hang_chi_tiet` (`id_chi_tiet`, `id_gio_hang`, `id_bien_the`, `so_luong`) VALUES
+(1, 1, 38, 1);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `nguoi_dung`
+-- Table structure for table `nguoi_dung`
 --
 
 DROP TABLE IF EXISTS `nguoi_dung`;
@@ -188,21 +237,22 @@ CREATE TABLE IF NOT EXISTS `nguoi_dung` (
   `vai_tro` enum('admin','khachhang') DEFAULT 'khachhang',
   PRIMARY KEY (`id_nguoi_dung`),
   UNIQUE KEY `sdt` (`sdt`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `nguoi_dung`
+-- Dumping data for table `nguoi_dung`
 --
 
 INSERT INTO `nguoi_dung` (`id_nguoi_dung`, `ho_ten`, `sdt`, `mat_khau`, `vai_tro`) VALUES
 (1, 'Admin', '123', '$2y$12$uUX9sJFZu1fjW5l6N1opCOlSO5T5CpZtyTWidRrClzKgmBiTBoE9q', 'admin'),
 (3, 'Nguyễn Trọng Tín', '0123456789', '$2y$10$UCiIdU7YmE4l92.IBdg3meQMszpyaZk0MhDaRjqaYkzFQfLvrABt2', 'khachhang'),
-(4, 'Nguyễn Trọng Tín', '0792132904', '$2y$10$QbURf0xZfrdtWVE3F6n81ODpPz1.GrqBxLsqVm4hrKkuZp/KV7.Qe', 'khachhang');
+(4, 'Nguyễn Trọng Tín', '0792132904', '$2y$10$QbURf0xZfrdtWVE3F6n81ODpPz1.GrqBxLsqVm4hrKkuZp/KV7.Qe', 'khachhang'),
+(5, 'Nguyễn Đình Phương', '0123456781', '$2y$12$2LjaP7dTJVJ52d2aI25gJeLo5tKQRz5BjappuWpr1Jwa8EkkZKlJO', 'khachhang');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `san_pham`
+-- Table structure for table `san_pham`
 --
 
 DROP TABLE IF EXISTS `san_pham`;
@@ -218,68 +268,66 @@ CREATE TABLE IF NOT EXISTS `san_pham` (
   `camera_sau` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id_san_pham`),
   KEY `id_danh_muc` (`id_danh_muc`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `san_pham`
+-- Dumping data for table `san_pham`
 --
 
 INSERT INTO `san_pham` (`id_san_pham`, `id_danh_muc`, `ten_san_pham`, `cpu`, `pin`, `man_hinh`, `os`, `camera_truoc`, `camera_sau`) VALUES
-(13, 6, 'iPhone 15 Pro Max', 'A17 Pro', '4422 mAh', '6.7\" OLED 120Hz', 'iOS 17', '12MP', '48MP'),
-(14, 6, 'iPhone 15', 'A16 Bionic', '3877 mAh', '6.1\" OLED', 'iOS 17', '12MP', '48MP'),
-(15, 6, 'iPhone 14 Pro Max', 'A16 Bionic', '4323 mAh', '6.7\" OLED 120Hz', 'iOS 16', '12MP', '48MP'),
-(16, 6, 'iPhone 13', 'A15 Bionic', '3227 mAh', '6.1\" OLED', 'iOS 15', '12MP', '12MP'),
-(17, 6, 'iPhone SE 2022', 'A15 Bionic', '2018 mAh', '4.7\" LCD', 'iOS 15', '7MP', '12MP'),
-(18, 6, 'iPhone 15 Pro Max', 'A17 Pro', '4422 mAh', '6.7\" OLED 120Hz', 'iOS 17', '12MP', '48MP'),
-(19, 6, 'iPhone 15', 'A16 Bionic', '3877 mAh', '6.1\" OLED', 'iOS 17', '12MP', '48MP'),
-(20, 6, 'iPhone 14 Pro Max', 'A16 Bionic', '4323 mAh', '6.7\" OLED 120Hz', 'iOS 16', '12MP', '48MP'),
-(21, 6, 'iPhone 13', 'A15 Bionic', '3227 mAh', '6.1\" OLED', 'iOS 15', '12MP', '12MP'),
-(22, 6, 'iPhone SE 2022', 'A15 Bionic', '2018 mAh', '4.7\" LCD', 'iOS 15', '7MP', '12MP');
+(23, 12, 'Samsung Galaxy A17 5G', 'Exynos 1330', '5000 mAh', '6.7\" - Tần số quét 90 Hz', 'android', '13 MP', 'Chính 50 MP & Phụ 5 MP, 2 MP'),
+(24, 12, 'Samsung Galaxy Z Fold7 5G', 'Qualcomm Snapdragon 8 Elite For Galaxy 8 nhân', '4400 mAh', 'Chính 8.0\" & Phụ 6.5\" - Tần số quét 120 Hz', 'android', 'Trong 10 MP & Ngoài 10 MP', 'Chính 200 MP & Phụ 12 MP, 10 MP'),
+(25, 12, 'Samsung Galaxy A56 5G', 'Exynos 1580 8 nhân', '5000 mAh', '6.7\" - Tần số quét 120 Hz', 'android', '12 MP', 'Chính 50 MP & Phụ 12 MP, 5 MP'),
+(26, 13, 'iPhone 17 Pro', 'Apple A19 Pro 6 nhân', '31 giờ', '6.3\" - Tần số quét 120 Hz', 'ios', '18 MP', 'Chính 48 MP & Phụ 48 MP, 48 MP'),
+(27, 13, 'iPhone 16', 'Apple A18 6 nhân', '3561mAh', '6.1\" - Tần số quét 60 Hz', 'ios', '12 MP', 'Chính 48 MP & Phụ 12 MP'),
+(28, 14, 'Xiaomi 15T Pro 5G', 'MediaTek Dimensity 9400+ 8 nhân', ' 5500 mAh', '6.83\" - Tần số quét 144 Hz', 'android', '32 MP', 'Chính 50 MP & Phụ 50 MP, 12 MP'),
+(29, 14, 'Xiaomi Redmi 15', 'Snapdragon 685 8 nhân', '7000 mAh', '6.9\" - Tần số quét 144 Hz', 'android', '8 MP', 'Chính 50 MP & Phụ QVGA'),
+(46, 13, 'iPhone 17 Pro Max', 'Apple A19 Pro 6 nhân', '4832mAh', '6.9\" - Tần số quét 120 Hz', 'ios', '18 MP', 'Chính 48 MP & Phụ 48 MP, 48 MP');
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `anh_san_pham`
+-- Constraints for table `anh_san_pham`
 --
 ALTER TABLE `anh_san_pham`
   ADD CONSTRAINT `anh_san_pham_ibfk_1` FOREIGN KEY (`id_san_pham`) REFERENCES `san_pham` (`id_san_pham`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `bien_the`
+-- Constraints for table `bien_the`
 --
 ALTER TABLE `bien_the`
   ADD CONSTRAINT `bien_the_ibfk_1` FOREIGN KEY (`id_san_pham`) REFERENCES `san_pham` (`id_san_pham`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `chi_tiet_don_hang`
+-- Constraints for table `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
   ADD CONSTRAINT `chi_tiet_don_hang_ibfk_1` FOREIGN KEY (`id_don_hang`) REFERENCES `don_hang` (`id_don_hang`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `chi_tiet_don_hang_ibfk_2` FOREIGN KEY (`id_bien_the`) REFERENCES `bien_the` (`id_bien_the`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `don_hang`
+-- Constraints for table `don_hang`
 --
 ALTER TABLE `don_hang`
   ADD CONSTRAINT `don_hang_ibfk_1` FOREIGN KEY (`id_nguoi_dung`) REFERENCES `nguoi_dung` (`id_nguoi_dung`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `gio_hang`
+-- Constraints for table `gio_hang`
 --
 ALTER TABLE `gio_hang`
   ADD CONSTRAINT `gio_hang_ibfk_1` FOREIGN KEY (`id_nguoi_dung`) REFERENCES `nguoi_dung` (`id_nguoi_dung`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `gio_hang_chi_tiet`
+-- Constraints for table `gio_hang_chi_tiet`
 --
 ALTER TABLE `gio_hang_chi_tiet`
   ADD CONSTRAINT `gio_hang_chi_tiet_ibfk_1` FOREIGN KEY (`id_gio_hang`) REFERENCES `gio_hang` (`id_gio_hang`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `gio_hang_chi_tiet_ibfk_2` FOREIGN KEY (`id_bien_the`) REFERENCES `bien_the` (`id_bien_the`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `san_pham`
+-- Constraints for table `san_pham`
 --
 ALTER TABLE `san_pham`
   ADD CONSTRAINT `san_pham_ibfk_1` FOREIGN KEY (`id_danh_muc`) REFERENCES `danh_muc` (`id_danh_muc`) ON DELETE RESTRICT ON UPDATE CASCADE;
