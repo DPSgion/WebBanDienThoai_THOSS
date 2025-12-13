@@ -1159,3 +1159,57 @@ form#form-them {
 .modal .modal-actions .btnDong {
     color: black;
 }
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+
+
+
+
+
+
+
+
+
+/* Modal sửa sản phẩm */
+
+#image-preview-container {
+    display: flex;
+    gap: 8px; /* khoảng cách giữa ảnh */
+    flex-wrap: wrap; /* nếu quá dài thì xuống hàng */
+    align-items: center;
+}
+
+.preview-item {
+    position: relative;
+}
+
+.preview-item img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.del-img-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    cursor: pointer;
+}
