@@ -5,13 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style_admin.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <title>Admin Page</title>
 </head>
 
 <?php
-
-$dashboard      = '../assets/js/dashboard.js';
 $quanlydanhmuc  = '../assets/js/quanlydanhmuc.js';
 $quanlysanpham  = '../assets/js/quanlysanpham.js';
 $quanlydonhang  = '../assets/js/quanlydonhang.js';
@@ -21,10 +18,10 @@ $caidat         = '../assets/js/caidat.js';
 
 <body>
     <div class="header">
-        <div class="header-left">
+        <a href="index.php" style="text-decoration: none" class="header-left">
             <img src="../assets/images/logodt.png" width="80px">
             <h1 class="header-logo">Admin</h1>
-        </div>
+        </a>
         <div class="header-right">
             <p class="admin-name">Admin Name</p>
             <button class="logout-btn">Đăng xuất</button>
@@ -33,10 +30,6 @@ $caidat         = '../assets/js/caidat.js';
 
     <div class="sidebar">
         <ul>
-            <li>
-                <a href="#" data-page="dashboard.php" data-js="<?php echo $dashboard ?>"
-                    data-callback="initDashboard">Dashboard</a>
-            </li>
             <li>
                 <a href="#" data-page="quanlydanhmuc.php" data-js="<?php echo $quanlydanhmuc ?>"
                     data-callback="initQuanLyDanhMuc">Quản lý danh mục</a>
@@ -57,7 +50,7 @@ $caidat         = '../assets/js/caidat.js';
     </div>
 
     <div class="content" id="content">
-
+        
     </div>
 
 
@@ -112,7 +105,7 @@ $caidat         = '../assets/js/caidat.js';
 
         // Tự động load dashboard khi mở trang
         window.addEventListener('DOMContentLoaded', () => {
-            const dashboardLink = document.querySelector('.sidebar a[data-page="dashboard.php"]');
+            const dashboardLink = document.querySelector('.sidebar a[data-page="quanlydanhmuc.php"]');
             if (dashboardLink) {
                 const page = dashboardLink.dataset.page;
                 const js = dashboardLink.dataset.js;
