@@ -2,25 +2,43 @@
 session_start();
 include 'config/config.php';
 
-function get_all_categories($pdo)
-{
-  try {
-    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
-  }
-}
+$keyword = trim($_GET["q"] ?? "");
 
-$romFilter   = $_GET['rom']   ?? '';
-$osFilter    = $_GET['os']    ?? '';
-$priceFilter = $_GET['price'] ?? '';
-$colorFilter = $_GET['color'] ?? '';
-$cat_id = $_GET['cat_id'] ?? '';
-$sqlAll = "SELECT 
+if ($keyword !== "") {
+  $sqlSearch = "
+        SELECT 
+            sp.id_san_pham,
+            dm.ten_danh_muc,
+            sp.ten_san_pham,
+            MIN(bt.gia) AS gia,
+            (SELECT duong_dan_anh FROM anh_san_pham WHERE id_san_pham = sp.id_san_pham LIMIT 1) AS hinh_anh
+        FROM san_pham sp
+        JOIN danh_muc dm ON dm.id_danh_muc = sp.id_danh_muc
+        LEFT JOIN bien_the bt ON bt.id_san_pham = sp.id_san_pham
+        WHERE sp.ten_san_pham LIKE :kw
+           OR dm.ten_danh_muc LIKE :kw
+        GROUP BY sp.id_san_pham
+        ORDER BY sp.ten_san_pham ASC
+    ";
+
+  $stmt = $pdo->prepare($sqlSearch);
+  $stmt->execute([":kw" => "%$keyword%"]);
+  $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Nếu KHÔNG tìm thấy
+  if (empty($allProducts)) {
+    $message = "❗ Cửa hàng không có sản phẩm '$keyword'.";
+  }
+} else {
+
+
+
+  $romFilter   = $_GET['rom']   ?? '';
+  $osFilter    = $_GET['os']    ?? '';
+  $priceFilter = $_GET['price'] ?? '';
+  $colorFilter = $_GET['color'] ?? '';
+  $cat_id = $_GET['cat_id'] ?? '';
+  $sqlAll = "SELECT 
     sp.id_san_pham,dm.ten_danh_muc,
     sp.ten_san_pham,
     MIN(bt.gia) AS gia,
@@ -36,57 +54,68 @@ join danh_muc dm on dm.id_danh_muc = sp.id_danh_muc
 WHERE dm.id_danh_muc = :id_cat ";
 
 
-// Lọc ROM
-if (!empty($romFilter)) {
-  $sqlAll .= " AND bt.rom = :rom ";
-}
-
-// Lọc OS (KHÔNG dùng param)
-if (!empty($osFilter)) {
-  if ($osFilter === 'iOS') {
-    $sqlAll .= " AND sp.os LIKE 'iOS%'";
-  } elseif ($osFilter === 'Android') {
-    $sqlAll .= " AND sp.os LIKE 'Android%'";
+  // Lọc ROM
+  if (!empty($romFilter)) {
+    $sqlAll .= " AND bt.rom = :rom ";
   }
+
+  // Lọc OS (KHÔNG dùng param)
+  if (!empty($osFilter)) {
+    if ($osFilter === 'iOS') {
+      $sqlAll .= " AND sp.os LIKE 'iOS%'";
+    } elseif ($osFilter === 'Android') {
+      $sqlAll .= " AND sp.os LIKE 'Android%'";
+    }
+  }
+
+  // Lọc màu sắc
+  if (!empty($colorFilter)) {
+    $sqlAll .= " AND bt.mau = :color ";
+  }
+
+  $sqlAll .= " GROUP BY sp.id_san_pham ";
+
+  // Lọc giá
+  if ($priceFilter == "low_high") {
+    $sqlAll .= " ORDER BY gia ASC ";
+  }
+  if ($priceFilter == "high_low") {
+    $sqlAll .= " ORDER BY gia DESC ";
+  }
+
+  $stmt = $pdo->prepare($sqlAll);
+  $params = [':id_cat' => $cat_id];
+
+  // Bind đúng tham số nào có trong SQL
+  if (!empty($romFilter)) {
+    $params[':rom'] = $romFilter;
+  }
+
+  if (!empty($colorFilter)) {
+    $params[':color'] = $colorFilter;
+  }
+
+
+
+  $stmt->execute($params);
+  $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Lọc màu sắc
-if (!empty($colorFilter)) {
-  $sqlAll .= " AND bt.mau = :color ";
-}
-
-$sqlAll .= " GROUP BY sp.id_san_pham ";
-
-// Lọc giá
-if ($priceFilter == "low_high") {
-  $sqlAll .= " ORDER BY gia ASC ";
-}
-if ($priceFilter == "high_low") {
-  $sqlAll .= " ORDER BY gia DESC ";
-}
-
-$stmt = $pdo->prepare($sqlAll);
-$params = [':id_cat' => $cat_id];
-
-// Bind đúng tham số nào có trong SQL
-if (!empty($romFilter)) {
-  $params[':rom'] = $romFilter;
-}
-
-if (!empty($colorFilter)) {
-  $params[':color'] = $colorFilter;
-}
-
-
-
-$stmt->execute($params);
-$allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
-// --- THỰC THI CHÍNH ---
 
 // Lấy danh sách danh mục
+
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
 $categories = get_all_categories($pdo);
 
 
@@ -135,9 +164,9 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
         <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
       </div>
       <div class="search-center">
-        <form action="TimKiem.php" method="GET">
-          <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
-          <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+        <form action="TimKiem.php" method="get" style="width: 500px;">
+          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
+          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
         </form>
       </div>
       <div class="icons-right">
@@ -157,7 +186,11 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
     </div>
   </header>
 
-
+  <?php if (!empty($message)): ?>
+    <h2 style="color:red; text-align:center; margin:20px 0;">
+      <?= $message ?>
+    </h2>
+  <?php endif; ?>
   <main class="container search-page">
     <div class="filter-bar">
       <div class="filter-item">

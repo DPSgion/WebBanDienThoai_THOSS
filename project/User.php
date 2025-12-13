@@ -50,8 +50,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
 
       <div class="search-center">
-        <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
-        <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+        <form action="TimKiem.php" method="get" style="width: 500px;">
+          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
+          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
+        </form>
       </div>
 
       <div class="icons-right">

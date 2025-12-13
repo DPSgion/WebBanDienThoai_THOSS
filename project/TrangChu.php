@@ -1,9 +1,18 @@
 <?php require_once './config/config.php';
 session_start();
-$sqlDM = "SELECT * FROM danh_muc";
-$stmtDM = $pdo->prepare($sqlDM);
-$stmtDM->execute();
-$dsDanhMuc = $stmtDM->fetchAll(PDO::FETCH_ASSOC);
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+$dsDanhMuc = get_all_categories($pdo);
 
 $sqlIphone = "
 SELECT sp.*, bt.gia, a.duong_dan_anh 
@@ -67,7 +76,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
                 <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
                 <ul class="danh-menu">
                   <?php foreach ($dsDanhMuc as $dm): ?>
-                    <li><a href="TimKiem.php?dm=<?= $dm['id_danh_muc'] ?>">
+                    <li><a href="TimKiem.php?cat_id=<?= $dm['id_danh_muc'] ?>">
                         <?= $dm['ten_danh_muc'] ?>
                       </a></li>
                   <?php endforeach; ?>
@@ -77,8 +86,10 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="search-wrap">
-              <input class="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm" />
-              <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+              <form action="TimKiem.php" method="get" style="width: 500px;">
+                <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
+                <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
+              </form>
             </div>
 
             <nav class="main-nav" aria-label="Main navigation">
@@ -94,7 +105,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
                 }
                 ?>
               </a>
-             <a href="logout.php">Đăng xuất</a>
+              <a href="logout.php">🚪</a>
             </nav>
             <!-- Contact block moved inside the bordered area (right side) -->
             <!--SỬA-->
@@ -182,7 +193,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
   <section class="featured container">
     <div class="section-header">
       <h2>iPhone chính hãng</h2>
-      <a class="view-more" href="#">Xem Thêm →</a>
+      <a class="view-more" href="SanPham.php">Xem Thêm →</a>
     </div>
     <div class="products">
       <?php foreach ($iphoneList as $sp): ?>
@@ -203,7 +214,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
   <section class="featured container">
     <div class="section-header">
       <h2>Samsung chính hãng</h2>
-      <a class="view-more" href="#">Xem Thêm →</a>
+      <a class="view-more" href="SanPham.php">Xem Thêm →</a>
     </div>
     <div class="products">
       <?php foreach ($samsungList as $sp): ?>

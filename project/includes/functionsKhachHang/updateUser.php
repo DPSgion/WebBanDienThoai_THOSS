@@ -46,11 +46,11 @@ try {
         $newHash = password_hash($newPw, PASSWORD_DEFAULT);
         $sql = "UPDATE nguoi_dung SET ho_ten = ?, mat_khau = ? WHERE id_nguoi_dung = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$name, $phone, $newHash, $id]);
+        $stmt->execute([$name, $newHash, $id]);
     } else {
         $sql = "UPDATE nguoi_dung SET ho_ten = ? WHERE id_nguoi_dung = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$name, $phone, $id]);
+        $stmt->execute([$name, $id]);
     }
 
     echo "OK";

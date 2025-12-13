@@ -1,5 +1,5 @@
 <?php
-$DB_HOST = 'localhost:3306';
+$DB_HOST = 'localhost:3308';
 $DB_NAME = 'bandienthoai';
 $DB_USER = 'root';
 $DB_PASS = '';

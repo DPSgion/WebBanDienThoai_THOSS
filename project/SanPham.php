@@ -1,24 +1,6 @@
 <?php
 session_start();
-include 'config/config.php'; 
-
-/**
- * Hàm lấy danh sách tất cả Danh mục
- * @param PDO $pdo
- * @return array
- */
-function get_all_categories($pdo)
-{
-  try {
-    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
-  }
-}
+include 'config/config.php';
 
 $romFilter   = $_GET['rom']   ?? '';
 $osFilter    = $_GET['os']    ?? '';
@@ -87,9 +69,18 @@ $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-// --- THỰC THI CHÍNH ---
-
-// Lấy danh sách danh mục
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
 $categories = get_all_categories($pdo);
 
 
@@ -138,9 +129,9 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
         <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
       </div>
       <div class="search-center">
-        <form action="TimKiem.php" method="GET">
-          <input class="search-input" placeholder="Tìm kiếm sản phẩm" />
-          <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+        <form action="TimKiem.php" method="get" style="width: 500px;">
+          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
+          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
         </form>
       </div>
       <div class="icons-right">

@@ -1,3 +1,49 @@
+<?php
+include 'config/config.php';
+function get_all_categories($pdo)
+{
+  try {
+    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+    // Log lỗi
+    return [];
+  }
+}
+$dsDanhMuc = get_all_categories($pdo);
+
+
+
+$sqlIphone = "
+SELECT sp.*, bt.gia, a.duong_dan_anh 
+FROM san_pham sp
+JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+JOIN anh_san_pham a ON sp.id_san_pham = a.id_san_pham
+JOIN danh_muc dm ON sp.id_danh_muc = dm.id_danh_muc
+WHERE dm.ten_danh_muc = 'iPhone'
+GROUP BY sp.id_san_pham
+LIMIT 5";
+
+$stmtIphone = $pdo->prepare($sqlIphone);
+$stmtIphone->execute();
+$iphoneList = $stmtIphone->fetchAll(PDO::FETCH_ASSOC);
+
+$sqlSamsung = "
+SELECT sp.*, bt.gia, a.duong_dan_anh 
+FROM san_pham sp
+JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+JOIN anh_san_pham a ON sp.id_san_pham = a.id_san_pham
+JOIN danh_muc dm ON sp.id_danh_muc = dm.id_danh_muc
+WHERE dm.ten_danh_muc = 'Samsung'
+GROUP BY sp.id_san_pham
+LIMIT 5";
+
+$stmtSamsung = $pdo->prepare($sqlSamsung);
+$stmtSamsung->execute();
+$samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!doctype html>
 <html lang="vi">
 
@@ -30,23 +76,27 @@
               <div class="danh-container">
                 <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
                 <ul class="danh-menu" role="menu">
-                  <li><a href="TimKiem.html" class="danh-link">iPhone</a></li>
-                  <li><a href="#">Samsung</a></li>
-                  <li><a href="#">Máy tính bảng</a></li>
+                  <?php foreach ($dsDanhMuc as $dm): ?>
+                    <li><a href="TimKiem.php?cat_id=<?= $dm['id_danh_muc'] ?>">
+                        <?= $dm['ten_danh_muc'] ?>
+                      </a></li>
+                  <?php endforeach; ?>
                 </ul>
               </div>
               <!--END SỬA-->
             </div>
 
             <div class="search-wrap">
-              <input class="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm" />
-              <button class="search-btn" aria-label="Tìm kiếm">🔍</button>
+              <form action="TimKiem.php" method="get" style="width: 500px;">
+                <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
+                <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
+              </form>
             </div>
 
             <nav class="main-nav" aria-label="Main navigation">
               <!--SỬA-->
-              <a href="SanPham.html">📱SẢN PHẨM</a>
-              <a href="GioHang.html">🛒GIỎ HÀNG</a>
+              <a href="SanPham.php">📱SẢN PHẨM</a>
+              <a href="GioHang.php">🛒GIỎ HÀNG</a>
               <a id="accountLink" href="login.php">👤TÀI KHOẢN</a>
               <!--END SỬA-->
             </nav>
@@ -101,11 +151,13 @@
   <section class="categories container">
     <h3 class="categories-title">Danh mục sản phẩm</h3>
     <div class="categories-list">
-      <!--SỬA-->
-      <div class="cat"><a href="TimKiem.html">📱 iPhone</a></div>
-      <div class="cat"><a href=""></a>📱 Samsung</div>
-      <div class="cat"><a href=""></a>📱 Máy tính bảng</div>
-      <!-- END SỬA-->
+      <?php foreach ($dsDanhMuc as $cat): ?>
+        <div class="cat">
+          <a href="TimKiem.php?danhmuc=<?php echo $cat['id_danh_muc']; ?>">
+            📱 <?php echo htmlspecialchars($cat['ten_danh_muc']); ?>
+          </a>
+        </div>
+      <?php endforeach; ?>
     </div>
   </section>
 
@@ -135,58 +187,17 @@
       <a class="view-more" href="#">Xem Thêm →</a>
     </div>
     <div class="products">
-      <div class="product">
-        <div class="thumb">
-          <a href="ChiTietSanPham.html" aria-label="Xem chi tiết iPhone 17 Pro Max">
-            <img src="uploads/products/iphone17.webp" alt="iPhone 17 Pro Max" width="100" height="120" />
+      <?php foreach ($iphoneList as $sp): ?>
+        <div class="product">
+          <a href="ChiTietSanPham.php?id=<?= $sp['id_san_pham'] ?>">
+            <img src="<?= $sp['duong_dan_anh'] ?>" width="120">
           </a>
+          <div class="name"><?= $sp['ten_san_pham'] ?></div>
+          <div class="current-price">
+            <?= number_format($sp['gia'], 0, ',', '.') ?>₫
+          </div>
         </div>
-        <div class="name"><a href="ChiTietSanPham.html">iPhone 17 Pro max </a></div>
-        <div class="prices">
-          <div class="current-price">31.990.000₫</div>
-          <div class="original-price">35.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/iphone 13 pro max.webp" alt="iPhone 15" width="100" height="120" />
-        </div>
-        <div class="name">iPhone 13</div>
-        <div class="prices">
-          <div class="current-price">21.990.000₫</div>
-          <div class="original-price">25.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/iPhone 16 pro max.webp" alt="iPhone 14" width="100" height="120" />
-        </div>
-        <div class="name">iPhone 16</div>
-        <div class="prices">
-          <div class="current-price">18.990.000₫</div>
-          <div class="original-price">22.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/iphone17.webp" alt="iPhone 13" width="100" height="120" />
-        </div>
-        <div class="name">iPhone 17</div>
-        <div class="prices">
-          <div class="current-price">14.990.000₫</div>
-          <div class="original-price">17.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/iPhone Air.webp" alt="iPhone 12" width="100" height="120" />
-        </div>
-        <div class="name">iPhone Ari</div>
-        <div class="prices">
-          <div class="current-price">9.990.000₫</div>
-          <div class="original-price">12.990.000₫</div>
-        </div>
-      </div>
+      <?php endforeach; ?>
     </div>
   </section>
 
@@ -197,56 +208,17 @@
       <a class="view-more" href="#">Xem Thêm →</a>
     </div>
     <div class="products">
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/samsung galaxy A17.webp" alt="Samsung S23 Ultra" width="100" height="120" />
+      <?php foreach ($samsungList as $sp): ?>
+        <div class="product">
+          <a href="ChiTietSanPham.php?id=<?= $sp['id_san_pham'] ?>">
+            <img src="<?= $sp['duong_dan_anh'] ?>" width="120">
+          </a>
+          <div class="name"><?= $sp['ten_san_pham'] ?></div>
+          <div class="current-price">
+            <?= number_format($sp['gia'], 0, ',', '.') ?>₫
+          </div>
         </div>
-        <div class="name">Samsung S23 Ultra</div>
-        <div class="prices">
-          <div class="current-price">24.990.000₫</div>
-          <div class="original-price">28.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/samsung galaxy z fLIP7.webp" alt="Samsung A54" width="100" height="120" />
-        </div>
-        <div class="name">Samsung A54</div>
-        <div class="prices">
-          <div class="current-price">7.990.000₫</div>
-          <div class="original-price">8.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/SamSung Ultra S25.webp" alt="Samsung A34" width="100" height="120" />
-        </div>
-        <div class="name">Samsung A34</div>
-        <div class="prices">
-          <div class="current-price">5.990.000₫</div>
-          <div class="original-price">6.490.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/Samsung.webp" alt="Samsung S22" width="100" height="120" />
-        </div>
-        <div class="name">Samsung S22</div>
-        <div class="prices">
-          <div class="current-price">18.990.000₫</div>
-          <div class="original-price">20.990.000₫</div>
-        </div>
-      </div>
-      <div class="product">
-        <div class="thumb">
-          <img src="uploads/products/samsung galaxy A17.webp" alt="Samsung M33" width="100" height="120" />
-        </div>
-        <div class="name">Samsung M33</div>
-        <div class="prices">
-          <div class="current-price">4.990.000₫</div>
-          <div class="original-price">5.490.000₫</div>
-        </div>
-      </div>
+      <?php endforeach; ?>
     </div>
   </section>
 
