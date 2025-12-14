@@ -18,12 +18,23 @@ $categories = get_all_categories($pdo);
 
 $id_user = $_SESSION['id_nguoi_dung'] ?? '';
 
-$sql = "SELECT ghct.*, bt.gia, sp.ten_san_pham, asp.duong_dan_anh
-        FROM gio_hang_chi_tiet ghct
-        JOIN bien_the bt ON ghct.id_bien_the = bt.id_bien_the
-        JOIN san_pham sp ON bt.id_san_pham = sp.id_san_pham
-        LEFT JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
-        WHERE ghct.id_gio_hang = (SELECT id_gio_hang FROM gio_hang WHERE id_nguoi_dung = ? LIMIT 1)";
+$sql = "SELECT ghct.*,bt.gia,sp.ten_san_pham, asp.duong_dan_anh
+FROM gio_hang_chi_tiet ghct
+JOIN bien_the bt ON ghct.id_bien_the = bt.id_bien_the
+JOIN san_pham sp ON bt.id_san_pham = sp.id_san_pham
+LEFT JOIN anh_san_pham asp 
+    ON asp.id_san_pham = sp.id_san_pham
+    AND asp.id_anh = (
+        SELECT MIN(id_anh)
+        FROM anh_san_pham
+        WHERE id_san_pham = sp.id_san_pham
+    )
+WHERE ghct.id_gio_hang = (
+    SELECT id_gio_hang 
+    FROM gio_hang 
+    WHERE id_nguoi_dung = ? 
+    LIMIT 1
+);";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$id_user]);
 $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
