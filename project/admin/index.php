@@ -42,10 +42,10 @@ $caidat         = '../assets/js/caidat.js';
                 <a href="#" data-page="quanlydonhang.php" data-js="<?php echo $quanlydonhang ?>"
                     data-callback="initQuanLyDonHang">Quản lý đơn hàng</a>
             </li>
-            <li>
+            <!-- <li>
                 <a href="#" data-page="caidat.php" data-js="<?php echo $caidat ?>"
                     data-callback="initCaiDat">Cài đặt</a>
-            </li>
+            </li> -->
         </ul>
     </div>
 
