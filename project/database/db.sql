@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Dec 13, 2025 at 03:54 PM
--- Server version: 9.1.0
--- PHP Version: 8.3.14
+-- Máy chủ: 127.0.0.1:3308
+-- Thời gian đã tạo: Th12 14, 2025 lúc 01:14 PM
+-- Phiên bản máy phục vụ: 9.1.0
+-- Phiên bản PHP: 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `bandienthoai`
+-- Cơ sở dữ liệu: `bandienthoai`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anh_san_pham`
+-- Cấu trúc bảng cho bảng `anh_san_pham`
 --
 
 DROP TABLE IF EXISTS `anh_san_pham`;
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `anh_san_pham` (
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `anh_san_pham`
+-- Đang đổ dữ liệu cho bảng `anh_san_pham`
 --
 
 INSERT INTO `anh_san_pham` (`id_anh`, `id_san_pham`, `duong_dan_anh`) VALUES
@@ -70,7 +70,7 @@ INSERT INTO `anh_san_pham` (`id_anh`, `id_san_pham`, `duong_dan_anh`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bien_the`
+-- Cấu trúc bảng cho bảng `bien_the`
 --
 
 DROP TABLE IF EXISTS `bien_the`;
@@ -87,11 +87,11 @@ CREATE TABLE IF NOT EXISTS `bien_the` (
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `bien_the`
+-- Đang đổ dữ liệu cho bảng `bien_the`
 --
 
 INSERT INTO `bien_the` (`id_bien_the`, `id_san_pham`, `ram`, `rom`, `mau`, `gia`, `so_luong_ton`) VALUES
-(38, 26, '12GB', '256GB', 'Cam Vũ Trụ', 34990000.00, 12),
+(38, 26, '12GB', '256GB', 'Cam Vũ Trụ', 34990000.00, 7),
 (39, 26, '12GB', '512GB', 'Cam Vũ Trụ', 41490000.00, 32),
 (40, 26, '12GB', '1TB', 'Cam Vũ Trụ', 47990000.00, 5),
 (41, 26, '12GB', '256GB', 'Xanh Đậm', 34990000.00, 12),
@@ -105,23 +105,23 @@ INSERT INTO `bien_the` (`id_bien_the`, `id_san_pham`, `ram`, `rom`, `mau`, `gia`
 (51, 25, '8GB', '128GB', 'Hồng', 9410000.00, 17),
 (52, 25, '8GB', '256GB', 'Hồng', 9590000.00, 22),
 (53, 25, '12GB', '256GB', 'Đen', 10280000.00, 22),
-(54, 27, '8GB', '128GB', 'Xanh Lưu Ly', 21290000.00, 7),
-(55, 27, '8GB', '128GB', 'Đen', 21290000.00, 12),
+(54, 27, '8GB', '128GB', 'Xanh Lưu Ly', 21290000.00, 4),
+(55, 27, '8GB', '128GB', 'Đen', 21290000.00, 0),
 (56, 27, '8GB', '128GB', 'Hồng', 21290000.00, 21),
-(57, 28, '12GB', '256GB', 'Vàng', 18490000.00, 21),
-(58, 28, '12GB', '256GB', 'Xám', 18490000.00, 11),
+(57, 28, '12GB', '256GB', 'Vàng', 18490000.00, 11),
+(58, 28, '12GB', '256GB', 'Xám', 18490000.00, 5),
 (59, 28, '12GB', '256GB', 'Đen', 18490000.00, 14),
-(60, 29, '6GB', '128GB', 'Xám', 4990000.00, 18),
+(60, 29, '6GB', '128GB', 'Xám', 4990000.00, 17),
 (61, 29, '8GB', '128GB', 'Xám', 4990000.00, 24),
 (94, 46, '12GB', '256GB', 'Cam Vũ Trụ', 37990000.00, 12),
-(95, 46, '12GB', '512GB', 'Cam Vũ Trụ', 44490000.00, 11),
+(95, 46, '12GB', '512GB', 'Cam Vũ Trụ', 44490000.00, 7),
 (98, 23, '8GB', '128GB', 'Xám', 6190000.00, 10),
 (99, 23, '8GB', '256GB', 'Xám', 7090000.00, 10);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chi_tiet_don_hang`
+-- Cấu trúc bảng cho bảng `chi_tiet_don_hang`
 --
 
 DROP TABLE IF EXISTS `chi_tiet_don_hang`;
@@ -134,12 +134,23 @@ CREATE TABLE IF NOT EXISTS `chi_tiet_don_hang` (
   PRIMARY KEY (`id_ctdh`),
   KEY `id_don_hang` (`id_don_hang`),
   KEY `id_bien_the` (`id_bien_the`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `chi_tiet_don_hang`
+--
+
+INSERT INTO `chi_tiet_don_hang` (`id_ctdh`, `id_don_hang`, `id_bien_the`, `so_luong`, `gia_luc_mua`) VALUES
+(5, 3, 95, 4, 44490000.00),
+(6, 4, 55, 4, 21290000.00),
+(7, 4, 58, 6, 18490000.00),
+(8, 4, 38, 5, 34990000.00),
+(9, 5, 55, 8, 21290000.00);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `danh_muc`
+-- Cấu trúc bảng cho bảng `danh_muc`
 --
 
 DROP TABLE IF EXISTS `danh_muc`;
@@ -150,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `danh_muc` (
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `danh_muc`
+-- Đang đổ dữ liệu cho bảng `danh_muc`
 --
 
 INSERT INTO `danh_muc` (`id_danh_muc`, `ten_danh_muc`) VALUES
@@ -161,7 +172,7 @@ INSERT INTO `danh_muc` (`id_danh_muc`, `ten_danh_muc`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `don_hang`
+-- Cấu trúc bảng cho bảng `don_hang`
 --
 
 DROP TABLE IF EXISTS `don_hang`;
@@ -169,17 +180,26 @@ CREATE TABLE IF NOT EXISTS `don_hang` (
   `id_don_hang` int NOT NULL AUTO_INCREMENT,
   `id_nguoi_dung` int DEFAULT NULL,
   `trang_thai` enum('choxuly','danggiao','hoanthanh','dahuy') DEFAULT 'choxuly',
-  `tong_tien` decimal(10,2) DEFAULT NULL,
+  `tong_tien` bigint DEFAULT NULL,
   `dia_chi` varchar(255) DEFAULT NULL,
   `ngay_dat` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_don_hang`),
   KEY `id_nguoi_dung` (`id_nguoi_dung`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `don_hang`
+--
+
+INSERT INTO `don_hang` (`id_don_hang`, `id_nguoi_dung`, `trang_thai`, `tong_tien`, `dia_chi`, `ngay_dat`) VALUES
+(3, 4, 'choxuly', 177960000, '341 Lạc Long Quân, Hồ Chí Minh, Quận 11', '2025-12-14 12:58:00'),
+(4, 4, 'choxuly', 371050000, 'Địa chỉ nhận thứ 2, Hồ Chí Minh, Quận 12', '2025-12-14 13:05:06'),
+(5, 4, 'choxuly', 170320000, 'Địa chỉ nhận thứ 2, Hồ Chí Minh, Quận 11', '2025-12-14 13:08:08');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gio_hang`
+-- Cấu trúc bảng cho bảng `gio_hang`
 --
 
 DROP TABLE IF EXISTS `gio_hang`;
@@ -189,10 +209,10 @@ CREATE TABLE IF NOT EXISTS `gio_hang` (
   `ngay_tao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_gio_hang`),
   KEY `id_nguoi_dung` (`id_nguoi_dung`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `gio_hang`
+-- Đang đổ dữ liệu cho bảng `gio_hang`
 --
 
 INSERT INTO `gio_hang` (`id_gio_hang`, `id_nguoi_dung`, `ngay_tao`) VALUES
@@ -201,7 +221,7 @@ INSERT INTO `gio_hang` (`id_gio_hang`, `id_nguoi_dung`, `ngay_tao`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gio_hang_chi_tiet`
+-- Cấu trúc bảng cho bảng `gio_hang_chi_tiet`
 --
 
 DROP TABLE IF EXISTS `gio_hang_chi_tiet`;
@@ -213,10 +233,10 @@ CREATE TABLE IF NOT EXISTS `gio_hang_chi_tiet` (
   PRIMARY KEY (`id_chi_tiet`),
   KEY `id_gio_hang` (`id_gio_hang`),
   KEY `id_bien_the` (`id_bien_the`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `gio_hang_chi_tiet`
+-- Đang đổ dữ liệu cho bảng `gio_hang_chi_tiet`
 --
 
 INSERT INTO `gio_hang_chi_tiet` (`id_chi_tiet`, `id_gio_hang`, `id_bien_the`, `so_luong`) VALUES
@@ -225,7 +245,7 @@ INSERT INTO `gio_hang_chi_tiet` (`id_chi_tiet`, `id_gio_hang`, `id_bien_the`, `s
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nguoi_dung`
+-- Cấu trúc bảng cho bảng `nguoi_dung`
 --
 
 DROP TABLE IF EXISTS `nguoi_dung`;
@@ -240,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `nguoi_dung` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `nguoi_dung`
+-- Đang đổ dữ liệu cho bảng `nguoi_dung`
 --
 
 INSERT INTO `nguoi_dung` (`id_nguoi_dung`, `ho_ten`, `sdt`, `mat_khau`, `vai_tro`) VALUES
@@ -252,7 +272,7 @@ INSERT INTO `nguoi_dung` (`id_nguoi_dung`, `ho_ten`, `sdt`, `mat_khau`, `vai_tro
 -- --------------------------------------------------------
 
 --
--- Table structure for table `san_pham`
+-- Cấu trúc bảng cho bảng `san_pham`
 --
 
 DROP TABLE IF EXISTS `san_pham`;
@@ -271,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `san_pham` (
 ) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `san_pham`
+-- Đang đổ dữ liệu cho bảng `san_pham`
 --
 
 INSERT INTO `san_pham` (`id_san_pham`, `id_danh_muc`, `ten_san_pham`, `cpu`, `pin`, `man_hinh`, `os`, `camera_truoc`, `camera_sau`) VALUES
@@ -285,49 +305,49 @@ INSERT INTO `san_pham` (`id_san_pham`, `id_danh_muc`, `ten_san_pham`, `cpu`, `pi
 (46, 13, 'iPhone 17 Pro Max', 'Apple A19 Pro 6 nhân', '4832mAh', '6.9\" - Tần số quét 120 Hz', 'ios', '18 MP', 'Chính 48 MP & Phụ 48 MP, 48 MP');
 
 --
--- Constraints for dumped tables
+-- Các ràng buộc cho các bảng đã đổ
 --
 
 --
--- Constraints for table `anh_san_pham`
+-- Các ràng buộc cho bảng `anh_san_pham`
 --
 ALTER TABLE `anh_san_pham`
   ADD CONSTRAINT `anh_san_pham_ibfk_1` FOREIGN KEY (`id_san_pham`) REFERENCES `san_pham` (`id_san_pham`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bien_the`
+-- Các ràng buộc cho bảng `bien_the`
 --
 ALTER TABLE `bien_the`
   ADD CONSTRAINT `bien_the_ibfk_1` FOREIGN KEY (`id_san_pham`) REFERENCES `san_pham` (`id_san_pham`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `chi_tiet_don_hang`
+-- Các ràng buộc cho bảng `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
   ADD CONSTRAINT `chi_tiet_don_hang_ibfk_1` FOREIGN KEY (`id_don_hang`) REFERENCES `don_hang` (`id_don_hang`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `chi_tiet_don_hang_ibfk_2` FOREIGN KEY (`id_bien_the`) REFERENCES `bien_the` (`id_bien_the`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `don_hang`
+-- Các ràng buộc cho bảng `don_hang`
 --
 ALTER TABLE `don_hang`
   ADD CONSTRAINT `don_hang_ibfk_1` FOREIGN KEY (`id_nguoi_dung`) REFERENCES `nguoi_dung` (`id_nguoi_dung`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `gio_hang`
+-- Các ràng buộc cho bảng `gio_hang`
 --
 ALTER TABLE `gio_hang`
   ADD CONSTRAINT `gio_hang_ibfk_1` FOREIGN KEY (`id_nguoi_dung`) REFERENCES `nguoi_dung` (`id_nguoi_dung`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `gio_hang_chi_tiet`
+-- Các ràng buộc cho bảng `gio_hang_chi_tiet`
 --
 ALTER TABLE `gio_hang_chi_tiet`
   ADD CONSTRAINT `gio_hang_chi_tiet_ibfk_1` FOREIGN KEY (`id_gio_hang`) REFERENCES `gio_hang` (`id_gio_hang`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `gio_hang_chi_tiet_ibfk_2` FOREIGN KEY (`id_bien_the`) REFERENCES `bien_the` (`id_bien_the`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `san_pham`
+-- Các ràng buộc cho bảng `san_pham`
 --
 ALTER TABLE `san_pham`
   ADD CONSTRAINT `san_pham_ibfk_1` FOREIGN KEY (`id_danh_muc`) REFERENCES `danh_muc` (`id_danh_muc`) ON DELETE RESTRICT ON UPDATE CASCADE;
