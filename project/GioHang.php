@@ -1,21 +1,12 @@
 <?php
-session_start();
-include_once 'config/config.php';
-// Lấy danh mục
-function get_all_categories($pdo)
-{
-  try {
-    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
-  }
+// 1. Start Session & Config
+// Kiểm tra session status trước khi start
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-$categories = get_all_categories($pdo);
+require_once __DIR__ . '/config/config.php';
 
+// 2. LOGIC GIỎ HÀNG (Backend)
 $id_user = $_SESSION['id_nguoi_dung'] ?? '';
 
 $sql = "SELECT ghct.*,bt.gia,sp.ten_san_pham, asp.duong_dan_anh
@@ -39,82 +30,76 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$id_user]);
 $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //
+// Nếu chưa đăng nhập thì chặn hoặc xử lý tùy ý (ở đây mình để trống thì query sẽ không ra gì)
+if (empty($id_user)) {
+    // Có thể chuyển hướng về login: header("Location: login.php"); exit;
+}
+
+// Xử lý XÓA sản phẩm
 if (isset($_GET['delete'])) {
   $id_delete = $_GET['delete'];
-
   // Xóa trong database
   $sql = "DELETE FROM gio_hang_chi_tiet WHERE id_chi_tiet = ?";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$id_delete]);
-
-  // Load lại trang
+  // Load lại trang để cập nhật danh sách
   header("Location: GioHang.php");
   exit();
 }
+
+// Lấy danh sách sản phẩm trong giỏ
+$sql = "SELECT ghct.*, bt.gia, sp.ten_san_pham, asp.duong_dan_anh, bt.rom, bt.mau
+        FROM gio_hang_chi_tiet ghct
+        JOIN bien_the bt ON ghct.id_bien_the = bt.id_bien_the
+        JOIN san_pham sp ON bt.id_san_pham = sp.id_san_pham
+        LEFT JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
+        WHERE ghct.id_gio_hang = (SELECT id_gio_hang FROM gio_hang WHERE id_nguoi_dung = ? LIMIT 1)
+        GROUP BY ghct.id_chi_tiet"; // Group by để tránh lặp ảnh nếu sản phẩm nhiều ảnh
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$id_user]);
+$cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!doctype html>
 <html lang="vi">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Giỏ hàng — ĐIỆN THOẠI TRỰC TUYẾN</title>
-  <link rel="stylesheet" href="assets/css/stylesTC.css">
-  <link rel="stylesheet" href="assets/css/stylesCart.css">
-</head>
-
 <body>
-  <!-- MAIN HEADER / NAV -->
-  <header class="main-header">
-    <div class="container header-row">
-      <div class="logo-left">
-        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
-      </div>
-      <div class="search-center">
-        <form action="TimKiem.php" method="get" style="width: 500px;">
-          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
-          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
-        </form>
-      </div>
-      <div class="icons-right">
-        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a id="accountLink" href="User.php">👤</a>
-        <a href="logout.php" class="icon-btn cart">🚪</a>
-        <div class="danh-container">
-          <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
-          <ul class="danh-menu" role="menu">
-            <?php foreach ($categories as $cat): ?>
-              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </header>
+  
+  <?php require_once './includes/header.php'; ?>
+  
+  <link rel="stylesheet" href="assets/css/stylesCart.css">
 
-  <!-- CART MAIN -->
   <main class="container cart-page">
     <div class="cart-wrapper">
       <div class="cart-header">
         <h2>GIỎ HÀNG CỦA BẠN <span class="lock">🔒</span></h2>
       </div>
+      
       <div class="select-all">
         <h4><input type="checkbox" id="selectAll"> TẤT CẢ</h4>
       </div>
+      
       <div class="cart-list" id="cartList">
-        <!-- product item template -->
         <?php if (!empty($cart_items)):
           foreach ($cart_items as $item): ?>
             <div class="cart-item" data-price="<?= $item['gia'] ?>">
               <div class="item-left">
-                <img src="<?= $item['duong_dan_anh'] ?? '' ?>" alt="" class="item-thumb">
+                <img src="<?= !empty($item['duong_dan_anh']) ? $item['duong_dan_anh'] : 'assets/images/no-image.png' ?>" alt="" class="item-thumb">
               </div>
               <div class="item-mid">
-                <div class="item-name"><?= $item['ten_san_pham'] ?></div>
+                <div class="item-name">
+                    <a href="ChiTietSanPham.php?id=<?= /* Bạn cần lấy id_san_pham nếu muốn link */ '#' ?>" style="text-decoration:none; color:inherit;">
+                        <?= htmlspecialchars($item['ten_san_pham']) ?>
+                    </a>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">
+                    Phân loại: <?= $item['rom'] ?> - <?= ucfirst($item['mau']) ?>
+                </div>
+
                 <div class="item-price price-red">
                   <?= $item['gia'] === null ? 'Liên hệ' : number_format($item['gia'], 0, ',', '.') . 'đ' ?>
                 </div>
+                
                 <div class="item-controls">
                   <div class="qty-box">
                     <button class="qty-btn qty-minus">−</button>
@@ -123,15 +108,22 @@ if (isset($_GET['delete'])) {
                   </div>
                 </div>
               </div>
+              
               <div class="item-right">
                 <button class="del" data-key="<?= $item['id_chi_tiet'] ?>">×</button>
-                <label class="select-wrap"><input type="checkbox" class="select-item"> Chọn</label>
+                <label class="select-wrap">
+                    <input type="checkbox" class="select-item" value="<?= $item['id_chi_tiet'] ?>"> Chọn
+                </label>
               </div>
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <p>Giỏ hàng hiện đang trống</p>
+          <div style="text-align: center; padding: 50px;">
+              <p>Giỏ hàng hiện đang trống</p>
+              <a href="TrangChu.php" class="btn">Tiếp tục mua sắm</a>
+          </div>
         <?php endif; ?>
+
         <div class="cart-footer">
           <div class="summary">
             <button id="totalBtn" class="btn total">TỔNG CỘNG: 0 VND</button>
@@ -143,45 +135,8 @@ if (isset($_GET['delete'])) {
         </div>
       </div>
   </main>
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="col">
-        <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
-      </div>
-      <div class="col">
 
-        <h4>THÀNH VIÊN 1</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
-
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-
-      </div>
-      <div class="col">
-
-        <h4>THÀNH VIÊN 2</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
-
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-
-      </div>
-      <div class="col">
-        <!--SỬA-->
-        <h4>THÀNH VIÊN 3</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
-
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
-      </div>
-    </div>
-    <!--SỬA-->
-    <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
-  </footer>
+  <?php require_once './includes/footer.php'; ?>
 
   <script>
     (function() {
@@ -200,14 +155,13 @@ if (isset($_GET['delete'])) {
           if (chk && chk.checked) {
             const price = Number(item.dataset.price || 0);
             const qty = Number(item.querySelector('.qty-input').value || 1);
-
             sum += price * qty;
           }
         });
-
         totalBtn.textContent = 'TỔNG CỘNG: ' + formatVND(sum);
       }
-      // quantity handlers
+
+      // Quantity & Delete handlers
       cartList.addEventListener('click', (e) => {
         if (e.target.matches('.qty-plus')) {
           const input = e.target.parentElement.querySelector('.qty-input');
@@ -219,17 +173,21 @@ if (isset($_GET['delete'])) {
           computeTotal();
         } else if (e.target.matches('.del')) {
           const key = e.target.dataset.key;
-
           if (confirm("Xóa sản phẩm này khỏi giỏ hàng?")) {
             window.location.href = "GioHang.php?delete=" + key;
           }
         }
       });
 
-      // checkbox change handlers
+      // Checkbox change handlers
       cartList.addEventListener('change', (e) => {
         if (e.target.matches('.select-item')) {
           computeTotal();
+          
+          // Logic bỏ chọn "Select All" nếu bỏ chọn 1 item con
+          if (!e.target.checked) {
+             selectAll.checked = false;
+          }
         }
         if (e.target.matches('.qty-input')) {
           e.target.value = Math.max(1, Number(e.target.value));
@@ -237,44 +195,25 @@ if (isset($_GET['delete'])) {
         }
       });
 
+      // Select All handler
       selectAll.addEventListener('change', () => {
         const checked = selectAll.checked;
         cartList.querySelectorAll('.select-item').forEach(c => c.checked = checked);
         computeTotal();
       });
 
-      // initial total
+      // Tính tổng lần đầu khi load trang
       computeTotal();
     })();
 
-    // danh mục dropdown (shared behavior)
-    (function() {
-      document.querySelectorAll('.danh-container').forEach(dc => {
-        const btn = dc.querySelector('.danh-muc');
-        const menu = dc.querySelector('.danh-menu');
-        if (!btn || !menu) return;
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dc.classList.toggle('open');
-          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
-        });
-        menu.addEventListener('click', (e) => e.stopPropagation());
-      });
-      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
-        dc.classList.remove('open');
-        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
-      }));
-    })();
-
-    // BACK END Lấy nhưng biến thể được chọn đẩy qua thanh toán
+    // XỬ LÝ SUBMIT FORM THANH TOÁN
     document.getElementById("checkoutForm").addEventListener("submit", function(e) {
       let ids = [];
-
       document.querySelectorAll(".cart-item").forEach(item => {
         const chk = item.querySelector(".select-item");
         if (chk.checked) {
-          ids.push(item.querySelector(".del").dataset.key);
-          // dataset.key = id_chi_tiet
+            // Lấy value của checkbox (chính là id_chi_tiet đã gán ở trên)
+            ids.push(chk.value); 
         }
       });
 
@@ -284,10 +223,10 @@ if (isset($_GET['delete'])) {
         return;
       }
 
+      // Gán mảng ID vào input hidden dưới dạng JSON string
       document.getElementById("selectedItems").value = JSON.stringify(ids);
     });
   </script>
 
 </body>
-
 </html>
