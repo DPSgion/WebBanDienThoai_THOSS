@@ -26,25 +26,38 @@ function get_all_categories($pdo)
 $categories = get_all_categories($pdo);
 
 $is_buy_now = false;
+
 if (!empty($_POST['id_bien_the'])) {
-  // TRƯỜNG HỢP MUA NGAY
   $is_buy_now = true;
 
-  $sql = "SELECT bt.gia, bt.rom, bt.mau, sp.ten_san_pham, asp.duong_dan_anh
-            FROM bien_the bt
-            JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
-            join anh_san_pham asp on asp.id_san_pham = sp.id_san_pham
-            WHERE bt.id_bien_the = ?";
+  $id_bien_the = (int)$_POST['id_bien_the'];
+  $qty = max(1, (int)($_POST['qty'] ?? 1));
+
+  $sql = "SELECT bt.id_san_pham, bt.gia, bt.rom, bt.mau, bt.so_luong_ton,
+               sp.ten_san_pham, asp.duong_dan_anh
+        FROM bien_the bt
+        JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
+        JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
+        WHERE bt.id_bien_the = ?";
   $stmt = $pdo->prepare($sql);
-  $stmt->execute([$_POST['id_bien_the']]);
+  $stmt->execute([$id_bien_the]);
   $buy_now_item = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if (!$buy_now_item) {
-    die("Sản phẩm không tồn tại!");
+    $_SESSION['cart_error'] = "Sản phẩm không tồn tại";
+    header("Location: ChiTietSanPham.php?id=$id_san_pham");
+    exit();
   }
 
-  $buy_now_item['so_luong'] = $_POST['qty'] ?? 1;
-  $subtotal = $buy_now_item['gia'] * $buy_now_item['so_luong'];
+  if ($qty > $buy_now_item['so_luong_ton']) {
+    $_SESSION['cart_error'] =
+      "Số lượng vượt tồn kho. Hiện còn {$buy_now_item['so_luong_ton']} sản phẩm.";
+    header("Location: ChiTietSanPham.php?id=" . $buy_now_item['id_san_pham']);
+    exit();
+  }
+
+  $buy_now_item['so_luong'] = $qty;
+  $subtotal = $buy_now_item['gia'] * $qty;
 } else {
   // TRƯỜNG HỢP TỪ GIỎ HÀNG
   if (!empty($_POST['selected_items'])) {

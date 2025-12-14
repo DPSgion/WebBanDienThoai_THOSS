@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "config/config.php";  // file kết nối CSDL
 // kiểm tra id
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -262,7 +263,13 @@ if ($hasVariant) {
               <li>Đổi mới trong 33 ngày nếu lỗi</li>
             </ul>
           </div>
-
+          <!-- Lỗi hiện ở đây -->
+          <?php if (!empty($_SESSION['cart_error'])): ?>
+            <div style="color:red; font-weight:bold; margin:10px 0;">
+              <?= $_SESSION['cart_error'] ?>
+            </div>
+            <?php unset($_SESSION['cart_error']); ?>
+          <?php endif; ?>
           <div class="purchase-actions">
             <?php if ($hasVariant): ?>
               <form action="./includes/functionsKhachHang/add_to_cart.php" method="POST">
@@ -271,8 +278,9 @@ if ($hasVariant) {
                 <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
                 <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
                 <input type="hidden" name="qty" id="qtyHidden" value="1">
-
+                <input type="hidden" name="id_san_pham" value="<?= $product['id_san_pham'] ?>">
                 <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
+
               </form>
               <form id="buyNowForm" action="ThanhToan.php" method="POST">
                 <input type="hidden" name="id_bien_the" id="buyNow_idBienThe">
