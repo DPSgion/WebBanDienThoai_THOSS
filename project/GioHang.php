@@ -48,7 +48,7 @@ if (isset($_GET['delete'])) {
 }
 
 // Lấy danh sách sản phẩm trong giỏ
-$sql = "SELECT ghct.*, bt.gia, sp.ten_san_pham, asp.duong_dan_anh, bt.rom, bt.mau, bt.so_luong_ton
+$sql = "SELECT ghct.*, bt.gia, sp.ten_san_pham, asp.duong_dan_anh, bt.ram, bt.rom, bt.mau, bt.so_luong_ton
         FROM gio_hang_chi_tiet ghct
         JOIN bien_the bt ON ghct.id_bien_the = bt.id_bien_the
         JOIN san_pham sp ON bt.id_san_pham = sp.id_san_pham
@@ -97,6 +97,7 @@ $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                         <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">
                             Phân loại:
+                            <?= $item['ram'] ?> -
                             <?= $item['rom'] ?> -
                             <?= ucfirst($item['mau']) ?>
                         </div>

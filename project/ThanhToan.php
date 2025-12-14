@@ -12,12 +12,12 @@ if (!isset($_SESSION['id_nguoi_dung'])) {
 }
 $id_nguoi_dung = $_SESSION['id_nguoi_dung'];
 
-// 3. XỬ LÝ DỮ LIỆU THANH TOÁN (Logic giữ nguyên)
+// 3. XỬ LÝ DỮ LIỆU THANH TOÁN
 $is_buy_now = false;
 $subtotal = 0;
 $cart_items = [];
 $buy_now_item = null;
-$selected_items = []; // Để lưu danh sách ID gửi qua form
+$selected_items = []; 
 
 // TRƯỜNG HỢP 1: MUA NGAY (Từ trang chi tiết)
 if (!empty($_POST['id_bien_the'])) {
@@ -25,40 +25,39 @@ if (!empty($_POST['id_bien_the'])) {
     $id_bien_the = (int)$_POST['id_bien_the'];
     $qty = max(1, (int)($_POST['qty'] ?? 1));
 
-    $sql = "SELECT bt.id_san_pham, bt.gia, bt.rom, bt.mau, bt.so_luong_ton, bt.id_bien_the,
+    // [SỬA 1] Thêm bt.ram vào SELECT
+    $sql = "SELECT bt.id_san_pham, bt.gia, bt.ram, bt.rom, bt.mau, bt.so_luong_ton, bt.id_bien_the,
                    sp.ten_san_pham, asp.duong_dan_anh
             FROM bien_the bt
             JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
             LEFT JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
             WHERE bt.id_bien_the = ?
-            LIMIT 1"; // Limit 1 lấy ảnh đầu tiên
+            LIMIT 1"; 
             
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$id_bien_the]);
     $buy_now_item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$buy_now_item) {
-        // Xử lý lỗi nếu hack ID
         header("Location: TrangChu.php");
         exit();
     }
 
-    // Gán số lượng mua
     $buy_now_item['so_luong'] = $qty;
     $subtotal = $buy_now_item['gia'] * $qty;
 
 } else {
     // TRƯỜNG HỢP 2: TỪ GIỎ HÀNG
     if (!empty($_POST['selected_items'])) {
-        // Decode JSON từ input hidden bên giỏ hàng
         $ids = json_decode($_POST['selected_items'], true);
         
         if (is_array($ids) && count($ids) > 0) {
             $selected_items = $ids;
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
+            // [SỬA 2] Thêm bt.ram vào SELECT
             $sql = "SELECT ghct.id_chi_tiet, ghct.id_bien_the, ghct.so_luong, 
-                           bt.gia, bt.rom, bt.mau,
+                           bt.gia, bt.ram, bt.rom, bt.mau,
                            sp.ten_san_pham, asp.duong_dan_anh
                     FROM gio_hang_chi_tiet ghct
                     JOIN gio_hang gh ON gh.id_gio_hang = ghct.id_gio_hang
@@ -71,7 +70,6 @@ if (!empty($_POST['id_bien_the'])) {
                     ) asp ON asp.id_san_pham = sp.id_san_pham
                     WHERE ghct.id_chi_tiet IN ($placeholders) AND gh.id_nguoi_dung = ?";
             
-            // Thêm id_nguoi_dung vào params để bảo mật (tránh thanh toán giỏ người khác)
             $params = $ids;
             $params[] = $id_nguoi_dung;
 
@@ -161,7 +159,11 @@ if (!empty($_POST['id_bien_the'])) {
                 <img src="<?= !empty($buy_now_item['duong_dan_anh']) ? $buy_now_item['duong_dan_anh'] : 'assets/images/no-image.png' ?>" class="prod-thumb">
                 <div class="order-mid">
                   <div class="prod-name"><?= htmlspecialchars($buy_now_item['ten_san_pham']) ?></div>
-                  <div class="prod-meta"><?= $buy_now_item['rom'] ?> • <?= $buy_now_item['mau'] ?></div>
+                  
+                  <div class="prod-meta">
+                      <?= $buy_now_item['ram'] ?> • <?= $buy_now_item['rom'] ?> • <?= ucfirst($buy_now_item['mau']) ?>
+                  </div>
+
                   <div>Số lượng: <strong><?= $buy_now_item['so_luong'] ?></strong></div>
                 </div>
                 <div class="order-price">
@@ -177,7 +179,11 @@ if (!empty($_POST['id_bien_the'])) {
                   <img src="<?= !empty($item['duong_dan_anh']) ? $item['duong_dan_anh'] : 'assets/images/no-image.png' ?>" class="prod-thumb">
                   <div class="order-mid">
                     <div class="prod-name"><?= htmlspecialchars($item['ten_san_pham']) ?></div>
-                    <div class="prod-meta"><?= $item['rom'] ?> • <?= $item['mau'] ?></div>
+                    
+                    <div class="prod-meta">
+                        <?= $item['ram'] ?> • <?= $item['rom'] ?> • <?= ucfirst($item['mau']) ?>
+                    </div>
+
                     <div>Số lượng: <strong><?= $item['so_luong'] ?></strong></div>
                   </div>
                   <div class="order-price">

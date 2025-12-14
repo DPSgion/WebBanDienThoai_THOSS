@@ -38,18 +38,37 @@ $images = $stmtImg->fetchAll(PDO::FETCH_ASSOC);
 $mainImage = $images[0]['duong_dan_anh'] ?? 'uploads/no-image.png';
 
 // Xử lý dữ liệu biến thể cho JS
+$ramList = [];
 $romList = [];
 $colorList = [];
-$variantMap = []; // Map để JS tra cứu nhanh
+$variantMap = []; 
+
+// --- KHỞI TẠO GIÁ TRỊ MẶC ĐỊNH ---
+$default_ram = '';
+$default_rom = '';
+$default_color = '';
+$default_id_bien_the = '';
+
+if ($hasVariant) {
+    // Lấy biến thể đầu tiên (giá rẻ nhất do đã ORDER BY gia ASC)
+    $firstVar = $variants[0];
+    $default_ram = $firstVar['ram'];
+    $default_rom = $firstVar['rom'];
+    $default_color = $firstVar['mau'];
+    $default_id_bien_the = $firstVar['id_bien_the'];
+}
 
 foreach ($variants as $v) {
     $variantMap[] = [
         "id" => $v['id_bien_the'],
+        "ram" => $v["ram"],
         "rom" => $v["rom"],
         "mau" => $v["mau"],
         "gia" => $v["gia"],
         "kho" => $v["so_luong_ton"]
     ];
+    
+    if (!in_array($v['ram'], $ramList)) $ramList[] = $v['ram'];
     if (!in_array($v['rom'], $romList)) $romList[] = $v['rom'];
     if (!in_array($v['mau'], $colorList)) $colorList[] = $v['mau'];
 }
@@ -118,22 +137,30 @@ if ($hasVariant) {
         
         <div class="variants">
           <?php if ($hasVariant): ?>
-            <div class="variant-group">
-              <label class="variant-label">Bộ nhớ:</label>
-              <div class="variant-options" id="storageOptions">
-                <?php foreach ($romList as $i => $rom): ?>
-                  <button class="variant opt <?= $i == 0 ? 'active' : '' ?>" data-value="<?= $rom ?>"><?= $rom ?></button>
-                <?php endforeach; ?>
-              </div>
+            
+            <p>Dung lượng RAM</p>
+            <div class="variant-options" id="ramOptions">
+              
+              <?php foreach ($ramList as $ram): ?>
+                <button class="variant ram <?= $ram == $default_ram ? 'active' : '' ?>" data-ram="<?= $ram ?>"><?= $ram ?></button>
+              <?php endforeach; ?>
+            </div>
+            
 
-              <div class="variant-group" style="margin-top:10px;">
-                <label class="variant-label">Màu sắc:</label>
-                <div class="variant-options" id="colorOptions">
-                  <?php foreach ($colorList as $i => $color): ?>
-                    <button class="variant color <?= $i == 0 ? 'active' : '' ?>" data-color="<?= $color ?>"><?= ucfirst($color) ?></button>
-                  <?php endforeach; ?>
-                </div>
-              </div>
+            <p>Dung lượng ổ cứng</p>
+            <div class="variant-options" id="storageOptions">
+              <?php foreach ($romList as $rom): ?>
+                <button class="variant opt <?= $rom == $default_rom ? 'active' : '' ?>" data-value="<?= $rom ?>"><?= $rom ?></button>
+              <?php endforeach; ?>
+            </div>
+            
+            <p>Màu sắc</p>
+            <div class="variant-options" id="colorOptions">
+              <?php foreach ($colorList as $color): ?>
+                <button class="variant color <?= $color == $default_color ? 'active' : '' ?>" data-color="<?= $color ?>"><?= ucfirst($color) ?></button>
+              <?php endforeach; ?>
+            </div>
+
             </div>
           <?php else: ?>
             <h3 class="coming-soon">Sản phẩm Sắp ra mắt</h3>
@@ -179,24 +206,26 @@ if ($hasVariant) {
           <div class="purchase-actions">
             <?php if ($hasVariant): ?>
               <form action="./includes/functionsKhachHang/add_to_cart.php" method="POST">
-                <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
-                
-                <input type="hidden" name="qty" id="qtyHidden" value="1">
-                
-                <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
-                <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
-                <input type="hidden" name="id_san_pham" value="<?= $product['id_san_pham'] ?>">
-                
-                <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
+                  <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
+                  <input type="hidden" name="qty" id="qtyHidden" value="1">
+                  
+                  <input type="hidden" name="ram" id="ramInput" value="<?= $default_ram ?>">
+                  <input type="hidden" name="rom" id="romInput" value="<?= $default_rom ?>">
+                  <input type="hidden" name="color" id="colorInput" value="<?= $default_color ?>">
+                  
+                  <input type="hidden" name="id_san_pham" value="<?= $product['id_san_pham'] ?>">
+                  <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
               </form>
 
               <form id="buyNowForm" action="ThanhToan.php" method="POST">
-                <input type="hidden" name="id_bien_the" id="buyNow_idBienThe" value="<?= $default_id_bien_the ?>">
-                <input type="hidden" name="qty" id="buyNow_qty" value="1">
-                <input type="hidden" name="rom" id="buyNow_rom" value="<?= $romList[0] ?>">
-                <input type="hidden" name="color" id="buyNow_color" value="<?= $colorList[0] ?>">
+                  <input type="hidden" name="id_bien_the" id="buyNow_idBienThe" value="<?= $default_id_bien_the ?>">
+                  <input type="hidden" name="qty" id="buyNow_qty" value="1">
 
-                <button type="submit" id="buyNowBtn" class="btn primary">Mua ngay</button>
+                  <input type="hidden" name="ram" id="buyNow_ram" value="<?= $default_ram ?>">
+                  <input type="hidden" name="rom" id="buyNow_rom" value="<?= $default_rom ?>">
+                  <input type="hidden" name="color" id="buyNow_color" value="<?= $default_color ?>">
+
+                  <button type="submit" id="buyNowBtn" class="btn primary">Mua ngay</button>
               </form>
             <?php else: ?>
               <p style="color:red; font-weight:bold;">Tạm hết hàng</p>
@@ -248,58 +277,67 @@ if ($hasVariant) {
     }
 
     function updateUI() {
+        // 1. Lấy 3 giá trị đang chọn
+        const activeRam = document.querySelector('#ramOptions .active'); // <--- MỚI
         const activeRom = document.querySelector('#storageOptions .active');
         const activeColor = document.querySelector('#colorOptions .active');
         
-        if (!activeRom || !activeColor) return;
+        if (!activeRam || !activeRom || !activeColor) return;
 
+        const ram = activeRam.dataset.ram; // <--- MỚI
         const rom = activeRom.dataset.value;
         const color = activeColor.dataset.color;
 
-        // Cập nhật value cho input hidden text (rom/color)
+        // 2. Cập nhật input hidden cho Form
+        document.getElementById('ramInput').value = ram;     // <--- MỚI
+        document.getElementById('buyNow_ram').value = ram;   // <--- MỚI
+        
         document.getElementById('romInput').value = rom;
         document.getElementById('colorInput').value = color;
         document.getElementById('buyNow_rom').value = rom;
         document.getElementById('buyNow_color').value = color;
 
-        // Tìm biến thể tương ứng
-        const found = variantMap.find(v => v.rom == rom && v.mau == color);
+        // 3. Tìm biến thể khớp cả 3 điều kiện (RAM + ROM + MÀU)
+        const found = variantMap.find(v => v.ram == ram && v.rom == rom && v.mau == color);
+        
         const priceText = document.querySelector('.price-red');
+        const stockMsg = document.getElementById('stockMessage');
+        const btnAddCart = document.getElementById('addCart');
+        const btnBuyNow = document.getElementById('buyNowBtn');
+        const qtyInput = document.getElementById('qtyInput');
 
         if (found) {
-            // 1. Cập nhật giá
+            // ... Logic cập nhật giá và tồn kho GIỮ NGUYÊN ...
             priceText.textContent = formatCurrency(found.gia);
-            
-            // 2. Cập nhật ID biến thể
             document.getElementById('idBienTheInput').value = found.id;
             document.getElementById('buyNow_idBienThe').value = found.id;
 
-            // 3. Xử lý Tồn kho (LOGIC MỚI)
             const stock = parseInt(found.kho);
-            updateQtyLimit(stock); // Gọi hàm giới hạn
+            updateQtyLimit(stock);
 
             if (stock > 0) {
                 stockMsg.textContent = `Còn ${stock} sản phẩm`;
                 stockMsg.style.color = 'green';
-                
-                // Mở khóa nút mua
                 if(btnAddCart) btnAddCart.disabled = false;
                 if(btnBuyNow) btnBuyNow.disabled = false;
                 qtyInput.disabled = false;
             } else {
                 stockMsg.textContent = `Tạm hết hàng`;
                 stockMsg.style.color = 'red';
-                
-                // Khóa nút mua
                 if(btnAddCart) btnAddCart.disabled = true;
                 if(btnBuyNow) btnBuyNow.disabled = true;
                 qtyInput.disabled = true;
             }
-
         } else {
-            // Trường hợp không tìm thấy biến thể (Lỗi data hoặc chưa set)
-            priceText.textContent = "Liên hệ";
-            stockMsg.textContent = "";
+            // Nếu chọn combo không tồn tại (Ví dụ: RAM 8GB không có màu Đỏ)
+            priceText.textContent = "Chưa có hàng";
+            stockMsg.textContent = "Phiên bản này không tồn tại";
+            stockMsg.style.color = 'orange';
+            
+            // Xóa ID để tránh lỗi submit
+            document.getElementById('idBienTheInput').value = "";
+            document.getElementById('buyNow_idBienThe').value = "";
+            
             if(btnAddCart) btnAddCart.disabled = true;
             if(btnBuyNow) btnBuyNow.disabled = true;
         }
@@ -371,6 +409,14 @@ if ($hasVariant) {
     document.querySelectorAll('#colorOptions .variant').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('#colorOptions .variant').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            updateUI();
+        });
+    });
+
+    document.querySelectorAll('#ramOptions .variant').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#ramOptions .variant').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             updateUI();
         });
