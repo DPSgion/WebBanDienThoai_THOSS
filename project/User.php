@@ -1,6 +1,11 @@
 <?php
-session_start();
-include_once 'config/config.php';
+// Kiểm tra session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Dùng __DIR__ để tránh lỗi path config
+require_once __DIR__ . '/config/config.php';
+
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['id_nguoi_dung'])) {
   header("Location: Login.php");
@@ -9,22 +14,9 @@ if (!isset($_SESSION['id_nguoi_dung'])) {
 
 $id_nguoi_dung = $_SESSION['id_nguoi_dung'];
 
+// --- ĐÃ XÓA HÀM get_all_categories (Vì header.php đã có rồi) ---
 
-// Lấy danh mục
-function get_all_categories($pdo)
-{
-  try {
-    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
-  }
-}
-$categories = get_all_categories($pdo);
-//Lấy lịch sử mua hàng
+// Lấy lịch sử mua hàng (Giữ nguyên logic của bạn)
 $sql = "SELECT * FROM don_hang WHERE id_nguoi_dung = ? ORDER BY ngay_dat DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$id_nguoi_dung]);
@@ -43,35 +35,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
 
-  <header class="main-header">
-    <div class="container header-row">
-      <div class="logo-left">
-        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
-      </div>
-
-      <div class="search-center">
-        <form action="TimKiem.php" method="get" style="width: 500px;">
-          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
-          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
-        </form>
-      </div>
-
-      <div class="icons-right">
-        <!--SỬA-->
-        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
-        <a href="logout.php" class="icon-btn cart">🚪</a>
-        <div class="danh-container">
-          <button class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
-          <ul class="danh-menu" role="menu">
-            <?php foreach ($categories as $cat): ?>
-              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </header>
+  <?php require_once './includes/header.php'; ?>
 
   <main class="container user-page">
     <div class="user-grid">
@@ -110,8 +74,6 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </form>
 
         <hr>
-
-
       </section>
 
       <section class="orders-card">
@@ -136,35 +98,16 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
               </div>
             </div>
           <?php endforeach; ?>
-
         <?php endif; ?>
       </section>
     </div>
   </main>
 
+  <?php require_once './includes/footer.php'; ?>
 
   <script>
-    // shared dropdown behavior
-    (function() {
-      document.querySelectorAll('.danh-container').forEach(dc => {
-        const btn = dc.querySelector('.danh-muc');
-        const menu = dc.querySelector('.danh-menu');
-        if (!btn || !menu) return;
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dc.classList.toggle('open');
-          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
-        });
-        menu.addEventListener('click', (e) => e.stopPropagation());
-      });
-      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
-        dc.classList.remove('open');
-        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
-      }));
-    })();
-
-
     document.addEventListener("DOMContentLoaded", () => {
+      // Fetch thông tin user để điền vào form (Logic cũ của bạn)
       fetch("includes/functionsKhachHang/getUser.php")
         .then(res => res.json())
         .then(data => {
@@ -185,6 +128,8 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
           })
           .then(res => res.text())
           .then(code => {
+            // Trim khoảng trắng thừa để switch case chính xác
+            code = code.trim(); 
             switch (code) {
               case "OK":
                 alert("Cập nhật thành công!");
@@ -199,18 +144,18 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert("Mật khẩu mới phải có ít nhất 6 ký tự.");
                 break;
               default:
-                alert("Lỗi không xác định: " + code);
+                alert("Lỗi hoặc phản hồi lạ: " + code);
             }
 
             document.getElementById("currentPassword").value = "";
             document.getElementById("newPassword").value = "";
             document.getElementById("confirmPassword").value = "";
-          });
+          })
+          .catch(err => console.error("Lỗi fetch update:", err));
       });
 
     });
   </script>
 
 </body>
-
 </html>

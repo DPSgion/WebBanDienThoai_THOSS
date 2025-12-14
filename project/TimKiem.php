@@ -1,11 +1,16 @@
 <?php
-session_start();
-include 'config/config.php';
+// 1. Start Session & Config
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/config/config.php';
 
+// 2. LOGIC TÌM KIẾM & LỌC (Giữ nguyên logic của bạn)
 $keyword = trim($_GET["q"] ?? "");
 
 if ($keyword !== "") {
-  $sqlSearch = "
+    // --- TRƯỜNG HỢP 1: TÌM THEO TỪ KHÓA ---
+    $sqlSearch = "
         SELECT 
             sp.id_san_pham,
             dm.ten_danh_muc,
@@ -21,110 +26,77 @@ if ($keyword !== "") {
         ORDER BY sp.ten_san_pham ASC
     ";
 
-  $stmt = $pdo->prepare($sqlSearch);
-  $stmt->execute([":kw" => "%$keyword%"]);
-  $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare($sqlSearch);
+    $stmt->execute([":kw" => "%$keyword%"]);
+    $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  // Nếu KHÔNG tìm thấy
-  if (empty($allProducts)) {
-    $message = "❗ Cửa hàng không có sản phẩm '$keyword'.";
-  }
-} else {
-
-
-
-  $romFilter   = $_GET['rom']   ?? '';
-  $osFilter    = $_GET['os']    ?? '';
-  $priceFilter = $_GET['price'] ?? '';
-  $colorFilter = $_GET['color'] ?? '';
-  $cat_id = $_GET['cat_id'] ?? '';
-  $sqlAll = "SELECT 
-    sp.id_san_pham,dm.ten_danh_muc,
-    sp.ten_san_pham,
-    MIN(bt.gia) AS gia,
-    (
-        SELECT duong_dan_anh 
-        FROM anh_san_pham 
-        WHERE id_san_pham = sp.id_san_pham 
-        LIMIT 1
-    ) AS hinh_anh
-FROM san_pham sp
-LEFT JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
-join danh_muc dm on dm.id_danh_muc = sp.id_danh_muc
-WHERE dm.id_danh_muc = :id_cat ";
-
-
-  // Lọc ROM
-  if (!empty($romFilter)) {
-    $sqlAll .= " AND bt.rom = :rom ";
-  }
-
-  // Lọc OS (KHÔNG dùng param)
-  if (!empty($osFilter)) {
-    if ($osFilter === 'iOS') {
-      $sqlAll .= " AND sp.os LIKE 'iOS%'";
-    } elseif ($osFilter === 'Android') {
-      $sqlAll .= " AND sp.os LIKE 'Android%'";
+    if (empty($allProducts)) {
+        $message = "❗ Cửa hàng không có sản phẩm nào khớp với từ khóa '$keyword'.";
     }
-  }
 
-  // Lọc màu sắc
-  if (!empty($colorFilter)) {
-    $sqlAll .= " AND bt.mau = :color ";
-  }
+} else {
+    // --- TRƯỜNG HỢP 2: LỌC THEO DANH MỤC & TIÊU CHÍ KHÁC ---
+    $romFilter   = $_GET['rom']   ?? '';
+    $osFilter    = $_GET['os']    ?? '';
+    $priceFilter = $_GET['price'] ?? '';
+    $colorFilter = $_GET['color'] ?? '';
+    $cat_id      = $_GET['cat_id'] ?? '';
 
-  $sqlAll .= " GROUP BY sp.id_san_pham ";
+    $sqlAll = "SELECT 
+        sp.id_san_pham, dm.ten_danh_muc,
+        sp.ten_san_pham,
+        MIN(bt.gia) AS gia,
+        (
+            SELECT duong_dan_anh 
+            FROM anh_san_pham 
+            WHERE id_san_pham = sp.id_san_pham 
+            LIMIT 1
+        ) AS hinh_anh
+    FROM san_pham sp
+    LEFT JOIN bien_the bt ON sp.id_san_pham = bt.id_san_pham
+    JOIN danh_muc dm on dm.id_danh_muc = sp.id_danh_muc
+    WHERE dm.id_danh_muc = :id_cat ";
 
-  // Lọc giá
-  if ($priceFilter == "low_high") {
-    $sqlAll .= " ORDER BY gia ASC ";
-  }
-  if ($priceFilter == "high_low") {
-    $sqlAll .= " ORDER BY gia DESC ";
-  }
+    // Nối chuỗi điều kiện
+    if (!empty($romFilter)) {
+        $sqlAll .= " AND bt.rom = :rom ";
+    }
+    if (!empty($osFilter)) {
+        if ($osFilter === 'iOS') {
+            $sqlAll .= " AND sp.os LIKE 'iOS%'";
+        } elseif ($osFilter === 'Android') {
+            $sqlAll .= " AND sp.os LIKE 'Android%'";
+        }
+    }
+    if (!empty($colorFilter)) {
+        $sqlAll .= " AND bt.mau = :color ";
+    }
 
-  $stmt = $pdo->prepare($sqlAll);
-  $params = [':id_cat' => $cat_id];
+    $sqlAll .= " GROUP BY sp.id_san_pham ";
 
-  // Bind đúng tham số nào có trong SQL
-  if (!empty($romFilter)) {
-    $params[':rom'] = $romFilter;
-  }
+    // Sắp xếp
+    if ($priceFilter == "low_high") {
+        $sqlAll .= " ORDER BY gia ASC ";
+    }
+    if ($priceFilter == "high_low") {
+        $sqlAll .= " ORDER BY gia DESC ";
+    }
 
-  if (!empty($colorFilter)) {
-    $params[':color'] = $colorFilter;
-  }
+    $stmt = $pdo->prepare($sqlAll);
+    $params = [':id_cat' => $cat_id];
 
+    if (!empty($romFilter)) {
+        $params[':rom'] = $romFilter;
+    }
+    if (!empty($colorFilter)) {
+        $params[':color'] = $colorFilter;
+    }
 
-
-  $stmt->execute($params);
-  $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    $allProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-
-// Lấy danh sách danh mục
-
-function get_all_categories($pdo)
-{
-  try {
-    $sql = "SELECT id_danh_muc, ten_danh_muc FROM danh_muc ORDER BY ten_danh_muc ASC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    // Log lỗi
-    return [];
-  }
-}
-$categories = get_all_categories($pdo);
-
-
-// Lấy thông tin người dùng cho Header
-$user_name = isset($_SESSION['ho_ten']) ? $_SESSION['ho_ten'] : 'TÀI KHOẢN';
-$account_link = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ? 'logout.php' : 'login.php';
-$account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ? '👤XIN CHÀO, ' . htmlspecialchars($user_name) : '👤TÀI KHOẢN';
-
 ?>
+
 <!doctype html>
 <html lang="vi">
 
@@ -132,66 +104,36 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tìm kiếm & Lọc — ĐIỆN THOẠI TRỰC TUYẾN</title>
+  
   <link rel="stylesheet" href="assets/css/stylesTC.css">
   <link rel="stylesheet" href="assets/css/stylesSanPham.css">
+  
   <style>
     .filter-menu li a {
       text-decoration: none;
       color: inherit;
-      /* Giữ nguyên màu chữ như li */
       display: block;
-      /* Giúp hover toàn dòng */
     }
-
-    .filter-menu a.active {
-      font-weight: bold;
-      color: #ff3b30;
-    }
-
     .filter-menu a.active {
       background: #f0f0f0;
-      border-radius: 6px;
+      font-weight: bold;
       color: #d00;
+      border-radius: 6px;
     }
   </style>
 </head>
 
 <body>
-  <!-- MAIN HEADER / NAV -->
-  <header class="main-header">
-    <div class="container header-row">
-      <div class="logo-left">
-        <div class="logo">ĐIỆN THOẠI TRỰC TUYẾN</div>
-      </div>
-      <div class="search-center">
-        <form action="TimKiem.php" method="get" style="width: 500px;">
-          <input class="search" placeholder="Tìm kiếm" name="q" aria-label="Tìm kiếm" />
-          <button class="search-btn" aria-label="Tìm kiếm" type="submit">🔍</button>
-        </form>
-      </div>
-      <div class="icons-right">
-        <a href="TrangChu.php" class="icon-btn cart" aria-label="Trang chủ">🏠 </a>
-        <a href="GioHang.php" class="icon-btn cart" aria-label="Giỏ hàng">🛒 </span></a>
-        <a id="accountLink" href="User.php">👤</a>
-        <a href="logout.php" class="icon-btn cart">🚪</a>
-        <div class="danh-container">
-          <button type="button" class="danh-muc" aria-haspopup="true" aria-expanded="false">☰ Danh mục</button>
-          <ul class="danh-menu" role="menu">
-            <?php foreach ($categories as $cat): ?>
-              <li><a href="TimKiem.php?cat_id=<?php echo htmlspecialchars($cat['id_danh_muc']); ?>" class="danh-link"><?php echo htmlspecialchars($cat['ten_danh_muc']); ?></a></li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </header>
+  <?php require_once './includes/header.php'; ?>
 
   <?php if (!empty($message)): ?>
     <h2 style="color:red; text-align:center; margin:20px 0;">
       <?= $message ?>
     </h2>
   <?php endif; ?>
+
   <main class="container search-page">
+    
     <div class="filter-bar">
       <div class="filter-item">
         <button class="filter-btn">Bộ nhớ (ROM) <span class="arrow">▾</span></button>
@@ -233,11 +175,19 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
       </div>
     </div>
 
-    <!-- iPhone chính hãng -->
     <section class="section-grid">
       <div class="section-header">
-        <h2><?php echo $allProducts[0]['ten_danh_muc'] ?? 'Danh mục này không có sản phẩm nào' ?></h2>
+        <h2>
+            <?php 
+                if (!empty($allProducts)) {
+                    echo htmlspecialchars($allProducts[0]['ten_danh_muc'] ?? 'Kết quả tìm kiếm');
+                } else {
+                    echo 'Không tìm thấy sản phẩm';
+                }
+            ?>
+        </h2>
       </div>
+      
       <div class="products-grid">
         <?php foreach ($allProducts as $p): ?>
           <div class="product-card">
@@ -245,7 +195,8 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
             <button class="fav">♡</button>
 
             <a href="ChiTietSanPham.php?id=<?= $p['id_san_pham'] ?>" aria-label="Xem chi tiết <?= $p['ten_san_pham'] ?>">
-              <img src="<?= $p['hinh_anh'] ?>" alt="<?= $p['ten_san_pham'] ?>" class="prod-img">
+               <img src="<?= !empty($p['hinh_anh']) ? $p['hinh_anh'] : 'assets/images/no-image.png' ?>" 
+                   alt="<?= $p['ten_san_pham'] ?>" class="prod-img">
               <div class="prod-name"><?= $p['ten_san_pham'] ?></div>
             </a>
 
@@ -261,62 +212,25 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
             <?php endif; ?>
           </div>
         <?php endforeach; ?>
-
       </div>
 
+      <?php if(!empty($allProducts)): ?>
       <div class="see-more">
         <button class="btn see">XEM THÊM →</button>
       </div>
+      <?php endif; ?>
     </section>
   </main>
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="col">
-        <h4>ĐIỆN THOẠI TRỰC TUYẾN</h4>
-      </div>
-      <div class="col">
-        <!--SỬA-->
-        <h4>THÀNH VIÊN 1</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
 
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
-      </div>
-      <div class="col">
-        <!--SỬA-->
-        <h4>THÀNH VIÊN 2</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
-
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
-      </div>
-      <div class="col">
-        <!--SỬA-->
-        <h4>THÀNH VIÊN 3</h4>
-        <p>Họ & Tên: <a href="#">...</a></p>
-
-        <p>MSSV: <a href="#">...</a></p>
-
-        <p>Email: <a href="#">...</a></p>
-        <!--END SỬA-->
-      </div>
-    </div>
-    <!--SỬA-->
-    <div class="footer-bottom">© 2025 ĐỀ TÀI XÂY DỰNG WEB BÁN ĐIỆN THOẠI TRỰC TUYẾN</div>
-  </footer>
+  <?php require_once './includes/footer.php'; ?>
 
   <script>
-    // simple dropdown toggle for filter bar
     document.querySelectorAll('.filter-item').forEach(fi => {
       const btn = fi.querySelector('.filter-btn');
       const menu = fi.querySelector('.filter-menu');
       if (!menu) return;
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const open = menu.style.display === 'block';
         document.querySelectorAll('.filter-menu').forEach(m => m.style.display = 'none');
         menu.style.display = open ? 'none' : 'block';
@@ -329,26 +243,6 @@ $account_text = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true ?
       }
     });
   </script>
-  <script>
-    // danh mục dropdown (shared behavior)
-    (function() {
-      document.querySelectorAll('.danh-container').forEach(dc => {
-        const btn = dc.querySelector('.danh-muc');
-        const menu = dc.querySelector('.danh-menu');
-        if (!btn || !menu) return;
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dc.classList.toggle('open');
-          btn.setAttribute('aria-expanded', dc.classList.contains('open'))
-        });
-        menu.addEventListener('click', (e) => e.stopPropagation());
-      });
-      document.addEventListener('click', () => document.querySelectorAll('.danh-container').forEach(dc => {
-        dc.classList.remove('open');
-        dc.querySelector('.danh-muc')?.setAttribute('aria-expanded', 'false');
-      }));
-    })();
-  </script>
-</body>
 
+</body>
 </html>
