@@ -47,7 +47,8 @@ foreach ($variants as $v) {
         "id" => $v['id_bien_the'],
         "rom" => $v["rom"],
         "mau" => $v["mau"],
-        "gia" => $v["gia"]
+        "gia" => $v["gia"],
+        "kho" => $v["so_luong_ton"]
     ];
     if (!in_array($v['rom'], $romList)) $romList[] = $v['rom'];
     if (!in_array($v['mau'], $colorList)) $colorList[] = $v['mau'];
@@ -145,11 +146,12 @@ if ($hasVariant) {
           <div class="quantity-block">
             <label>Số lượng</label>
             <div class="qty-controls">
-              <button id="qtyMinus" class="qty-btn">−</button>
-              <input id="qtyInput" type="number" value="1" min="1">
-              <button id="qtyPlus" class="qty-btn">+</button>
+                <button id="qtyMinus" class="qty-btn">−</button>
+                <input id="qtyInput" type="number" value="1" min="1">
+                <button id="qtyPlus" class="qty-btn">+</button>
             </div>
-          </div>
+            <div id="stockMessage" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
+        </div>
 
           <div class="tradein-banner">
             <h4>Ưu đãi thu cũ đổi mới</h4>
@@ -178,13 +180,14 @@ if ($hasVariant) {
             <?php if ($hasVariant): ?>
               <form action="./includes/functionsKhachHang/add_to_cart.php" method="POST">
                 <input type="hidden" name="id_bien_the" id="idBienTheInput" value="<?= $default_id_bien_the ?>">
+                
                 <input type="hidden" name="qty" id="qtyHidden" value="1">
+                
                 <input type="hidden" name="rom" id="romInput" value="<?= $romList[0] ?>">
                 <input type="hidden" name="color" id="colorInput" value="<?= $colorList[0] ?>">
-                <input type="hidden" name="qty" id="qtyHidden" value="1">
                 <input type="hidden" name="id_san_pham" value="<?= $product['id_san_pham'] ?>">
+                
                 <button id="addCart" class="btn outline">Thêm vào giỏ hàng</button>
-
               </form>
 
               <form id="buyNowForm" action="ThanhToan.php" method="POST">
@@ -206,7 +209,7 @@ if ($hasVariant) {
 
   <?php require_once './includes/footer.php'; ?>
   <script>
-    // --- 1. Gallery ---
+    // --- 1. Gallery (Giữ nguyên) ---
     const mainImg = document.getElementById('mainThumb');
     document.querySelectorAll('.thumb').forEach(t => {
         t.addEventListener('click', () => {
@@ -216,11 +219,32 @@ if ($hasVariant) {
         });
     });
 
-    // --- 2. Logic Giá & Biến thể (Dùng mảng Map PHP đã tạo) ---
+    // --- 2. Logic Giá & Biến thể & Tồn kho ---
     const variantMap = <?= json_encode($variantMap) ?>;
+    const qtyInput = document.getElementById('qtyInput');
+    const stockMsg = document.getElementById('stockMessage');
+    const btnAddCart = document.getElementById('addCart');
+    const btnBuyNow = document.getElementById('buyNowBtn');
 
     function formatCurrency(amount) {
         return Number(amount).toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Hàm cập nhật giới hạn số lượng
+    function updateQtyLimit(maxStock) {
+        // Cập nhật thuộc tính max cho input
+        qtyInput.max = maxStock;
+        
+        // Nếu số lượng đang chọn lớn hơn tồn kho mới -> giảm xuống bằng tồn kho
+        if (parseInt(qtyInput.value) > maxStock) {
+            qtyInput.value = maxStock;
+        }
+        
+        // Nếu kho hết -> về 0 hoặc 1 tùy logic (ở đây xử lý disable nút mua bên dưới)
+        if (maxStock <= 0) qtyInput.value = 1; 
+
+        // Cập nhật lại các input hidden
+        updateHiddenInputs();
     }
 
     function updateUI() {
@@ -232,7 +256,7 @@ if ($hasVariant) {
         const rom = activeRom.dataset.value;
         const color = activeColor.dataset.color;
 
-        // Cập nhật input hidden cho Form
+        // Cập nhật value cho input hidden text (rom/color)
         document.getElementById('romInput').value = rom;
         document.getElementById('colorInput').value = color;
         document.getElementById('buyNow_rom').value = rom;
@@ -243,28 +267,107 @@ if ($hasVariant) {
         const priceText = document.querySelector('.price-red');
 
         if (found) {
+            // 1. Cập nhật giá
             priceText.textContent = formatCurrency(found.gia);
-            // Cập nhật ID biến thể quan trọng nhất
+            
+            // 2. Cập nhật ID biến thể
             document.getElementById('idBienTheInput').value = found.id;
             document.getElementById('buyNow_idBienThe').value = found.id;
+
+            // 3. Xử lý Tồn kho (LOGIC MỚI)
+            const stock = parseInt(found.kho);
+            updateQtyLimit(stock); // Gọi hàm giới hạn
+
+            if (stock > 0) {
+                stockMsg.textContent = `Còn ${stock} sản phẩm`;
+                stockMsg.style.color = 'green';
+                
+                // Mở khóa nút mua
+                if(btnAddCart) btnAddCart.disabled = false;
+                if(btnBuyNow) btnBuyNow.disabled = false;
+                qtyInput.disabled = false;
+            } else {
+                stockMsg.textContent = `Tạm hết hàng`;
+                stockMsg.style.color = 'red';
+                
+                // Khóa nút mua
+                if(btnAddCart) btnAddCart.disabled = true;
+                if(btnBuyNow) btnBuyNow.disabled = true;
+                qtyInput.disabled = true;
+            }
+
         } else {
+            // Trường hợp không tìm thấy biến thể (Lỗi data hoặc chưa set)
             priceText.textContent = "Liên hệ";
-            document.getElementById('idBienTheInput').value = ""; // Xóa ID để tránh lỗi
-            document.getElementById('buyNow_idBienThe').value = "";
+            stockMsg.textContent = "";
+            if(btnAddCart) btnAddCart.disabled = true;
+            if(btnBuyNow) btnBuyNow.disabled = true;
         }
     }
 
-    // Sự kiện Click chọn ROM
+    // --- 3. Logic Input Số lượng ---
+    
+    // Hàm cập nhật giá trị vào form hidden
+    function updateHiddenInputs() {
+        let val = parseInt(qtyInput.value);
+        if (isNaN(val) || val < 1) val = 1;
+        
+        document.getElementById('qtyHidden').value = val;
+        document.getElementById('buyNow_qty').value = val;
+    }
+
+    // Hàm kiểm tra khi người dùng thay đổi số lượng
+    function checkQtyValidity() {
+        let currentVal = parseInt(qtyInput.value);
+        let maxVal = parseInt(qtyInput.max); // Lấy max từ thuộc tính đã set ở updateUI
+
+        if (isNaN(currentVal) || currentVal < 1) {
+            currentVal = 1;
+        }
+
+        // Nếu nhập quá số tồn -> trả về max
+        if (currentVal > maxVal) {
+            alert(`Xin lỗi, chỉ còn ${maxVal} sản phẩm trong kho!`);
+            currentVal = maxVal;
+        }
+
+        qtyInput.value = currentVal;
+        updateHiddenInputs();
+    }
+
+    // Sự kiện nút cộng trừ
+    document.getElementById('qtyPlus').onclick = () => { 
+        let currentVal = parseInt(qtyInput.value);
+        let maxVal = parseInt(qtyInput.max);
+        
+        if (currentVal < maxVal) {
+            qtyInput.value = currentVal + 1;
+            updateHiddenInputs();
+        } else {
+            alert('Đã đạt số lượng tối đa trong kho!');
+        }
+    };
+
+    document.getElementById('qtyMinus').onclick = () => { 
+        if(qtyInput.value > 1) {
+            qtyInput.value--; 
+            updateHiddenInputs(); 
+        }
+    };
+
+    // Sự kiện khi gõ trực tiếp
+    qtyInput.addEventListener('change', checkQtyValidity);
+    // qtyInput.addEventListener('input', checkQtyValidity); // Nếu muốn chặn ngay khi gõ
+
+    // Sự kiện Click chọn Option
     document.querySelectorAll('#storageOptions .variant').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('#storageOptions .variant').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            // (Bạn có thể thêm logic validate màu khả dụng ở đây nếu muốn)
             updateUI();
         });
     });
 
-    // Sự kiện Click chọn Màu
     document.querySelectorAll('#colorOptions .variant').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('#colorOptions .variant').forEach(b => b.classList.remove('active'));
@@ -273,18 +376,8 @@ if ($hasVariant) {
         });
     });
 
-    // --- 3. Số lượng ---
-    const qtyInput = document.getElementById('qtyInput');
-    document.getElementById('qtyPlus').onclick = () => { qtyInput.value++; updateQty(); };
-    document.getElementById('qtyMinus').onclick = () => { if(qtyInput.value > 1) qtyInput.value--; updateQty(); };
-    
-    function updateQty() {
-        document.getElementById('qtyHidden').value = qtyInput.value;
-        document.getElementById('buyNow_qty').value = qtyInput.value;
-    }
-
     // Chạy lần đầu
     updateUI();
-  </script>
+</script>
 </body>
 </html>
