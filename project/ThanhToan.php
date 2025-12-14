@@ -65,15 +65,18 @@ if (!empty($_POST['id_bien_the'])) {
     $selected_items = $ids;
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-    $sql = "SELECT ghct.id_chi_tiet,ghct.id_bien_the, ghct.so_luong,
-                   bt.gia, bt.rom, bt.mau,
-                   sp.ten_san_pham, asp.duong_dan_anh
-            FROM gio_hang_chi_tiet ghct
-            JOIN gio_hang gh ON gh.id_gio_hang = ghct.id_gio_hang
-            JOIN bien_the bt ON bt.id_bien_the = ghct.id_bien_the
-            JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
-            JOIN anh_san_pham asp ON asp.id_san_pham = sp.id_san_pham
-            WHERE ghct.id_chi_tiet IN ($placeholders)";
+    $sql = "SELECT ghct.id_chi_tiet,ghct.id_bien_the,ghct.so_luong,bt.gia,bt.rom,bt.mau,
+    sp.ten_san_pham,asp.duong_dan_anh
+FROM gio_hang_chi_tiet ghct
+JOIN gio_hang gh ON gh.id_gio_hang = ghct.id_gio_hang
+JOIN bien_the bt ON bt.id_bien_the = ghct.id_bien_the
+JOIN san_pham sp ON sp.id_san_pham = bt.id_san_pham
+LEFT JOIN (
+    SELECT id_san_pham, MIN(duong_dan_anh) AS duong_dan_anh
+    FROM anh_san_pham
+    GROUP BY id_san_pham
+) asp ON asp.id_san_pham = sp.id_san_pham
+WHERE ghct.id_chi_tiet IN ($placeholders)";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($ids);
