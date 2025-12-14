@@ -70,7 +70,7 @@ $samsungList = $stmtSamsung->fetchAll(PDO::FETCH_ASSOC);
     <div class="categories-list">
         <?php foreach ($dsDanhMuc as $cat): ?>
             <div class="cat">
-                <a href="TimKiem.php?danhmuc=<?php echo $cat['id_danh_muc']; ?>">
+                <a href="TimKiem.php?cat_id=<?php echo $cat['id_danh_muc']; ?>">
                     📱 <?php echo htmlspecialchars($cat['ten_danh_muc']); ?>
                 </a>
             </div>

@@ -156,17 +156,7 @@ function makeUrl($key, $value) {
         </ul>
       </div>
 
-      <div class="filter-item">
-        <button class="filter-btn">Màu sắc <span class="arrow">▾</span></button>
-        <ul class="filter-menu">
-          <li><a href="<?= makeUrl('color', '') ?>">Tất cả</a></li>
-          <li><a class="<?= ($colorFilter == 'Titan') ? 'active' : '' ?>" href="<?= makeUrl('color', 'Titan') ?>">Titan</a></li>
-          <li><a class="<?= ($colorFilter == 'Vàng') ? 'active' : '' ?>" href="<?= makeUrl('color', 'Vàng') ?>">Vàng</a></li>
-          <li><a class="<?= ($colorFilter == 'Trắng') ? 'active' : '' ?>" href="<?= makeUrl('color', 'Trắng') ?>">Trắng</a></li>
-          <li><a class="<?= ($colorFilter == 'Đen') ? 'active' : '' ?>" href="<?= makeUrl('color', 'Đen') ?>">Đen</a></li>
-          <li><a class="<?= ($colorFilter == 'Xanh') ? 'active' : '' ?>" href="<?= makeUrl('color', 'Xanh') ?>">Xanh</a></li>
-        </ul>
-      </div>
+      
     </div>
     <section class="section-grid">
       <div class="section-header">

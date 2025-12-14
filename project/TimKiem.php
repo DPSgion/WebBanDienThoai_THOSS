@@ -133,47 +133,7 @@ if ($keyword !== "") {
   <?php endif; ?>
 
   <main class="container search-page">
-    
-    <div class="filter-bar">
-      <div class="filter-item">
-        <button class="filter-btn">Bộ nhớ (ROM) <span class="arrow">▾</span></button>
-        <ul class="filter-menu">
-          <li><a href="SanPham.php?rom=&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">All</a></li>
-          <li><a class="<?= (($_GET['rom'] ?? '') == '32GB') ? 'active' : '' ?>" href="SanPham.php?rom=32GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">32GB</a></li>
-          <li><a class="<?= (($_GET['rom'] ?? '') == '64GB') ? 'active' : '' ?>" href="SanPham.php?rom=64GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">64GB</a></li>
-          <li><a class="<?= (($_GET['rom'] ?? '') == '128GB') ? 'active' : '' ?>" href="SanPham.php?rom=128GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">128GB</a></li>
-          <li><a class="<?= (($_GET['rom'] ?? '') == '256GB') ? 'active' : '' ?>" href="SanPham.php?rom=256GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">256GB</a></li>
-          <li><a class="<?= (($_GET['rom'] ?? '') == '512GB') ? 'active' : '' ?>" href="SanPham.php?rom=512GB&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">512GB</a></li>
-        </ul>
-      </div>
-      <div class="filter-item">
-        <button class="filter-btn">Hệ điều hành <span class="arrow">▾</span></button>
-        <ul class="filter-menu">
-          <li><a href="SanPham.php?os=&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">All</a></li>
-          <li><a class="<?= (($_GET['os'] ?? '') == 'iOS') ? 'active' : '' ?>" href="SanPham.php?os=iOS&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">iOS</a></li>
-          <li><a class="<?= (($_GET['os'] ?? '') == 'Android') ? 'active' : '' ?>" href="SanPham.php?os=Android&rom=<?= $_GET['rom'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Android</a></li>
-        </ul>
-      </div>
-      <div class="filter-item">
-        <button class="filter-btn">Giá <span class="arrow">▾</span></button>
-        <ul class="filter-menu">
-          <li><a href="SanPham.php?price=&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Mặc định</a></li>
-          <li><a class="<?= (($_GET['price'] ?? '') == 'low_high') ? 'active' : '' ?>" href="SanPham.php?price=low_high&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Giá thấp → cao</a></li>
-          <li><a class="<?= (($_GET['price'] ?? '') == 'high_low') ? 'active' : '' ?>" href="SanPham.php?price=high_low&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&color=<?= $_GET['color'] ?? '' ?>">Giá cao → thấp</a></li>
-        </ul>
-      </div>
-
-      <div class="filter-item">
-        <button class="filter-btn">Màu sắc <span class="arrow">▾</span></button>
-        <ul class="filter-menu">
-          <li><a href="SanPham.php?color=&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Tất cả</a></li>
-          <li><a class="<?= (($_GET['color'] ?? '') == 'Orange') ? 'active' : '' ?>" href="SanPham.php?color=Orange&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Cam</a></li>
-          <li><a class="<?= (($_GET['color'] ?? '') == 'Red') ? 'active' : '' ?>" href="SanPham.php?color=Red&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Đỏ</a></li>
-          <li><a class="<?= (($_GET['color'] ?? '') == 'White') ? 'active' : '' ?>" href="SanPham.php?color=White&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Trắng</a></li>
-          <li><a class="<?= (($_GET['color'] ?? '') == 'Black') ? 'active' : '' ?>" href="SanPham.php?color=Black&rom=<?= $_GET['rom'] ?? '' ?>&os=<?= $_GET['os'] ?? '' ?>&price=<?= $_GET['price'] ?? '' ?>">Đen</a></li>
-        </ul>
-      </div>
-    </div>
+   
 
     <section class="section-grid">
       <div class="section-header">
@@ -214,11 +174,7 @@ if ($keyword !== "") {
         <?php endforeach; ?>
       </div>
 
-      <?php if(!empty($allProducts)): ?>
-      <div class="see-more">
-        <button class="btn see">XEM THÊM →</button>
-      </div>
-      <?php endif; ?>
+      
     </section>
   </main>
 
